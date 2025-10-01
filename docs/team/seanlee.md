@@ -1,4 +1,4 @@
-# John Doe - Project Portfolio Page
+# Sean Lee - Project Portfolio Page
 
 ## Overview
 
