@@ -11,14 +11,14 @@ public class ProjectFilter {
     private String searchString;
     private ProjectList matchingProjects;
 
-    public ProjectList getMatchingTasks() {
-        return matchingProjects;
-    }
-
     public ProjectFilter(ProjectList projects, String searchString){
         this.projects = projects;
         this.searchString = searchString;
         search();
+    }
+
+    public ProjectList getMatchingTasks() {
+        return matchingProjects;
     }
 
     public void search() {

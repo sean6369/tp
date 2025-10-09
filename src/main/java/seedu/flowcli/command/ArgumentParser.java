@@ -4,6 +4,12 @@ import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 
 public class ArgumentParser {
+    public ArgumentParser(String argument, ProjectList projects) {
+        this.argument = argument;
+        this.projects = projects;
+        parseArgument();
+
+    }
     private String argument;
     private ProjectList projects;
 
@@ -18,12 +24,7 @@ public class ArgumentParser {
         return remainingArgument;
     }
 
-    public ArgumentParser(String argument, ProjectList projects) {
-        this.argument = argument;
-        this.projects = projects;
-        parseArgument();
 
-    }
 
     public void parseArgument() {
         if(argument.isEmpty()) {

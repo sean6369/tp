@@ -55,10 +55,12 @@ public class CommandHandler {
                         throw new MissingArgumentException();
                     }
 
-                    Integer idx = CommandParser.parseIndexOrNull(parsedArgument.getRemainingArgument(), targetProject.size());
+                    Integer idx = CommandParser.parseIndexOrNull(parsedArgument.getRemainingArgument(),
+                            targetProject.size());
 
                     targetProject.getProjectTasks().mark(idx);
-                    ui.showMarked(targetProject.getProjectName(), targetProject.getProjectTasks().get(idx), true);
+                    ui.showMarked(targetProject.getProjectName(), targetProject.getProjectTasks().get(idx),
+                            true);
                     break;
                 }
 
@@ -69,10 +71,12 @@ public class CommandHandler {
                         throw new MissingArgumentException();
                     }
 
-                    Integer idx = CommandParser.parseIndexOrNull(parsedArgument.getRemainingArgument(), targetProject.size());
+                    Integer idx = CommandParser.parseIndexOrNull(parsedArgument.getRemainingArgument(),
+                            targetProject.size());
 
                     targetProject.getProjectTasks().unmark(idx);
-                    ui.showMarked(targetProject.getProjectName(), targetProject.getProjectTasks().get(idx), true);
+                    ui.showMarked(targetProject.getProjectName(), targetProject.getProjectTasks().get(idx),
+                            true);
                     break;
                 }
 
@@ -115,7 +119,8 @@ public class CommandHandler {
                     }
 
                     //deleting tasks
-                    Integer index = CommandParser.parseIndexOrNull(parsedArgument.getRemainingArgument(), targetProject.size());
+                    Integer index = CommandParser.parseIndexOrNull(parsedArgument.getRemainingArgument(),
+                            targetProject.size());
                     Task deletedTask = targetProject.deleteTask(index);
                     ui.showDeletedTask(targetProject, deletedTask);
                     break;
@@ -127,6 +132,8 @@ public class CommandHandler {
                 case UNKNOWN: {
                     throw new FlowCLIExceptions.UnknownInputException();
                 }
+
+                default:
 
 
 

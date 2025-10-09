@@ -10,6 +10,9 @@ import seedu.flowcli.project.Project;
  */
 public class ConsoleUi {
 
+    public ConsoleUi(ProjectList projects) {
+        this.projects = projects;
+    }
     private ProjectList projects;
     private String line = "____________________________________________________________";
 
@@ -25,10 +28,6 @@ public class ConsoleUi {
     private String helloMessage = "Hello! I'm FlowCLI, a fast minimal CLI task manager";
     private String byeMessage = "Bye. Hope to see you again soon!";
 
-
-    public ConsoleUi(ProjectList projects) {
-        this.projects = projects;
-    }
 
     public void printHelloMessage() {
         System.out.println(helloMessage);
