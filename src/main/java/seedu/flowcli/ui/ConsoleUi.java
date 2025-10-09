@@ -13,26 +13,14 @@ public class ConsoleUi {
     private ProjectList projects;
     private String line = "____________________________________________________________";
 
-    private String logo = "                                                                                                                                            \n" +
-            "                                                                                                                                            \n" +
-            "FFFFFFFFFFFFFFFFFFFFFFlllllll                                                                CCCCCCCCCCCCCLLLLLLLLLLL             IIIIIIIIII\n" +
-            "F::::::::::::::::::::Fl:::::l                                                             CCC::::::::::::CL:::::::::L             I::::::::I\n" +
-            "F::::::::::::::::::::Fl:::::l                                                           CC:::::::::::::::CL:::::::::L             I::::::::I\n" +
-            "FF::::::FFFFFFFFF::::Fl:::::l                                                          C:::::CCCCCCCC::::CLL:::::::LL             II::::::II\n" +
-            "  F:::::F       FFFFFF l::::l    ooooooooooo wwwwwww           wwwww           wwwwwwwC:::::C       CCCCCC  L:::::L                 I::::I  \n" +
-            "  F:::::F              l::::l  oo:::::::::::oow:::::w         w:::::w         w:::::wC:::::C                L:::::L                 I::::I  \n" +
-            "  F::::::FFFFFFFFFF    l::::l o:::::::::::::::ow:::::w       w:::::::w       w:::::w C:::::C                L:::::L                 I::::I  \n" +
-            "  F:::::::::::::::F    l::::l o:::::ooooo:::::o w:::::w     w:::::::::w     w:::::w  C:::::C                L:::::L                 I::::I  \n" +
-            "  F:::::::::::::::F    l::::l o::::o     o::::o  w:::::w   w:::::w:::::w   w:::::w   C:::::C                L:::::L                 I::::I  \n" +
-            "  F::::::FFFFFFFFFF    l::::l o::::o     o::::o   w:::::w w:::::w w:::::w w:::::w    C:::::C                L:::::L                 I::::I  \n" +
-            "  F:::::F              l::::l o::::o     o::::o    w:::::w:::::w   w:::::w:::::w     C:::::C                L:::::L                 I::::I  \n" +
-            "  F:::::F              l::::l o::::o     o::::o     w:::::::::w     w:::::::::w       C:::::C       CCCCCC  L:::::L         LLLLLL  I::::I  \n" +
-            "FF:::::::FF           l::::::lo:::::ooooo:::::o      w:::::::w       w:::::::w         C:::::CCCCCCCC::::CLL:::::::LLLLLLLLL:::::LII::::::II\n" +
-            "F::::::::FF           l::::::lo:::::::::::::::o       w:::::w         w:::::w           CC:::::::::::::::CL::::::::::::::::::::::LI::::::::I\n" +
-            "F::::::::FF           l::::::l oo:::::::::::oo         w:::w           w:::w              CCC::::::::::::CL::::::::::::::::::::::LI::::::::I\n" +
-            "FFFFFFFFFFF           llllllll   ooooooooooo            www             www                  CCCCCCCCCCCCCLLLLLLLLLLLLLLLLLLLLLLLLIIIIIIIIII\n" +
-            "                                                                                                                                            \n" +
-            "                                                                                                                                            ";
+    private String logo = " _______  _        _______           _______  _       _________\n" +
+            "(  ____ \\( \\      (  ___  )|\\     /|(  ____ \\( \\      \\__   __/\n" +
+            "| (    \\/| (      | (   ) || )   ( || (    \\/| (         ) (   \n" +
+            "| (__    | |      | |   | || | _ | || |      | |         | |   \n" +
+            "|  __)   | |      | |   | || |( )| || |      | |         | |   \n" +
+            "| (      | |      | |   | || || || || |      | |         | |   \n" +
+            "| )      | (____/\\| (___) || () () || (____/\\| (____/\\___) (___\n" +
+            "|/       (_______/(_______)(_______)(_______/(_______/\\_______/\n" + "\n";
 
     private String helloMessage = "Hello! I'm FlowCLI, a fast minimal CLI task manager";
     private String byeMessage = "Bye. Hope to see you again soon!";
@@ -82,7 +70,8 @@ public class ConsoleUi {
     }
 
     public void showCurrentTaskListSize(Project targetProject) {
-        System.out.println(String.format("Now you have %d task in the %s.", targetProject.size(), targetProject.getProjectName()));
+        System.out.println(String.format("Now you have %d task in the %s.", targetProject.size(),
+                targetProject.getProjectName()));
     }
 
     public void showAddedProject() {
