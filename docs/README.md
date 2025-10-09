@@ -1,4 +1,3 @@
-# Duke
 
 # FlowCLI - Class Documentation
 
@@ -516,58 +515,6 @@ public void showFindResults(ProjectList results) {
 }
 ```
 
-### Extending Task Functionality
-
-To add task properties (due dates, priority, etc.):
-
-1. Modify `Task` class to add fields
-2. Update `Task.toString()` to display new fields
-3. Update `TaskList.addTask()` to accept new parameters
-4. Update `CommandHandler` ADD case to parse new fields
-
-### Adding Data Persistence
-
-Currently, data is not saved. To add persistence:
-
-1. Create `Storage` class in a new `storage` package
-2. Implement `saveToFile()` and `loadFromFile()` methods
-3. Call `storage.loadFromFile()` in `FlowCLI` constructor
-4. Call `storage.saveToFile()` after each modification in `CommandHandler`
-
----
-
-## Best Practices for Contributors
-
-1. **Follow existing patterns**: Commands follow a consistent parse → validate → execute → display pattern
-2. **Use exceptions**: Throw appropriate exceptions for error cases
-3. **Update UI**: All user-facing changes should go through `ConsoleUi`
-4. **Maintain separation**: Keep parsing, business logic, and UI separate
-5. **Add JavaDoc**: Document new public methods
-6. **Handle edge cases**: Empty lists, null values, invalid indices
-
----
-
-## Known Limitations
-
-1. **No data persistence**: Projects and tasks are lost when application closes
-2. **ProjectFilter unused**: Search functionality exists but not integrated
-3. **Case-sensitive project lookup**: "Work" ≠ "work"
-4. **Unused Project fields**: `projectDescription` and `projectStatus` defined but not used
-5. **Method naming**: `ProjectFilter.getMatchingTasks()` returns projects, not tasks
-
----
-
-## Future Enhancements
-
-- [ ] File-based data persistence
-- [ ] Search/find command using ProjectFilter
-- [ ] Task priorities and due dates
-- [ ] Project descriptions and status
-- [ ] Case-insensitive project names
-- [ ] Undo/redo functionality
-- [ ] Task filtering within projects
-- [ ] Color-coded output
-- [ ] Export to CSV/JSON
 
 Useful links:
 * [User Guide](UserGuide.md)
