@@ -131,4 +131,20 @@ public class ConsoleUi {
         printLine();
     }
 
+    public void showHelp() {
+        printLine();
+        System.out.println("Available Commands:");
+        System.out.println("  add project <name>          - Add a new project");
+        System.out.println("  add task <project> <desc>   - Add a task to a project");
+        System.out.println("  list                        - List all projects");
+        System.out.println("  list <project>              - List tasks in a project");
+        System.out.println("  mark <project> <index>      - Mark task as done");
+        System.out.println("  unmark <project> <index>    - Mark task as not done");
+        System.out.println("  delete project <name>       - Delete a project");
+        System.out.println("  delete task <project> <idx> - Delete a task");
+        System.out.println("  help                        - Show this help message");
+        System.out.println("  bye                         - Exit the application");
+        printLine();
+    }
+
 }
