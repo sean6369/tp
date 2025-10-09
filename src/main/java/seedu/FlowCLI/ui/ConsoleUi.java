@@ -128,8 +128,8 @@ public class ConsoleUi {
 
     public void showTaskList(Project targetProject) {
         printLine();
-        System.out.println("Here are the tasks in" + targetProject.getProjectName() + " :");
-        System.out.print(targetProject);
+        System.out.println("Here are the tasks in " + targetProject.getProjectName() + ":");
+        System.out.print(targetProject.showAllTasks());
         printLine();
     }
 

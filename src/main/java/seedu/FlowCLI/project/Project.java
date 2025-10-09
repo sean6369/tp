@@ -43,4 +43,8 @@ public class Project {
         return projectName + "\n" + projectTasks.render();
     }
 
+    public String showAllTasks() {
+        return projectTasks.render();
+    }
+
 }
