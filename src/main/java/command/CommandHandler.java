@@ -109,7 +109,7 @@ public class CommandHandler {
 
                     //deleting projects
                     if (parsedArgument.getRemainingArgument() == null) {
-                        Project deletedProject = projects.delete(targetProject);
+                        Project deletedProject = projects.deleteProject(targetProject);
                         ui.showDeletedProject(deletedProject);
                         break;
                     }

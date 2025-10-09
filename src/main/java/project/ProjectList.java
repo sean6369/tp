@@ -19,7 +19,7 @@ public class ProjectList {
         return returnProject;
     }
 
-    public Project delete(Project project) {
+    public Project deleteProject(Project project) {
         Project removedProject = project;
         projects.remove(project);
         return removedProject;
