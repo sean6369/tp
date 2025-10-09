@@ -1,4 +1,4 @@
-package task;
+package seedu.FlowCLI.task;
 
 /**
  * Represents a basic task with a description and completion status.

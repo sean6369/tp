@@ -1,8 +1,8 @@
-package command;
+package seedu.FlowCLI.command;
 
-import project.ProjectList;
-import exception.FlowcliExceptions.IndexOutOfRangeException;
-import exception.FlowcliExceptions.MissingIndexException;
+import seedu.FlowCLI.project.ProjectList;
+import seedu.FlowCLI.exception.FlowcliExceptions.IndexOutOfRangeException;
+import seedu.FlowCLI.exception.FlowcliExceptions.MissingIndexException;
 
 public class CommandParser {
 

@@ -1,8 +1,6 @@
-package Filter;
-import task.Task;
-import task.TaskList;
-import project.Project;
-import project.ProjectList;
+package seedu.FlowCLI.Filter;
+import seedu.FlowCLI.project.Project;
+import seedu.FlowCLI.project.ProjectList;
 
 /**
  * Searches for tasks whose descriptions contain a specified search string.

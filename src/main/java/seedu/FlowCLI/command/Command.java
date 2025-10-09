@@ -1,7 +1,4 @@
-package command;
-
-import project.ProjectList;
-import project.Project;
+package seedu.FlowCLI.command;
 
 public class Command {
     public final CommandParser.Type type;

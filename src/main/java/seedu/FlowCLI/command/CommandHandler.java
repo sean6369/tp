@@ -1,12 +1,12 @@
-package command;
+package seedu.FlowCLI.command;
 
-import exception.FlowcliExceptions;
-import exception.FlowcliExceptions.MissingArgumentException;
-import exception.FlowcliExceptions.MissingDescriptionException;
-import project.Project;
-import project.ProjectList;
-import task.Task;
-import ui.ConsoleUi;
+import seedu.FlowCLI.exception.FlowcliExceptions;
+import seedu.FlowCLI.exception.FlowcliExceptions.MissingArgumentException;
+import seedu.FlowCLI.exception.FlowcliExceptions.MissingDescriptionException;
+import seedu.FlowCLI.project.Project;
+import seedu.FlowCLI.project.ProjectList;
+import seedu.FlowCLI.task.Task;
+import seedu.FlowCLI.ui.ConsoleUi;
 
 import java.util.Scanner;
 

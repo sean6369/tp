@@ -1,8 +1,7 @@
-package command;
+package seedu.FlowCLI.command;
 
-import project.Project;
-import project.ProjectList;
-import exception.FlowcliExceptions.MissingArgumentException;
+import seedu.FlowCLI.project.Project;
+import seedu.FlowCLI.project.ProjectList;
 
 public class ArgumentParser {
     private String argument;

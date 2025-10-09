@@ -1,4 +1,4 @@
-package exception;
+package seedu.FlowCLI.exception;
 
 public class FlowcliExceptions {
     public static class MissingArgumentException extends Exception {

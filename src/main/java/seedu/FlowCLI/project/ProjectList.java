@@ -1,7 +1,4 @@
-package project;
-
-import exception.FlowcliExceptions;
-import task.Task;
+package seedu.FlowCLI.project;
 
 import java.util.ArrayList;
 import java.util.List;

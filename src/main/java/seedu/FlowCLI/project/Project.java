@@ -1,6 +1,6 @@
-package project;
-import task.Task;
-import task.TaskList;
+package seedu.FlowCLI.project;
+import seedu.FlowCLI.task.Task;
+import seedu.FlowCLI.task.TaskList;
 
 public class Project {
     private String projectName;
