@@ -6,6 +6,16 @@ import seedu.flowcli.exception.FlowCLIExceptions.MissingIndexException;
 
 public class CommandParser {
 
+
+
+    private Command command;
+
+    public Command getCommand() {
+        return command;
+    }
+
+    public enum Type { LIST, MARK, UNMARK, BYE, ADD, DELETE, UNKNOWN }
+
     public CommandParser(String line, ProjectList projects) {
 
         String[] parts = line.trim().split("\\s+", 2);
@@ -43,14 +53,6 @@ public class CommandParser {
         } // treat as add
         }
     }
-
-    private Command command;
-
-    public Command getCommand() {
-        return command;
-    }
-
-    public enum Type { LIST, MARK, UNMARK, BYE, ADD, DELETE, UNKNOWN }
 
     public static Integer parseIndexOrNull(String indexText, int maxIndex) throws IndexOutOfRangeException, MissingIndexException {
         if (indexText == null) {
