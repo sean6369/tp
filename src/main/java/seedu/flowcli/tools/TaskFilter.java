@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Filters tasks globally across all projects based on priority and/or project ID.
+ * Filters tasks globally across all projects based on priority and/or project name.
  */
 public class TaskFilter {
     private ProjectList projects;
     private String priorityFilter; // "high", "medium", "low", or null
-    private Integer projectIdFilter; // project ID or null
+    private String projectNameFilter; // project name or null
     private List<FilteredTask> filteredTasks;
 
     /**
@@ -42,10 +42,10 @@ public class TaskFilter {
         }
     }
 
-    public TaskFilter(ProjectList projects, String priority, Integer projectId) {
+    public TaskFilter(ProjectList projects, String priority, String projectName) {
         this.projects = projects;
         this.priorityFilter = priority;
-        this.projectIdFilter = projectId;
+        this.projectNameFilter = projectName;
         filter();
     }
 
@@ -56,10 +56,9 @@ public class TaskFilter {
     private void filter() {
         filteredTasks = new ArrayList<>();
         for (Project project : projects.getProjectList()) {
-            // Check project ID filter
-            if (projectIdFilter != null) {
-                // Assuming projectId is the index in the list
-                if (projects.getProjectList().indexOf(project) + 1 != projectIdFilter) {
+            // Check project name filter
+            if (projectNameFilter != null) {
+                if (!project.getProjectName().equalsIgnoreCase(projectNameFilter)) {
                     continue;
                 }
             }

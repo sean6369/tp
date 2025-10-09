@@ -4,9 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
-import seedu.flowcli.task.Task;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,8 +63,8 @@ class TaskFilterTest {
     }
 
     @Test
-    void testFilterByProjectId() {
-        TaskFilter filter = new TaskFilter(projects, null, 1); // Project1
+    void testFilterByProjectName() {
+        TaskFilter filter = new TaskFilter(projects, null, "Project1"); // Project1
         List<TaskFilter.FilteredTask> filteredTasks = filter.getFilteredTasks();
 
         assertEquals(3, filteredTasks.size());
@@ -76,8 +74,8 @@ class TaskFilterTest {
     }
 
     @Test
-    void testFilterByProjectId2() {
-        TaskFilter filter = new TaskFilter(projects, null, 2); // Project2
+    void testFilterByProjectName2() {
+        TaskFilter filter = new TaskFilter(projects, null, "Project2"); // Project2
         List<TaskFilter.FilteredTask> filteredTasks = filter.getFilteredTasks();
 
         assertEquals(2, filteredTasks.size());
@@ -88,7 +86,7 @@ class TaskFilterTest {
 
     @Test
     void testFilterByPriorityAndProject() {
-        TaskFilter filter = new TaskFilter(projects, "high", 1); // High priority in Project1
+        TaskFilter filter = new TaskFilter(projects, "high", "Project1"); // High priority in Project1
         List<TaskFilter.FilteredTask> filteredTasks = filter.getFilteredTasks();
 
         assertEquals(1, filteredTasks.size());

@@ -206,13 +206,13 @@ public class CommandHandler {
                     String args = parsedCommand.getCommand().arg;
                     if (args == null || !args.startsWith("tasks by")) {
                         throw new FlowCLIExceptions.InvalidArgumentException(
-                                "Invalid filter command. Use: filter tasks by priority <value> or project <id>");
+                                "Invalid filter command. Use: filter tasks by priority <value> or project <name>");
                     }
 
                     String[] parts = args.split("\\s+");
                     if (parts.length < 4) {
                         throw new FlowCLIExceptions.InvalidArgumentException(
-                                "Invalid filter command. Use: filter tasks by priority <value> or project <id>");
+                                "Invalid filter command. Use: filter tasks by priority <value> or project <name>");
                     }
 
                     String type = parts[2];
@@ -222,13 +222,8 @@ public class CommandHandler {
                         TaskFilter filter = new TaskFilter(projects, value, null);
                         ui.showGlobalFilteredTasks(filter.getFilteredTasks(), type, value);
                     } else if ("project".equals(type)) {
-                        try {
-                            int projectId = Integer.parseInt(value);
-                            TaskFilter filter = new TaskFilter(projects, null, projectId);
-                            ui.showGlobalFilteredTasks(filter.getFilteredTasks(), type, value);
-                        } catch (NumberFormatException e) {
-                            throw new FlowCLIExceptions.InvalidArgumentException("Project ID must be a number");
-                        }
+                        TaskFilter filter = new TaskFilter(projects, null, value);
+                        ui.showGlobalFilteredTasks(filter.getFilteredTasks(), type, value);
                     } else {
                         throw new FlowCLIExceptions.InvalidArgumentException(
                                 "Invalid filter type. Use: priority or project");

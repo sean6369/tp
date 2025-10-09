@@ -11,8 +11,8 @@ FlowCLI allows you to manage projects and tasks via command line. Below are all 
 ### Commands
 
 #### Project Management
-- **Add Project**: `add project <name>`
-  - Input: `add project work`
+- **Add Project**: `add <name>`
+  - Input: `add work`
   - Expected Output: Confirmation of project added.
 
 - **List Projects**: `list`
@@ -59,9 +59,9 @@ FlowCLI allows you to manage projects and tasks via command line. Below are all 
   - Input: `filter tasks by priority high`
   - Expected Output: Only tasks with high priority, showing project context.
 
-- **Filter Tasks by Project**: `filter tasks by project <id>`
-  - Input: `filter tasks by project 1`
-  - Expected Output: Only tasks from project with ID 1, showing project context.
+- **Filter Tasks by Project**: `filter tasks by project <name>`
+  - Input: `filter tasks by project work`
+  - Expected Output: Only tasks from project "work", showing project context.
 
 #### Other
 - **Help**: `help`
@@ -112,7 +112,7 @@ The project uses [GitHub actions](https://github.com/features/actions) for CI. W
 
 `/docs` folder contains a skeleton version of the project documentation.
 
-Steps for publishing documentation to the public: 
+Steps for publishing documentation to the public:
 1. If you are using this project template for an individual project, go your fork on GitHub.<br>
    If you are using this project template for a team project, go to the team fork on GitHub.
 1. Click on the `settings` tab.

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
-import seedu.flowcli.task.Task;
 
 import java.time.LocalDate;
 import java.util.List;

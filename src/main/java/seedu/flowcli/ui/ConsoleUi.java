@@ -146,7 +146,7 @@ public class ConsoleUi {
         System.out.println("  delete task <project> <idx> - Delete a task");
         System.out.println("  sort tasks by deadline/priority ascending/descending - Sort all tasks");
         System.out.println("  filter tasks by priority <value> - Filter tasks by priority");
-        System.out.println("  filter tasks by project <id> - Filter tasks by project ID");
+        System.out.println("  filter tasks by project <name> - Filter tasks by project name");
         System.out.println("  help                        - Show this help message");
         System.out.println("  bye                         - Exit the application");
         printLine();
