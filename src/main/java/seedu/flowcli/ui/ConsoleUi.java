@@ -14,6 +14,7 @@ public class ConsoleUi {
     private ProjectList projects;
     private String line = "____________________________________________________________";
 
+    /*
     private String logo = " _______  _        _______           _______  _       _________\n" +
             "(  ____ \\( \\      (  ___  )|\\     /|(  ____ \\( \\      \\__   __/\n" +
             "| (    \\/| (      | (   ) || )   ( || (    \\/| (         ) (   \n" +
@@ -23,12 +24,18 @@ public class ConsoleUi {
             "| )      | (____/\\| (___) || () () || (____/\\| (____/\\___) (___\n" +
             "|/       (_______/(_______)(_______)(_______/(_______/\\_______/\n" + "\n";
 
+     */
+
     private String helloMessage = "Hello! I'm FlowCLI, a fast minimal CLI task manager";
     private String byeMessage = "Bye. Hope to see you again soon!";
 
     public ConsoleUi(ProjectList projects) {
         this.projects = projects;
     }
+
+
+
+    private String logo = "FLOWCLI";
 
 
     public void printHelloMessage() {
