@@ -1,8 +1,8 @@
-package seedu.FlowCLI;
+package seedu.flowcli;
 
-import seedu.FlowCLI.project.ProjectList;
-import seedu.FlowCLI.ui.ConsoleUi;
-import seedu.FlowCLI.command.CommandHandler;
+import seedu.flowcli.project.ProjectList;
+import seedu.flowcli.ui.ConsoleUi;
+import seedu.flowcli.command.CommandHandler;
 
 public class FlowCLI {
     private ProjectList projects;

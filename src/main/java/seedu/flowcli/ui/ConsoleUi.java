@@ -1,8 +1,8 @@
-package seedu.FlowCLI.ui;
+package seedu.flowcli.ui;
 
-import seedu.FlowCLI.task.Task;
-import seedu.FlowCLI.project.ProjectList;
-import seedu.FlowCLI.project.Project;
+import seedu.flowcli.task.Task;
+import seedu.flowcli.project.ProjectList;
+import seedu.flowcli.project.Project;
 
 /**
  * Handles all user interface interactions for the FlowCLI application.

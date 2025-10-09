@@ -1,4 +1,4 @@
-package seedu.FlowCLI.project;
+package seedu.flowcli.project;
 
 import java.util.ArrayList;
 import java.util.List;

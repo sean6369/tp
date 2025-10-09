@@ -1,4 +1,4 @@
-package seedu.FlowCLI.task;
+package seedu.flowcli.task;
 
 import java.util.ArrayList;
 import java.util.List;

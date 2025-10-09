@@ -1,4 +1,4 @@
-package seedu.FlowCLI;
+package seedu.flowcli;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

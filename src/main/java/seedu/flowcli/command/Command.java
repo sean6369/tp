@@ -1,4 +1,4 @@
-package seedu.FlowCLI.command;
+package seedu.flowcli.command;
 
 public class Command {
     public final CommandParser.Type type;

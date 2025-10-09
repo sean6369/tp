@@ -1,7 +1,7 @@
-package seedu.FlowCLI.command;
+package seedu.flowcli.command;
 
-import seedu.FlowCLI.project.Project;
-import seedu.FlowCLI.project.ProjectList;
+import seedu.flowcli.project.Project;
+import seedu.flowcli.project.ProjectList;
 
 public class ArgumentParser {
     private String argument;
