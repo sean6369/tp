@@ -120,13 +120,13 @@ Each important role must be assigned to one person (with optional backup):
 
 Using GitHub tools for comprehensive project tracking:
 
-| Tracking Need | GitHub Tool |
-|---------------|-------------|
-| WHAT needs to be done? | Issues |
-| WHO should do tasks? | Issue assignees |
-| WHEN to complete tasks? | Milestones with deadlines |
-| HOW is task progressing? | Pull Requests |
-| HOW is iteration progressing? | Milestones + Releases |
+| Tracking Need                 | GitHub Tool               |
+| ----------------------------- | ------------------------- |
+| WHAT needs to be done?        | Issues                    |
+| WHO should do tasks?          | Issue assignees           |
+| WHEN to complete tasks?       | Milestones with deadlines |
+| HOW is task progressing?      | Pull Requests             |
+| HOW is iteration progressing? | Milestones + Releases     |
 
 ## Issue Tracking Workflow
 
@@ -200,10 +200,89 @@ Using GitHub tools for comprehensive project tracking:
 ## Code Quality Standards
 
 ### Java Standards
-- Follow course coding standard
-- Proper method header comments (first sentence style)
-- Consistent naming conventions
-- Appropriate access modifiers
+
+#### Naming
+- **Packages**: All lowercase, use group/project name as root
+  - `seedu.flowcli.command`, `seedu.flowcli.ui`
+- **Classes/Enums**: Nouns in PascalCase
+  - `Task`, `CommandParser`, `FlowCLI`
+- **Variables**: camelCase
+  - `taskList`, `isDone`, `projectName`
+- **Constants**: SCREAMING_SNAKE_CASE
+  - `MAX_ITERATIONS`, `DEFAULT_PRIORITY`
+- **Methods**: Verbs in camelCase
+  - `getName()`, `addTask()`, `sortByDeadline()`
+- **Test Methods**: `featureUnderTest_testScenario_expectedBehavior()`
+  - `sortList_emptyList_exceptionThrown()`
+- **Booleans**: Use `is`, `has`, `was`, `can` prefixes
+  - `isDone`, `hasDeadline`, `wasCompleted`
+- **Collections**: Use plural form
+  - `List<Task> tasks`, `Set<Project> projects`
+- **Iterators**: `i`, `j`, `k` for loops
+
+#### Layout
+- **Indentation**: 4 spaces (not tabs)
+- **Line Length**: Max 120 characters (soft limit 110)
+- **Brackets**: K&R style (Egyptian brackets)
+  ```java
+  if (condition) {
+      statements;
+  }
+  ```
+- **Method Definitions**:
+  ```java
+  public void someMethod() throws SomeException {
+      // body
+  }
+  ```
+
+#### Statements
+- **Conditionals**: Always use braces, condition on separate line
+  ```java
+  if (condition) {
+      statements;
+  } else if (otherCondition) {
+      statements;
+  } else {
+      statements;
+  }
+  ```
+- **Loops**: Always use braces
+  ```java
+  for (int i = 0; i < n; i++) {
+      statements;
+  }
+  ```
+- **Switch**: No indentation for case clauses
+  ```java
+  switch (condition) {
+  case ABC:
+      statements;
+      break;
+  default:
+      statements;
+  }
+  ```
+
+#### Comments
+- **Language**: English only
+- **Javadoc**: First sentence starts with verb (Returns, Adds, etc.)
+  ```java
+  /**
+   * Returns the task description.
+   * @param taskId The ID of the task
+   * @return Task description string
+   */
+  public String getDescription(int taskId)
+  ```
+- **Indentation**: Comments indented relative to code
+
+#### Additional Rules
+- Put every class in a package
+- Import classes explicitly (not `import java.util.*`)
+- Array specifiers attach to type: `int[] array`, not `int array[]`
+- All names in English
+- Follow Google Java Style Guide for uncovered topics
 
 ### Commit Messages
 - Follow conventional format

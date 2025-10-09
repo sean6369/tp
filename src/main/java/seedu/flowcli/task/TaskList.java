@@ -1,5 +1,6 @@
 package seedu.flowcli.task;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +15,17 @@ public class TaskList {
         tasks.add(new Task(description));
     }
 
+    public void addTask(String description, LocalDate deadline, int priority) {
+        tasks.add(new Task(description, deadline, priority));
+    }
 
-    public int size() { return tasks.size(); }
+    public int size() {
+        return tasks.size();
+    }
 
-    public boolean isEmpty() { return tasks.isEmpty(); }
+    public boolean isEmpty() {
+        return tasks.isEmpty();
+    }
 
     public Task get(int zeroBasedIndex) {
         return tasks.get(zeroBasedIndex);
@@ -38,7 +46,35 @@ public class TaskList {
 
     }
 
-    public List<Task> getTasks() { return tasks; }
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void sortByDeadline(boolean ascending) {
+        tasks.sort((t1, t2) -> {
+            // Handle null deadlines
+            if (t1.getDeadline() == null && t2.getDeadline() == null) {
+                return 0; // Both have no deadline, maintain relative order
+            }
+            if (t1.getDeadline() == null) {
+                return ascending ? 1 : -1; // Null deadlines go to end for ascending, beginning for descending
+            }
+            if (t2.getDeadline() == null) {
+                return ascending ? -1 : 1; // Null deadlines go to end for ascending, beginning for descending
+            }
+
+            // Both have deadlines, compare them
+            int comparison = t1.getDeadline().compareTo(t2.getDeadline());
+            return ascending ? comparison : -comparison;
+        });
+    }
+
+    public void sortByPriority(boolean ascending) {
+        tasks.sort((t1, t2) -> {
+            int comparison = Integer.compare(t1.getPriority(), t2.getPriority());
+            return ascending ? comparison : -comparison;
+        });
+    }
 
     public String render() {
         StringBuilder sb = new StringBuilder();
@@ -48,5 +84,3 @@ public class TaskList {
         return sb.toString();
     }
 }
-
-

@@ -1,6 +1,76 @@
 # FlowCLI
 
-This is a project template for a greenfield Java project. It's named after the Java mascot _Duke_. Given below are instructions on how to use it.
+FlowCLI is a fast, minimal CLI task manager for organizing projects and tasks.
+
+![FlowCLI Mascot](docs/images/jojo.png)
+
+## Features
+
+FlowCLI allows you to manage projects and tasks via command line. Below are all available commands with examples.
+
+### Commands
+
+#### Project Management
+- **Add Project**: `add project <name>`
+  - Input: `add project work`
+  - Expected Output: Confirmation of project added.
+
+- **List Projects**: `list`
+  - Input: `list`
+  - Expected Output: Lists all projects with indices.
+
+- **List Tasks in Project**: `list <project>`
+  - Input: `list work`
+  - Expected Output: Lists all tasks in the "work" project.
+
+- **Delete Project**: `delete project <name>`
+  - Input: `delete project work`
+  - Expected Output: Confirmation of project deleted.
+
+#### Task Management
+- **Add Task**: `add <project> <description> [--priority high/medium/low] [--deadline YYYY-MM-DD]`
+  - Input: `add work finish report --priority high --deadline 2025-12-31`
+  - Expected Output: Confirmation of task added with priority and deadline.
+  - Input: `add work simple task`
+  - Expected Output: Task added with default medium priority and no deadline.
+
+- **Mark Task Done**: `mark <project> <index>`
+  - Input: `mark work 1`
+  - Expected Output: Task 1 in "work" marked as done ([X]).
+
+- **Unmark Task**: `unmark <project> <index>`
+  - Input: `unmark work 1`
+  - Expected Output: Task 1 in "work" unmarked ([ ]).
+
+- **Delete Task**: `delete task <project> <index>`
+  - Input: `delete task work 1`
+  - Expected Output: Confirmation of task deleted.
+
+#### Global Sorting and Filtering
+- **Sort Tasks by Deadline**: `sort tasks by deadline ascending` or `sort tasks by deadline descending`
+  - Input: `sort tasks by deadline ascending`
+  - Expected Output: All tasks sorted by deadline (ascending), showing project context (e.g., "work: finish report").
+
+- **Sort Tasks by Priority**: `sort tasks by priority ascending` or `sort tasks by priority descending`
+  - Input: `sort tasks by priority descending`
+  - Expected Output: All tasks sorted by priority (high to low), showing project context.
+
+- **Filter Tasks by Priority**: `filter tasks by priority <value>`
+  - Input: `filter tasks by priority high`
+  - Expected Output: Only tasks with high priority, showing project context.
+
+- **Filter Tasks by Project**: `filter tasks by project <id>`
+  - Input: `filter tasks by project 1`
+  - Expected Output: Only tasks from project with ID 1, showing project context.
+
+#### Other
+- **Help**: `help`
+  - Input: `help`
+  - Expected Output: Displays all available commands.
+
+- **Exit**: `bye`
+  - Input: `bye`
+  - Expected Output: Exits the application with goodbye message.
 
 ## Setting up in Intellij
 
@@ -8,23 +78,7 @@ Prerequisites: JDK 17 (use the exact version), update Intellij to the most recen
 
 1. **Ensure Intellij JDK 17 is defined as an SDK**, as described [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk) -- this step is not needed if you have used JDK 17 in a previous Intellij project.
 1. **Import the project _as a Gradle project_**, as described [here](https://se-education.org/guides/tutorials/intellijImportGradleProject.html).
-1. **Verify the setup**: After the importing is complete, locate the `src/main/java/seedu/duke/Duke.java` file, right-click it, and choose `Run Duke.main()`. If the setup is correct, you should see something like the below:
-   ```
-   > Task :compileJava
-   > Task :processResources NO-SOURCE
-   > Task :classes
-   
-   > Task :Duke.main()
-   Hello from
-    ____        _        
-   |  _ \ _   _| | _____ 
-   | | | | | | | |/ / _ \
-   | |_| | |_| |   <  __/
-   |____/ \__,_|_|\_\___|
-   
-   What is your name?
-   ```
-   Type some word and press enter to let the execution proceed to the end.
+1. **Verify the setup**: After the importing is complete, locate the `src/main/java/seedu/flowcli/FlowCLI.java` file, right-click it, and choose `Run FlowCLI.main()`. If the setup is correct, you should see the welcome message and command prompt.
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
 
@@ -41,7 +95,8 @@ Prerequisites: JDK 17 (use the exact version), update Intellij to the most recen
 
 ### JUnit tests
 
-* A skeleton JUnit test (`src/test/java/seedu/duke/DukeTest.java`) is provided with this project template. 
+* Unit tests are provided in `src/test/java/seedu/flowcli/`.
+* Run tests with `./gradlew test`.
 * If you are new to JUnit, refer to the [JUnit Tutorial at se-education.org/guides](https://se-education.org/guides/tutorials/junit.html).
 
 ## Checkstyle
