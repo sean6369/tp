@@ -1,8 +1,8 @@
 package seedu.FlowCLI.command;
 
-import seedu.FlowCLI.exception.FlowcliExceptions;
-import seedu.FlowCLI.exception.FlowcliExceptions.MissingArgumentException;
-import seedu.FlowCLI.exception.FlowcliExceptions.MissingDescriptionException;
+import seedu.FlowCLI.exception.FlowCLIExceptions;
+import seedu.FlowCLI.exception.FlowCLIExceptions.MissingArgumentException;
+import seedu.FlowCLI.exception.FlowCLIExceptions.MissingDescriptionException;
 import seedu.FlowCLI.project.Project;
 import seedu.FlowCLI.project.ProjectList;
 import seedu.FlowCLI.task.Task;
@@ -125,7 +125,7 @@ public class CommandHandler {
                 }
 
                 case UNKNOWN: {
-                    throw new FlowcliExceptions.UnknownInputException();
+                    throw new FlowCLIExceptions.UnknownInputException();
                 }
 
 

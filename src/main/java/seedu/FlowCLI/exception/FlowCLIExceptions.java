@@ -1,6 +1,6 @@
 package seedu.FlowCLI.exception;
 
-public class FlowcliExceptions {
+public class FlowCLIExceptions {
     public static class MissingArgumentException extends Exception {
         public MissingArgumentException() {
             super("Couldn't find any project with such name");
