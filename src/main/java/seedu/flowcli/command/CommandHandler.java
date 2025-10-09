@@ -129,6 +129,11 @@ public class CommandHandler {
 
                 }
 
+                case HELP: {
+                    ui.showHelp();
+                    break;
+                }
+
                 case UNKNOWN: {
                     throw new FlowCLIExceptions.UnknownInputException();
                 }

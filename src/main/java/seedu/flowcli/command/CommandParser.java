@@ -10,7 +10,7 @@ public class CommandParser {
 
     private Command command;
 
-    public enum Type { LIST, MARK, UNMARK, BYE, ADD, DELETE, UNKNOWN }
+    public enum Type { LIST, MARK, UNMARK, BYE, ADD, DELETE, HELP, UNKNOWN }
 
     public CommandParser(String line, ProjectList projects) {
 
@@ -41,6 +41,10 @@ public class CommandParser {
         }
         case "delete": {
             command = new Command(Type.DELETE, arguments);
+            break;
+        }
+        case "help": {
+            command = new Command(Type.HELP, arguments);
             break;
         }
         default:       {

@@ -39,11 +39,8 @@ public class FlowCLIExceptions {
 
     public static class UnknownInputException extends Exception {
         public UnknownInputException() {
-            super("Unknown command, please follow format");
+            super("Unknown command. Type 'help' to see all available commands.");
         }
     }
-
-
-
 
 }
