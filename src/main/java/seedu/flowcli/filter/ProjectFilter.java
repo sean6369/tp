@@ -1,4 +1,4 @@
-package seedu.flowcli.Filter;
+package seedu.flowcli.filter;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 
