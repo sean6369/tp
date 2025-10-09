@@ -25,6 +25,7 @@ public class ConsoleUi {
             "|/       (_______/(_______)(_______)(_______/(_______/\\_______/\n" + "\n";
 
      */
+    private String logo = "FLOWCLI";
 
     private String helloMessage = "Hello! I'm FlowCLI, a fast minimal CLI task manager";
     private String byeMessage = "Bye. Hope to see you again soon!";
@@ -35,7 +36,7 @@ public class ConsoleUi {
 
 
 
-    private String logo = "FLOWCLI";
+
 
 
     public void printHelloMessage() {
