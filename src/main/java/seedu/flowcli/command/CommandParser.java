@@ -10,10 +10,6 @@ public class CommandParser {
 
     private Command command;
 
-    public Command getCommand() {
-        return command;
-    }
-
     public enum Type { LIST, MARK, UNMARK, BYE, ADD, DELETE, UNKNOWN }
 
     public CommandParser(String line, ProjectList projects) {
@@ -54,7 +50,12 @@ public class CommandParser {
         }
     }
 
-    public static Integer parseIndexOrNull(String indexText, int maxIndex) throws IndexOutOfRangeException, MissingIndexException {
+    public Command getCommand() {
+        return command;
+    }
+
+    public static Integer parseIndexOrNull(String indexText, int maxIndex) throws IndexOutOfRangeException,
+            MissingIndexException {
         if (indexText == null) {
             throw new MissingIndexException();
         }
