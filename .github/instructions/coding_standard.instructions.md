@@ -316,6 +316,138 @@ Using GitHub tools for comprehensive project tracking:
 - Fix failures before merge
 - Update test files with new functionality
 
+### JUnit Testing Standards
+
+#### Test Method Naming
+- **Format**: `featureUnderTest_testScenario_expectedBehavior()`
+- **Examples**:
+  - `sortTasks_emptyList_noExceptionThrown()`
+  - `filterTasks_byPriorityHigh_returnsHighPriorityTasks()`
+  - `addTask_validInput_taskAddedSuccessfully()`
+
+#### Test Structure
+- **@BeforeEach/@AfterEach**: Use for setup/cleanup of test fixtures
+- **@BeforeAll/@AfterAll**: Use for expensive setup/cleanup (database connections, etc.)
+- **@Test**: Mark all test methods with this annotation
+- **@DisplayName**: Use descriptive names for complex tests
+- **@Disabled**: Temporarily disable failing tests with reason
+
+#### Assertions
+- **Use JUnit assertions** in test code, not Java `assert`
+- **assertEquals(expected, actual)**: For value comparisons
+- **assertTrue/assertFalse**: For boolean conditions
+- **assertNotNull/assertNull**: For null checks
+- **assertThrows**: For expected exceptions
+- **assertDoesNotThrow**: For ensuring no exceptions
+- **assertAll**: Group multiple assertions that should all pass
+
+#### Test Data Setup
+- **@BeforeEach**: Initialize test fixtures for each test
+- **Test Data**: Use realistic but minimal data
+- **Isolation**: Each test should be independent
+- **Constants**: Define test constants at class level
+
+#### Edge Cases & Error Testing
+- **Null Values**: Test with null inputs where applicable
+- **Empty Collections**: Test empty lists, sets, maps
+- **Boundary Values**: Test minimum/maximum values
+- **Invalid Inputs**: Test exception handling
+- **Concurrency**: Test thread safety if applicable
+
+#### Test Documentation
+- **Comments**: Explain complex test setup or assertions
+- **@DisplayName**: Use for tests with complex scenarios
+- **Arrange-Act-Assert**: Structure tests clearly
+
+### Assertions Standards
+
+#### When to Use Assertions
+- **Internal Invariants**: Verify assumptions about code state
+- **Preconditions**: Check method parameters
+- **Postconditions**: Verify method results
+- **Class Invariants**: Ensure object consistency
+- **Control Flow**: Verify execution paths
+
+#### Assertion Syntax
+```java
+// Basic assertion with message
+assert condition : "Error message when assertion fails";
+
+// Common patterns
+assert value != null : "Value should not be null";
+assert index >= 0 && index < size : "Index out of bounds";
+assert state == EXPECTED_STATE : "Invalid state: " + state;
+```
+
+#### Best Practices
+- **Enable Assertions**: Always run with `-ea` flag in production
+- **Don't Use for Control Flow**: Assertions should not affect program logic
+- **Clear Messages**: Provide descriptive failure messages
+- **Performance**: Assertions have minimal performance impact
+- **Testing**: Use JUnit assertions in tests, Java assert in production code
+
+#### Common Assertion Patterns
+- **Parameter Validation**: `assert param != null : "Parameter cannot be null";`
+- **State Validation**: `assert isValidState() : "Object in invalid state";`
+- **Boundary Checks**: `assert index >= 0 : "Index must be non-negative";`
+
+### Logging Standards
+
+#### When to Use Logging
+- **Debugging**: Record program execution flow
+- **Error Tracking**: Log exceptions and error conditions
+- **Audit Trail**: Record important business operations
+- **Performance Monitoring**: Track execution times
+- **System Health**: Monitor resource usage
+
+#### Logger Setup
+```java
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
+// Class-level logger
+private static final Logger logger = Logger.getLogger(ClassName.class.getName());
+
+// Method-level logging
+logger.info("Starting operation: " + parameter);
+logger.warning("Potential issue detected: " + details);
+logger.severe("Critical error occurred", exception);
+```
+
+#### Logging Levels
+- **SEVERE**: Critical errors that may cause system failure
+- **WARNING**: Potential problems that don't stop execution
+- **INFO**: General information about program execution
+- **CONFIG**: Configuration information
+- **FINE/FINER/FINEST**: Detailed debugging information
+
+#### Best Practices
+- **Consistent Format**: Use structured logging with context
+- **Avoid Sensitive Data**: Don't log passwords, tokens, or PII
+- **Performance**: Use appropriate levels to avoid overhead
+- **Exception Logging**: Include stack traces for errors
+- **Resource Management**: Ensure log files don't grow unbounded
+
+#### Logging Patterns
+```java
+// Entry/Exit logging
+logger.entering(className, methodName, parameters);
+logger.exiting(className, methodName, result);
+
+// Exception logging
+try {
+    riskyOperation();
+} catch (Exception e) {
+    logger.log(Level.SEVERE, "Operation failed", e);
+}
+
+// Performance logging
+long startTime = System.nanoTime();
+// ... operation ...
+long duration = System.nanoTime() - startTime;
+logger.info("Operation completed in " + duration + " ns");
+```
+
 ## Documentation Standards
 
 ### User Guide (UG)
