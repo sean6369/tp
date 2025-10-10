@@ -3,27 +3,31 @@ package seedu.flowcli.ui;
 import seedu.flowcli.task.Task;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.project.Project;
+import seedu.flowcli.tools.TaskSorter;
+import seedu.flowcli.tools.TaskFilter;
+import java.util.List;
 
 /**
  * Handles all user interface interactions for the FlowCLI application.
- * This class provides methods to display messages, task lists, and errors to the user.
+ * This class provides methods to display messages, task lists, and errors to
+ * the user.
  */
 public class ConsoleUi {
-
 
     private ProjectList projects;
     private String line = "____________________________________________________________";
 
     /*
-    private String logo = " _______  _        _______           _______  _       _________\n" +
-            "(  ____ \\( \\      (  ___  )|\\     /|(  ____ \\( \\      \\__   __/\n" +
-            "| (    \\/| (      | (   ) || )   ( || (    \\/| (         ) (   \n" +
-            "| (__    | |      | |   | || | _ | || |      | |         | |   \n" +
-            "|  __)   | |      | |   | || |( )| || |      | |         | |   \n" +
-            "| (      | |      | |   | || || || || |      | |         | |   \n" +
-            "| )      | (____/\\| (___) || () () || (____/\\| (____/\\___) (___\n" +
-            "|/       (_______/(_______)(_______)(_______/(_______/\\_______/\n" + "\n";
-
+     * private String logo =
+     * " _______  _        _______           _______  _       _________\n" +
+     * "(  ____ \\( \\      (  ___  )|\\     /|(  ____ \\( \\      \\__   __/\n" +
+     * "| (    \\/| (      | (   ) || )   ( || (    \\/| (         ) (   \n" +
+     * "| (__    | |      | |   | || | _ | || |      | |         | |   \n" +
+     * "|  __)   | |      | |   | || |( )| || |      | |         | |   \n" +
+     * "| (      | |      | |   | || || || || |      | |         | |   \n" +
+     * "| )      | (____/\\| (___) || () () || (____/\\| (____/\\___) (___\n" +
+     * "|/       (_______/(_______)(_______)(_______/(_______/\\_______/\n" + "\n";
+     *
      */
     private String logo = "FLOWCLI";
 
@@ -34,15 +38,9 @@ public class ConsoleUi {
         this.projects = projects;
     }
 
-
-
-
-
-
     public void printHelloMessage() {
         System.out.println(helloMessage);
     }
-
 
     public void printLine() {
         System.out.println(line);
@@ -51,7 +49,6 @@ public class ConsoleUi {
     public void printLogo() {
         System.out.println(logo);
     }
-
 
     public void welcome() {
         printLogo();
@@ -115,8 +112,6 @@ public class ConsoleUi {
         printLine();
     }
 
-
-
     public void showProjectList() {
         printLine();
         System.out.println("Here is your whole project list:");
@@ -131,20 +126,47 @@ public class ConsoleUi {
         printLine();
     }
 
+    public void showSortedTaskList(Project targetProject, String sortBy, String order) {
+        printLine();
+        System.out.println("Tasks in " + targetProject.getProjectName() + " sorted by " + sortBy + " (" + order + "):");
+        System.out.print(targetProject.showAllTasks());
+        printLine();
+    }
+
     public void showHelp() {
         printLine();
         System.out.println("Available Commands:");
         System.out.println("  add project <name>          - Add a new project");
-        System.out.println("  add task <project> <desc>   - Add a task to a project");
+        System.out.println("  add <project> <desc> [--priority high/medium/low] [--deadline YYYY-MM-DD]");
         System.out.println("  list                        - List all projects");
         System.out.println("  list <project>              - List tasks in a project");
         System.out.println("  mark <project> <index>      - Mark task as done");
         System.out.println("  unmark <project> <index>    - Mark task as not done");
         System.out.println("  delete project <name>       - Delete a project");
         System.out.println("  delete task <project> <idx> - Delete a task");
+        System.out.println("  sort tasks by deadline/priority ascending/descending - Sort all tasks");
+        System.out.println("  filter tasks by priority <value> - Filter tasks by priority");
+        System.out.println("  filter tasks by project <name> - Filter tasks by project name");
         System.out.println("  help                        - Show this help message");
         System.out.println("  bye                         - Exit the application");
         printLine();
     }
 
+    public void showGlobalSortedTasks(List<TaskSorter.SortedTask> tasks, String field, String order) {
+        printLine();
+        System.out.println("Sorted all tasks by " + field + " " + order + ":");
+        for (TaskSorter.SortedTask task : tasks) {
+            System.out.println(task.toString());
+        }
+        printLine();
+    }
+
+    public void showGlobalFilteredTasks(List<TaskFilter.FilteredTask> tasks, String type, String value) {
+        printLine();
+        System.out.println("Filtered tasks by " + type + " " + value + ":");
+        for (TaskFilter.FilteredTask task : tasks) {
+            System.out.println(task.toString());
+        }
+        printLine();
+    }
 }

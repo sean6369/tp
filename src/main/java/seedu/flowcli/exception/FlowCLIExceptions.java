@@ -43,4 +43,9 @@ public class FlowCLIExceptions {
         }
     }
 
+    public static class InvalidArgumentException extends Exception {
+        public InvalidArgumentException(String message) {
+            super(message);
+        }
+    }
 }

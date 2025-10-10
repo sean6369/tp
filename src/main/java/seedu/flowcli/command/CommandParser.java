@@ -6,11 +6,11 @@ import seedu.flowcli.exception.FlowCLIExceptions.MissingIndexException;
 
 public class CommandParser {
 
-
-
     private Command command;
 
-    public enum Type { LIST, MARK, UNMARK, BYE, ADD, DELETE, HELP, UNKNOWN }
+    public enum Type {
+        LIST, MARK, UNMARK, BYE, ADD, DELETE, HELP, SORT, FILTER, UNKNOWN
+    }
 
     public CommandParser(String line, ProjectList projects) {
 
@@ -19,23 +19,23 @@ public class CommandParser {
         String arguments = parts.length > 1 ? parts[1] : "";
 
         switch (commandWord) {
-        case "list":   {
+        case "list": {
             command = new Command(Type.LIST, arguments);
             break;
         }
-        case "mark":   {
+        case "mark": {
             command = new Command(Type.MARK, arguments);
             break;
         }
         case "unmark": {
-            command =  new Command(Type.UNMARK, arguments);
+            command = new Command(Type.UNMARK, arguments);
             break;
         }
-        case "bye":    {
-            command =  new Command(Type.BYE, null);
+        case "bye": {
+            command = new Command(Type.BYE, null);
             break;
         }
-        case "add":    {
+        case "add": {
             command = new Command(Type.ADD, arguments);
             break;
         }
@@ -47,7 +47,15 @@ public class CommandParser {
             command = new Command(Type.HELP, arguments);
             break;
         }
-        default:       {
+        case "sort": {
+            command = new Command(Type.SORT, arguments);
+            break;
+        }
+        case "filter": {
+            command = new Command(Type.FILTER, arguments);
+            break;
+        }
+        default: {
             command = new Command(Type.UNKNOWN, arguments);
             break;
         } // treat as add
@@ -71,6 +79,5 @@ public class CommandParser {
         return idx1 - 1;
 
     }
-
 
 }
