@@ -1,6 +1,7 @@
 package seedu.flowcli.ui;
 
 import seedu.flowcli.task.Task;
+import seedu.flowcli.task.TaskWithProject;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.tools.TaskSorter;
@@ -155,19 +156,19 @@ public class ConsoleUi {
         printLine();
     }
 
-    public void showGlobalSortedTasks(List<TaskSorter.SortedTask> tasks, String field, String order) {
+    public void showGlobalSortedTasks(List<TaskWithProject> tasks, String field, String order) {
         printLine();
         System.out.println("Sorted all tasks by " + field + " " + order + ":");
-        for (TaskSorter.SortedTask task : tasks) {
+        for (TaskWithProject task : tasks) {
             System.out.println(task.toString());
         }
         printLine();
     }
 
-    public void showGlobalFilteredTasks(List<TaskFilter.FilteredTask> tasks, String type, String value) {
+    public void showGlobalFilteredTasks(List<TaskWithProject> tasks, String type, String value) {
         printLine();
         System.out.println("Filtered tasks by " + type + " " + value + ":");
-        for (TaskFilter.FilteredTask task : tasks) {
+        for (TaskWithProject task : tasks) {
             System.out.println(task.toString());
         }
         printLine();

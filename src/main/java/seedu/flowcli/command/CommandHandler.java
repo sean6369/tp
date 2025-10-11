@@ -6,6 +6,7 @@ import seedu.flowcli.exception.FlowCLIExceptions.MissingDescriptionException;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
+import seedu.flowcli.task.TaskWithProject;
 import seedu.flowcli.ui.ConsoleUi;
 import seedu.flowcli.tools.TaskSorter;
 import seedu.flowcli.tools.TaskFilter;
@@ -203,7 +204,7 @@ public class CommandHandler {
                     }
 
                     TaskSorter sorter = new TaskSorter(projects, field, ascending);
-                    List<TaskSorter.SortedTask> sortedTasks = sorter.getSortedTasks();
+                    List<TaskWithProject> sortedTasks = sorter.getSortedTasks();
                     ui.showGlobalSortedTasks(sortedTasks, field, order);
 
                     // Update view state for export
@@ -238,7 +239,7 @@ public class CommandHandler {
                         }
 
                         TaskFilter filter = new TaskFilter(projects, value, null);
-                        List<TaskFilter.FilteredTask> filteredTasks = filter.getFilteredTasks();
+                        List<TaskWithProject> filteredTasks = filter.getFilteredTasks();
                         ui.showGlobalFilteredTasks(filteredTasks, type, value);
 
                         // Update view state for export
@@ -246,7 +247,7 @@ public class CommandHandler {
                                 "filtered by " + type + " " + value);
                     } else if ("project".equals(type)) {
                         TaskFilter filter = new TaskFilter(projects, null, value);
-                        List<TaskFilter.FilteredTask> filteredTasks = filter.getFilteredTasks();
+                        List<TaskWithProject> filteredTasks = filter.getFilteredTasks();
                         ui.showGlobalFilteredTasks(filteredTasks, type, value);
 
                         // Update view state for export

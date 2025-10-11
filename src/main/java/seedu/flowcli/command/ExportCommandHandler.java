@@ -4,6 +4,7 @@ import seedu.flowcli.exception.FlowCLIExceptions;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
+import seedu.flowcli.task.TaskWithProject;
 import seedu.flowcli.export.TaskExporter;
 import seedu.flowcli.tools.TaskFilter;
 import seedu.flowcli.tools.TaskSorter;
@@ -20,7 +21,7 @@ public class ExportCommandHandler {
     private final ConsoleUi ui;
 
     // View state tracking for export functionality
-    private final List<TaskExporter.ExportableTask> lastDisplayedTasks;
+    private final List<TaskWithProject> lastDisplayedTasks;
     private ViewType lastViewType;
     private String lastViewMetadata;
 
@@ -39,21 +40,11 @@ public class ExportCommandHandler {
     /**
      * Updates the view state tracking for export functionality.
      */
-    public void updateViewState(List<?> tasks, ViewType viewType, String metadata) {
+    public void updateViewState(List<TaskWithProject> tasks, ViewType viewType, String metadata) {
         lastDisplayedTasks.clear();
         lastViewType = viewType;
         lastViewMetadata = metadata;
-
-        // Convert tasks to ExportableTask format
-        for (Object task : tasks) {
-            if (task instanceof TaskSorter.SortedTask sortedTask) {
-                lastDisplayedTasks.add(new TaskExporter.ExportableTask(sortedTask.getProjectName(),
-                        sortedTask.getTask()));
-            } else if (task instanceof TaskFilter.FilteredTask filteredTask) {
-                lastDisplayedTasks.add(new TaskExporter.ExportableTask(filteredTask.getProjectName(),
-                        filteredTask.getTask()));
-            }
-        }
+        lastDisplayedTasks.addAll(tasks);
     }
 
     /**
@@ -84,7 +75,7 @@ public class ExportCommandHandler {
         // Check if we have additional parameters
         String remainingArgs = args.substring(args.indexOf(filename) + filename.length()).trim();
 
-        List<TaskExporter.ExportableTask> tasksToExport;
+        List<TaskWithProject> tasksToExport;
         String header;
 
         if (remainingArgs.isEmpty()) {
@@ -120,8 +111,8 @@ public class ExportCommandHandler {
     /**
      * Parses export parameters and returns the appropriate tasks.
      */
-    private List<TaskExporter.ExportableTask> parseExportParameters(String args) throws Exception {
-        List<TaskExporter.ExportableTask> tasks = new ArrayList<>();
+    private List<TaskWithProject> parseExportParameters(String args) throws Exception {
+        List<TaskWithProject> tasks = new ArrayList<>();
 
         // Check for project-specific export
         String[] parts = args.split("\\s+");
@@ -188,13 +179,13 @@ public class ExportCommandHandler {
                 throw new FlowCLIExceptions.InvalidArgumentException("Project not found: " + projectName);
             }
             for (Task task : project.getProjectTasks().getTasks()) {
-                tasks.add(new TaskExporter.ExportableTask(projectName, task));
+                tasks.add(new TaskWithProject(projectName, task));
             }
         } else {
             // All tasks from all projects
             for (Project project : projects.getProjectList()) {
                 for (Task task : project.getProjectTasks().getTasks()) {
-                    tasks.add(new TaskExporter.ExportableTask(project.getProjectName(), task));
+                    tasks.add(new TaskWithProject(project.getProjectName(), task));
                 }
             }
         }
@@ -206,29 +197,9 @@ public class ExportCommandHandler {
                 throw new FlowCLIExceptions.InvalidArgumentException(
                         "Invalid filter type: " + filterType + ". Use priority or project");
             }
-            tasks = applyFilter(tasks, filterType, filterValue);
-        }
 
-        // Apply sort if specified
-        if (sortField != null && sortOrder != null) {
-            applySort(tasks, sortField, sortOrder);
-        }
-
-        return tasks;
-    }
-
-    /**
-     * Applies filter to the list of tasks.
-     */
-    private List<TaskExporter.ExportableTask> applyFilter(List<TaskExporter.ExportableTask> tasks,
-                                                          String filterType, String filterValue) throws FlowCLIExceptions.InvalidArgumentException {
-        List<TaskExporter.ExportableTask> filteredTasks = new ArrayList<>();
-
-        for (TaskExporter.ExportableTask exportableTask : tasks) {
-            Task task = exportableTask.getTask();
-
+            // Validate priority value if filtering by priority
             if ("priority".equals(filterType)) {
-                // Validate priority value
                 String normalizedPriority = filterValue.toLowerCase();
                 if (!normalizedPriority.equals("low") &&
                         !normalizedPriority.equals("medium") &&
@@ -236,69 +207,47 @@ public class ExportCommandHandler {
                     throw new FlowCLIExceptions.InvalidArgumentException(
                             "Invalid priority: " + filterValue + ". Use low, medium, or high.");
                 }
-
-                if (task.getPriorityString().equalsIgnoreCase(filterValue)) {
-                    filteredTasks.add(exportableTask);
-                }
-            } else if ("project".equals(filterType)) {
-                if (exportableTask.getProjectName().equalsIgnoreCase(filterValue)) {
-                    filteredTasks.add(exportableTask);
-                }
-            }
-        }
-
-        return filteredTasks;
-    }
-
-    /**
-     * Applies sort to the list of tasks.
-     */
-    private void applySort(List<TaskExporter.ExportableTask> tasks,
-                           String sortField, String sortOrder) throws FlowCLIExceptions.InvalidArgumentException {
-        // Validate sort field
-        if (!("deadline".equals(sortField) || "priority".equals(sortField))) {
-            throw new FlowCLIExceptions.InvalidArgumentException(
-                    "Invalid sort field: " + sortField + ". Use deadline or priority");
-        }
-
-        // Validate sort order
-        if (!("ascending".equals(sortOrder) || "descending".equals(sortOrder))) {
-            throw new FlowCLIExceptions.InvalidArgumentException(
-                    "Invalid sort order: " + sortOrder + ". Use ascending or descending");
-        }
-        boolean ascending = "ascending".equals(sortOrder);
-
-        tasks.sort((t1, t2) -> {
-            Task task1 = t1.getTask();
-            Task task2 = t2.getTask();
-            int comparison = 0;
-
-            if ("deadline".equals(sortField)) {
-                if (task1.getDeadline() != null && task2.getDeadline() != null) {
-                    // Both have deadlines - compare them
-                    comparison = task1.getDeadline().compareTo(task2.getDeadline());
-                } else if (task1.getDeadline() == null && task2.getDeadline() != null) {
-                    comparison = 1; // null sorts after non-null
-                } else if (task1.getDeadline() != null && task2.getDeadline() == null) {
-                    comparison = -1; // non-null sorts before null
-                }
-                // else both null, comparison = 0 (already initialized)
-            } else {
-                comparison = Integer.compare(task1.getPriority(), task2.getPriority());
             }
 
-            return ascending ? comparison : -comparison;
-        });
+            // Use TaskFilter for filtering
+            String priorityParam = "priority".equals(filterType) ? filterValue : null;
+            String projectParam = "project".equals(filterType) ? filterValue : null;
+            TaskFilter filter = new TaskFilter(projects, priorityParam, projectParam);
+            tasks = filter.getFilteredTasks();
+        }
+
+        // Apply sort if specified
+        if (sortField != null && sortOrder != null) {
+            // Validate sort field
+            if (!("deadline".equals(sortField) || "priority".equals(sortField))) {
+                throw new FlowCLIExceptions.InvalidArgumentException(
+                        "Invalid sort field: " + sortField + ". Use deadline or priority");
+            }
+
+            // Validate sort order
+            if (!("ascending".equals(sortOrder) || "descending".equals(sortOrder))) {
+                throw new FlowCLIExceptions.InvalidArgumentException(
+                        "Invalid sort order: " + sortOrder + ". Use ascending or descending");
+            }
+
+            boolean ascending = "ascending".equals(sortOrder);
+
+            // Use TaskSorter for sorting
+            TaskSorter sorter = new TaskSorter(projects, sortField, ascending);
+            tasks = sorter.getSortedTasks();
+        }
+
+        return tasks;
     }
 
     /**
      * Retrieves all tasks from all projects.
      */
-    private List<TaskExporter.ExportableTask> getAllTasks() {
-        List<TaskExporter.ExportableTask> tasks = new ArrayList<>();
+    private List<TaskWithProject> getAllTasks() {
+        List<TaskWithProject> tasks = new ArrayList<>();
         for (Project project : projects.getProjectList()) {
             for (Task task : project.getProjectTasks().getTasks()) {
-                tasks.add(new TaskExporter.ExportableTask(project.getProjectName(), task));
+                tasks.add(new TaskWithProject(project.getProjectName(), task));
             }
         }
         return tasks;

@@ -3,6 +3,7 @@ package seedu.flowcli.tools;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
+import seedu.flowcli.task.TaskWithProject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,33 +19,7 @@ public class TaskFilter {
     private ProjectList projects;
     private String priorityFilter; // "high", "medium", "low", or null
     private String projectNameFilter; // project name or null
-    private List<FilteredTask> filteredTasks;
-
-    /**
-     * Represents a task with its associated project information.
-     */
-    public static class FilteredTask {
-        private final String projectName;
-        private final Task task;
-
-        public FilteredTask(String projectName, Task task) {
-            this.projectName = projectName;
-            this.task = task;
-        }
-
-        public String getProjectName() {
-            return projectName;
-        }
-
-        public Task getTask() {
-            return task;
-        }
-
-        @Override
-        public String toString() {
-            return projectName + ": " + task.toString();
-        }
-    }
+    private List<TaskWithProject> filteredTasks;
 
     public TaskFilter(ProjectList projects, String priority, String projectName) {
         // Validate parameters
@@ -60,7 +35,7 @@ public class TaskFilter {
         filter();
     }
 
-    public List<FilteredTask> getFilteredTasks() {
+    public List<TaskWithProject> getFilteredTasks() {
         return filteredTasks;
     }
 
@@ -89,7 +64,7 @@ public class TaskFilter {
                     }
                 }
 
-                filteredTasks.add(new FilteredTask(project.getProjectName(), task));
+                filteredTasks.add(new TaskWithProject(project.getProjectName(), task));
                 logger.fine(String.format("Added task '%s' from project '%s' to filtered results",
                         task.getDescription(), project.getProjectName()));
             }
