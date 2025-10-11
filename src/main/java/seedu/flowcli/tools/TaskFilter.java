@@ -6,11 +6,15 @@ import seedu.flowcli.task.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
- * Filters tasks globally across all projects based on priority and/or project name.
+ * Filters tasks globally across all projects based on priority and/or project
+ * name.
  */
 public class TaskFilter {
+    private static final Logger logger = Logger.getLogger(TaskFilter.class.getName());
+
     private ProjectList projects;
     private String priorityFilter; // "high", "medium", "low", or null
     private String projectNameFilter; // project name or null
@@ -43,9 +47,16 @@ public class TaskFilter {
     }
 
     public TaskFilter(ProjectList projects, String priority, String projectName) {
+        // Validate parameters
+        assert projects != null : "ProjectList cannot be null";
+
         this.projects = projects;
         this.priorityFilter = priority;
         this.projectNameFilter = projectName;
+
+        logger.info(String.format("Creating TaskFilter with priority='%s', project='%s'",
+                priorityFilter, projectNameFilter));
+
         filter();
     }
 
@@ -54,7 +65,11 @@ public class TaskFilter {
     }
 
     private void filter() {
+        logger.fine("Starting task filtering process");
+
         filteredTasks = new ArrayList<>();
+        int totalTasksProcessed = 0;
+
         for (Project project : projects.getProjectList()) {
             // Check project name filter
             if (projectNameFilter != null) {
@@ -64,6 +79,8 @@ public class TaskFilter {
             }
 
             for (Task task : project.getProjectTasks().getTasks()) {
+                totalTasksProcessed++;
+
                 // Check priority filter
                 if (priorityFilter != null) {
                     String taskPriority = task.getPriorityString().toLowerCase();
@@ -73,7 +90,12 @@ public class TaskFilter {
                 }
 
                 filteredTasks.add(new FilteredTask(project.getProjectName(), task));
+                logger.fine(String.format("Added task '%s' from project '%s' to filtered results",
+                        task.getDescription(), project.getProjectName()));
             }
         }
+
+        logger.info(String.format("Task filtering completed. Processed %d tasks, found %d matches",
+                totalTasksProcessed, filteredTasks.size()));
     }
 }

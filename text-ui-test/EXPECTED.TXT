@@ -2,5 +2,114 @@ FLOWCLI
 ____________________________________________________________
 Hello! I'm FlowCLI, a fast minimal CLI task manager
 ____________________________________________________________
+Got it. I've added this project: 
+Project1
+
+Now you have 1 projects.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this project: 
+Project2
+
+Now you have 2 projects.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this project: 
+EmptyProject
+
+Now you have 3 projects.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task in Project1 : 
+[ ] Task A (Due: Dec 31, 2025) [High]
+Now you have 1 task in the Project1.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task in Project1 : 
+[ ] Task B (Due: Oct 15, 2025) [Low]
+Now you have 2 task in the Project1.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task in Project1 : 
+[ ] Task C [Medium]
+Now you have 3 task in the Project1.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task in Project2 : 
+[ ] Task D (Due: Nov 20, 2025) [Medium]
+Now you have 1 task in the Project2.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task in Project2 : 
+[ ] Task E (Due: Oct 10, 2025) [High]
+Now you have 2 task in the Project2.
+____________________________________________________________
+____________________________________________________________
+Sorted all tasks by deadline ascending:
+Project2: [ ] Task E (Due: Oct 10, 2025) [High]
+Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project2: [ ] Task D (Due: Nov 20, 2025) [Medium]
+Project1: [ ] Task A (Due: Dec 31, 2025) [High]
+Project1: [ ] Task C [Medium]
+____________________________________________________________
+____________________________________________________________
+Sorted all tasks by deadline descending:
+Project1: [ ] Task C [Medium]
+Project1: [ ] Task A (Due: Dec 31, 2025) [High]
+Project2: [ ] Task D (Due: Nov 20, 2025) [Medium]
+Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project2: [ ] Task E (Due: Oct 10, 2025) [High]
+____________________________________________________________
+____________________________________________________________
+Sorted all tasks by priority ascending:
+Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project1: [ ] Task C [Medium]
+Project2: [ ] Task D (Due: Nov 20, 2025) [Medium]
+Project1: [ ] Task A (Due: Dec 31, 2025) [High]
+Project2: [ ] Task E (Due: Oct 10, 2025) [High]
+____________________________________________________________
+____________________________________________________________
+Sorted all tasks by priority descending:
+Project1: [ ] Task A (Due: Dec 31, 2025) [High]
+Project2: [ ] Task E (Due: Oct 10, 2025) [High]
+Project1: [ ] Task C [Medium]
+Project2: [ ] Task D (Due: Nov 20, 2025) [Medium]
+Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
+____________________________________________________________
+____________________________________________________________
+Filtered tasks by priority high:
+Project1: [ ] Task A (Due: Dec 31, 2025) [High]
+Project2: [ ] Task E (Due: Oct 10, 2025) [High]
+____________________________________________________________
+____________________________________________________________
+Filtered tasks by priority medium:
+Project1: [ ] Task C [Medium]
+Project2: [ ] Task D (Due: Nov 20, 2025) [Medium]
+____________________________________________________________
+____________________________________________________________
+Filtered tasks by priority low:
+Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
+____________________________________________________________
+____________________________________________________________
+Filtered tasks by project Project1:
+Project1: [ ] Task A (Due: Dec 31, 2025) [High]
+Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project1: [ ] Task C [Medium]
+____________________________________________________________
+____________________________________________________________
+Filtered tasks by project project1:
+Project1: [ ] Task A (Due: Dec 31, 2025) [High]
+Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project1: [ ] Task C [Medium]
+____________________________________________________________
+____________________________________________________________
+Filtered tasks by project Project2:
+Project2: [ ] Task D (Due: Nov 20, 2025) [Medium]
+Project2: [ ] Task E (Due: Oct 10, 2025) [High]
+____________________________________________________________
+____________________________________________________________
+Filtered tasks by project NonExistent:
+____________________________________________________________
+____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________

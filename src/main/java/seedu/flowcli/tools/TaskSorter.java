@@ -6,11 +6,14 @@ import seedu.flowcli.task.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Sorts tasks globally across all projects based on deadline or priority.
  */
 public class TaskSorter {
+    private static final Logger logger = Logger.getLogger(TaskSorter.class.getName());
+
     private ProjectList projects;
     private String sortBy; // "deadline" or "priority"
     private boolean ascending; // true for ascending, false for descending
@@ -43,9 +46,17 @@ public class TaskSorter {
     }
 
     public TaskSorter(ProjectList projects, String sortBy, boolean ascending) {
+        // Validate parameters
+        assert projects != null : "ProjectList cannot be null";
+        assert sortBy != null && (sortBy.equals("deadline") || sortBy.equals("priority")) :
+            "sortBy must be 'deadline' or 'priority'";
+
         this.projects = projects;
         this.sortBy = sortBy;
         this.ascending = ascending;
+
+        logger.info(String.format("Creating TaskSorter with sortBy='%s', ascending=%b", sortBy, ascending));
+
         sort();
     }
 
@@ -54,12 +65,23 @@ public class TaskSorter {
     }
 
     private void sort() {
+        logger.fine("Starting task sorting process");
+
         sortedTasks = new ArrayList<>();
+        int totalTasksCollected = 0;
+
+        // Collect all tasks from all projects
         for (Project project : projects.getProjectList()) {
             for (Task task : project.getProjectTasks().getTasks()) {
                 sortedTasks.add(new SortedTask(project.getProjectName(), task));
+                totalTasksCollected++;
             }
         }
+
+        logger.fine(String.format("Collected %d tasks for sorting by %s", totalTasksCollected, sortBy));
+
+        // Sort the tasks
+        long startTime = System.nanoTime();
 
         sortedTasks.sort((t1, t2) -> {
             Task task1 = t1.getTask();
@@ -83,5 +105,9 @@ public class TaskSorter {
 
             return ascending ? comparison : -comparison;
         });
+
+        long duration = System.nanoTime() - startTime;
+        logger.info(String.format("Task sorting completed in %d ns. Sorted %d tasks by %s (%s)",
+            duration, sortedTasks.size(), sortBy, ascending ? "ascending" : "descending"));
     }
 }
