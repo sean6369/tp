@@ -131,6 +131,32 @@ public class ExportCommandHandler {
         String sortField = null;
         String sortOrder = null;
 
+        // Early validation for incomplete filter/sort commands
+        for (int j = 0; j < parts.length; j++) {
+            if ("filter".equals(parts[j])) {
+                // Check if we have "filter by <type> <value>"
+                if (j + 3 >= parts.length) {
+                    throw new FlowCLIExceptions.InvalidArgumentException(
+                            "Incomplete filter command. Use: filter by <type> <value>");
+                }
+                if (!"by".equals(parts[j + 1])) {
+                    throw new FlowCLIExceptions.InvalidArgumentException(
+                            "Incomplete filter command. Use: filter by <type> <value>");
+                }
+            }
+            if ("sort".equals(parts[j])) {
+                // Check if we have "sort by <field> <order>"
+                if (j + 3 >= parts.length) {
+                    throw new FlowCLIExceptions.InvalidArgumentException(
+                            "Incomplete sort command. Use: sort by <field> <order>");
+                }
+                if (!"by".equals(parts[j + 1])) {
+                    throw new FlowCLIExceptions.InvalidArgumentException(
+                            "Incomplete sort command. Use: sort by <field> <order>");
+                }
+            }
+        }
+
         int i = 0;
         while (i < parts.length) {
             String current = parts[i];
@@ -175,6 +201,11 @@ public class ExportCommandHandler {
 
         // Apply filter if specified
         if (filterType != null && filterValue != null) {
+            // Validate filter type
+            if (!("priority".equals(filterType) || "project".equals(filterType))) {
+                throw new FlowCLIExceptions.InvalidArgumentException(
+                        "Invalid filter type: " + filterType + ". Use priority or project");
+            }
             tasks = applyFilter(tasks, filterType, filterValue);
         }
 
@@ -190,13 +221,22 @@ public class ExportCommandHandler {
      * Applies filter to the list of tasks.
      */
     private List<TaskExporter.ExportableTask> applyFilter(List<TaskExporter.ExportableTask> tasks,
-                                                          String filterType, String filterValue) {
+                                                          String filterType, String filterValue) throws FlowCLIExceptions.InvalidArgumentException {
         List<TaskExporter.ExportableTask> filteredTasks = new ArrayList<>();
 
         for (TaskExporter.ExportableTask exportableTask : tasks) {
             Task task = exportableTask.getTask();
 
             if ("priority".equals(filterType)) {
+                // Validate priority value
+                String normalizedPriority = filterValue.toLowerCase();
+                if (!normalizedPriority.equals("low") &&
+                        !normalizedPriority.equals("medium") &&
+                        !normalizedPriority.equals("high")) {
+                    throw new FlowCLIExceptions.InvalidArgumentException(
+                            "Invalid priority: " + filterValue + ". Use low, medium, or high.");
+                }
+
                 if (task.getPriorityString().equalsIgnoreCase(filterValue)) {
                     filteredTasks.add(exportableTask);
                 }
@@ -214,7 +254,18 @@ public class ExportCommandHandler {
      * Applies sort to the list of tasks.
      */
     private void applySort(List<TaskExporter.ExportableTask> tasks,
-                           String sortField, String sortOrder) {
+                           String sortField, String sortOrder) throws FlowCLIExceptions.InvalidArgumentException {
+        // Validate sort field
+        if (!("deadline".equals(sortField) || "priority".equals(sortField))) {
+            throw new FlowCLIExceptions.InvalidArgumentException(
+                    "Invalid sort field: " + sortField + ". Use deadline or priority");
+        }
+
+        // Validate sort order
+        if (!("ascending".equals(sortOrder) || "descending".equals(sortOrder))) {
+            throw new FlowCLIExceptions.InvalidArgumentException(
+                    "Invalid sort order: " + sortOrder + ". Use ascending or descending");
+        }
         boolean ascending = "ascending".equals(sortOrder);
 
         tasks.sort((t1, t2) -> {
@@ -232,6 +283,8 @@ public class ExportCommandHandler {
                     comparison = -1; // non-null sorts before null
                 }
                 // else both null, comparison = 0 (already initialized)
+            } else {
+                comparison = Integer.compare(task1.getPriority(), task2.getPriority());
             }
 
             return ascending ? comparison : -comparison;

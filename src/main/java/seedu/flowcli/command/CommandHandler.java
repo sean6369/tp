@@ -228,6 +228,15 @@ public class CommandHandler {
                     String value = parts[3];
 
                     if ("priority".equals(type)) {
+                        // Validate priority value
+                        String normalizedPriority = value.toLowerCase();
+                        if (!normalizedPriority.equals("low") &&
+                                !normalizedPriority.equals("medium") &&
+                                !normalizedPriority.equals("high")) {
+                            throw new FlowCLIExceptions.InvalidArgumentException(
+                                    "Invalid priority: " + value + ". Use low, medium, or high.");
+                        }
+
                         TaskFilter filter = new TaskFilter(projects, value, null);
                         List<TaskFilter.FilteredTask> filteredTasks = filter.getFilteredTasks();
                         ui.showGlobalFilteredTasks(filteredTasks, type, value);
