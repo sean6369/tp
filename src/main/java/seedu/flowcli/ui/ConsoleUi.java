@@ -178,10 +178,4 @@ public class ConsoleUi {
         System.out.println("Successfully exported " + taskCount + " tasks to " + filename);
         printLine();
     }
-
-    public void showExportError(String message) {
-        printLine();
-        System.out.println("Export failed: " + message);
-        printLine();
-    }
 }

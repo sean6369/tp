@@ -40,23 +40,6 @@ public class TaskExporter {
     }
 
     /**
-     * Exports a list of tasks to a TXT file.
-     *
-     * @param tasks List of tasks with project information to export
-     * @param filename The name of the file to write to
-     * @throws FileWriteException if there's an error writing to the file
-     */
-    public static void exportTasksToFile(List<ExportableTask> tasks, String filename) throws FileWriteException {
-        try (FileWriter writer = new FileWriter(filename)) {
-            for (ExportableTask exportableTask : tasks) {
-                writer.write(exportableTask.toString() + "\n");
-            }
-        } catch (IOException e) {
-            throw new FileWriteException(e.getMessage());
-        }
-    }
-
-    /**
      * Exports a list of tasks to a TXT file with a header.
      *
      * @param tasks List of tasks with project information to export
