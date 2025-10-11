@@ -1,13 +1,12 @@
 package seedu.flowcli.tools;
 
-import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
 import seedu.flowcli.task.TaskWithProject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import seedu.flowcli.validation.ValidationConstants;
 
 /**
  * Sorts tasks globally across all projects based on deadline or priority.
@@ -42,18 +41,8 @@ public class TaskSorter {
     private void sort() {
         logger.fine("Starting task sorting process");
 
-        sortedTasks = new ArrayList<>();
-        int totalTasksCollected = 0;
-
-        // Collect all tasks from all projects
-        for (Project project : projects.getProjectList()) {
-            for (Task task : project.getProjectTasks().getTasks()) {
-                sortedTasks.add(new TaskWithProject(project.getProjectName(), task));
-                totalTasksCollected++;
-            }
-        }
-
-        logger.fine(String.format("Collected %d tasks for sorting by %s", totalTasksCollected, sortBy));
+        sortedTasks = TaskCollector.getAllTasksWithProjects(projects);
+        logger.fine(String.format("Collected %d tasks for sorting by %s", sortedTasks.size(), sortBy));
 
         // Sort the tasks
         long startTime = System.nanoTime();
@@ -63,7 +52,7 @@ public class TaskSorter {
             Task task2 = t2.getTask();
             int comparison = 0;
 
-            if ("deadline".equals(sortBy)) {
+            if (ValidationConstants.SORT_FIELD_DEADLINE.equals(sortBy)) {
                 // Handle null deadlines: nulls last in ascending
                 if (task1.getDeadline() == null && task2.getDeadline() == null) {
                     comparison = 0;
@@ -74,7 +63,7 @@ public class TaskSorter {
                 } else {
                     comparison = task1.getDeadline().compareTo(task2.getDeadline());
                 }
-            } else if ("priority".equals(sortBy)) {
+            } else if (ValidationConstants.SORT_FIELD_PRIORITY.equals(sortBy)) {
                 comparison = Integer.compare(task1.getPriority(), task2.getPriority());
             }
 

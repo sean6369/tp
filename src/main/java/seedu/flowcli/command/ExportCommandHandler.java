@@ -9,6 +9,9 @@ import seedu.flowcli.export.TaskExporter;
 import seedu.flowcli.tools.TaskFilter;
 import seedu.flowcli.tools.TaskSorter;
 import seedu.flowcli.ui.ConsoleUi;
+import seedu.flowcli.validation.ValidationConstants;
+import seedu.flowcli.validation.CommandValidator;
+import seedu.flowcli.tools.TaskCollector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +89,7 @@ public class ExportCommandHandler {
                 header = "Exported tasks (" + lastViewMetadata + ")";
             } else {
                 // No last view - export all tasks from all projects
-                tasksToExport = getAllTasks();
+                tasksToExport = TaskCollector.getAllTasksWithProjects(projects);
                 header = "Exported all tasks";
             }
         } else {
@@ -94,7 +97,7 @@ public class ExportCommandHandler {
             // Check if parameter is "--all"
             if (remainingArgs.trim().equals("--all")) {
                 // Force export all tasks, ignore last view
-                tasksToExport = getAllTasks();
+                tasksToExport = TaskCollector.getAllTasksWithProjects(projects);
                 header = "Exported all tasks";
             } else {
                 // Normal parameter parsing (project, filter, sort)
@@ -112,67 +115,94 @@ public class ExportCommandHandler {
      * Parses export parameters and returns the appropriate tasks.
      */
     private List<TaskWithProject> parseExportParameters(String args) throws Exception {
-        List<TaskWithProject> tasks = new ArrayList<>();
-
-        // Check for project-specific export
         String[] parts = args.split("\\s+");
-        String projectName = null;
-        String filterType = null;
-        String filterValue = null;
-        String sortField = null;
-        String sortOrder = null;
-
-        // Early validation for incomplete filter/sort commands
+        
+        // Validate incomplete filter/sort commands early
+        validateFilterSortCommands(parts);
+        
+        // Parse command tokens
+        ParsedParams params = parseCommandTokens(parts);
+        
+        // Get base tasks
+        List<TaskWithProject> tasks = collectBaseTasks(params.projectName);
+        
+        // Apply filter if specified
+        if (params.filterType != null && params.filterValue != null) {
+            tasks = applyFiltering(tasks, params.filterType, params.filterValue);
+        }
+        
+        // Apply sort if specified
+        if (params.sortField != null && params.sortOrder != null) {
+            tasks = applySorting(tasks, params.sortField, params.sortOrder);
+        }
+        
+        return tasks;
+    }
+    
+    /**
+     * Validates that filter and sort commands are complete.
+     */
+    private void validateFilterSortCommands(String[] parts) throws FlowCLIExceptions.InvalidArgumentException {
         for (int j = 0; j < parts.length; j++) {
-            if ("filter".equals(parts[j])) {
-                // Check if we have "filter by <type> <value>"
-                if (j + 3 >= parts.length) {
+            if (ValidationConstants.KEYWORD_FILTER.equals(parts[j])) {
+                if (j + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[j + 1])) {
                     throw new FlowCLIExceptions.InvalidArgumentException(
-                            "Incomplete filter command. Use: filter by <type> <value>");
-                }
-                if (!"by".equals(parts[j + 1])) {
-                    throw new FlowCLIExceptions.InvalidArgumentException(
-                            "Incomplete filter command. Use: filter by <type> <value>");
+                        "Incomplete filter command. Use: filter by <type> <value>");
                 }
             }
-            if ("sort".equals(parts[j])) {
-                // Check if we have "sort by <field> <order>"
-                if (j + 3 >= parts.length) {
+            if (ValidationConstants.KEYWORD_SORT.equals(parts[j])) {
+                if (j + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[j + 1])) {
                     throw new FlowCLIExceptions.InvalidArgumentException(
-                            "Incomplete sort command. Use: sort by <field> <order>");
-                }
-                if (!"by".equals(parts[j + 1])) {
-                    throw new FlowCLIExceptions.InvalidArgumentException(
-                            "Incomplete sort command. Use: sort by <field> <order>");
+                        "Incomplete sort command. Use: sort by <field> <order>");
                 }
             }
         }
-
+    }
+    
+    /**
+     * Parses command tokens to extract parameters.
+     */
+    private ParsedParams parseCommandTokens(String[] parts) {
+        ParsedParams params = new ParsedParams();
+        
         int i = 0;
         while (i < parts.length) {
             String current = parts[i];
-
-            if ("filter".equals(current) && i + 3 < parts.length && "by".equals(parts[i + 1])) {
-                filterType = parts[i + 2];
-                filterValue = parts[i + 3];
+            
+            if (ValidationConstants.KEYWORD_FILTER.equals(current) 
+                    && i + 3 < parts.length 
+                    && ValidationConstants.KEYWORD_BY.equals(parts[i + 1])) {
+                params.filterType = parts[i + 2];
+                params.filterValue = parts[i + 3];
                 i += 4;
-            } else if ("sort".equals(current) && i + 3 < parts.length && "by".equals(parts[i + 1])) {
-                sortField = parts[i + 2];
-                sortOrder = parts[i + 3];
+            } else if (ValidationConstants.KEYWORD_SORT.equals(current) 
+                    && i + 3 < parts.length 
+                    && ValidationConstants.KEYWORD_BY.equals(parts[i + 1])) {
+                params.sortField = parts[i + 2];
+                params.sortOrder = parts[i + 3];
                 i += 4;
-            } else if (!"filter".equals(current) && !"sort".equals(current) && !"by".equals(current)) {
-                // Likely a project name (take first non-keyword token)
-                if (projectName == null) {
-                    projectName = current;
+            } else if (!ValidationConstants.KEYWORD_FILTER.equals(current) 
+                    && !ValidationConstants.KEYWORD_SORT.equals(current) 
+                    && !ValidationConstants.KEYWORD_BY.equals(current)) {
+                if (params.projectName == null) {
+                    params.projectName = current;
                 }
                 i++;
             } else {
-                // Skip standalone keywords that don't form valid patterns
                 i++;
             }
         }
-
-        // Get base tasks
+        
+        return params;
+    }
+    
+    /**
+     * Collects base tasks from specified project or all projects.
+     */
+    private List<TaskWithProject> collectBaseTasks(String projectName) 
+            throws FlowCLIExceptions.InvalidArgumentException {
+        List<TaskWithProject> tasks = new ArrayList<>();
+        
         if (projectName != null) {
             Project project = projects.getProject(projectName);
             if (project == null) {
@@ -182,76 +212,53 @@ public class ExportCommandHandler {
                 tasks.add(new TaskWithProject(projectName, task));
             }
         } else {
-            // All tasks from all projects
-            for (Project project : projects.getProjectList()) {
-                for (Task task : project.getProjectTasks().getTasks()) {
-                    tasks.add(new TaskWithProject(project.getProjectName(), task));
-                }
-            }
+            tasks = TaskCollector.getAllTasksWithProjects(projects);
         }
-
-        // Apply filter if specified
-        if (filterType != null && filterValue != null) {
-            // Validate filter type
-            if (!("priority".equals(filterType) || "project".equals(filterType))) {
-                throw new FlowCLIExceptions.InvalidArgumentException(
-                        "Invalid filter type: " + filterType + ". Use priority or project");
-            }
-
-            // Validate priority value if filtering by priority
-            if ("priority".equals(filterType)) {
-                String normalizedPriority = filterValue.toLowerCase();
-                if (!normalizedPriority.equals("low") &&
-                        !normalizedPriority.equals("medium") &&
-                        !normalizedPriority.equals("high")) {
-                    throw new FlowCLIExceptions.InvalidArgumentException(
-                            "Invalid priority: " + filterValue + ". Use low, medium, or high.");
-                }
-            }
-
-            // Use TaskFilter for filtering
-            String priorityParam = "priority".equals(filterType) ? filterValue : null;
-            String projectParam = "project".equals(filterType) ? filterValue : null;
-            TaskFilter filter = new TaskFilter(projects, priorityParam, projectParam);
-            tasks = filter.getFilteredTasks();
-        }
-
-        // Apply sort if specified
-        if (sortField != null && sortOrder != null) {
-            // Validate sort field
-            if (!("deadline".equals(sortField) || "priority".equals(sortField))) {
-                throw new FlowCLIExceptions.InvalidArgumentException(
-                        "Invalid sort field: " + sortField + ". Use deadline or priority");
-            }
-
-            // Validate sort order
-            if (!("ascending".equals(sortOrder) || "descending".equals(sortOrder))) {
-                throw new FlowCLIExceptions.InvalidArgumentException(
-                        "Invalid sort order: " + sortOrder + ". Use ascending or descending");
-            }
-
-            boolean ascending = "ascending".equals(sortOrder);
-
-            // Use TaskSorter for sorting
-            TaskSorter sorter = new TaskSorter(projects, sortField, ascending);
-            tasks = sorter.getSortedTasks();
-        }
-
+        
         return tasks;
     }
-
+    
     /**
-     * Retrieves all tasks from all projects.
+     * Applies filtering to tasks.
      */
-    private List<TaskWithProject> getAllTasks() {
-        List<TaskWithProject> tasks = new ArrayList<>();
-        for (Project project : projects.getProjectList()) {
-            for (Task task : project.getProjectTasks().getTasks()) {
-                tasks.add(new TaskWithProject(project.getProjectName(), task));
-            }
+    private List<TaskWithProject> applyFiltering(List<TaskWithProject> tasks, 
+            String filterType, String filterValue) throws Exception {
+        CommandValidator.validateFilterType(filterType);
+        
+        if (ValidationConstants.FILTER_TYPE_PRIORITY.equals(filterType)) {
+            CommandValidator.validatePriority(filterValue);
         }
-        return tasks;
+        
+        String priorityParam = ValidationConstants.FILTER_TYPE_PRIORITY.equals(filterType) ? filterValue : null;
+        String projectParam = ValidationConstants.FILTER_TYPE_PROJECT.equals(filterType) ? filterValue : null;
+        TaskFilter filter = new TaskFilter(projects, priorityParam, projectParam);
+        return filter.getFilteredTasks();
     }
+    
+    /**
+     * Applies sorting to tasks.
+     */
+    private List<TaskWithProject> applySorting(List<TaskWithProject> tasks, 
+            String sortField, String sortOrder) throws Exception {
+        CommandValidator.validateSortField(sortField);
+        CommandValidator.validateSortOrder(sortOrder);
+        
+        boolean ascending = ValidationConstants.SORT_ORDER_ASCENDING.equals(sortOrder);
+        TaskSorter sorter = new TaskSorter(projects, sortField, ascending);
+        return sorter.getSortedTasks();
+    }
+    
+    /**
+     * Helper class to hold parsed parameters.
+     */
+    private static class ParsedParams {
+        String projectName = null;
+        String filterType = null;
+        String filterValue = null;
+        String sortField = null;
+        String sortOrder = null;
+    }
+
 
     /**
      * Clears the current filter/sort view state.

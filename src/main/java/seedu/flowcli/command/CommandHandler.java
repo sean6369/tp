@@ -10,6 +10,8 @@ import seedu.flowcli.task.TaskWithProject;
 import seedu.flowcli.ui.ConsoleUi;
 import seedu.flowcli.tools.TaskSorter;
 import seedu.flowcli.tools.TaskFilter;
+import seedu.flowcli.validation.ValidationConstants;
+import seedu.flowcli.validation.CommandValidator;
 
 import java.time.LocalDate;
 import java.util.Scanner;
@@ -112,21 +114,9 @@ public class CommandHandler {
                     for (int i = 1; i < parts.length; i++) {
                         String option = parts[i].trim();
                         if (option.startsWith("priority ")) {
-                            String priStr = option.substring(9).trim().toLowerCase();
-                            switch (priStr) {
-                            case "low":
-                                priority = 1;
-                                break;
-                            case "medium":
-                                priority = 2;
-                                break;
-                            case "high":
-                                priority = 3;
-                                break;
-                            default:
-                                throw new FlowCLIExceptions.InvalidArgumentException(
-                                        "Invalid priority: " + priStr + ". Use low, medium, or high.");
-                            }
+                            String priStr = option.substring(9).trim();
+                            String validatedPriority = CommandValidator.validatePriority(priStr);
+                            priority = CommandValidator.priorityToInt(validatedPriority);
                         } else if (option.startsWith("deadline ")) {
                             String dateStr = option.substring(9).trim();
                             try {
@@ -191,24 +181,18 @@ public class CommandHandler {
 
                     String field = parts[2];
                     String order = parts[3];
-                    boolean ascending = "ascending".equals(order);
+                    boolean ascending = ValidationConstants.SORT_ORDER_ASCENDING.equals(order);
 
-                    if (!("deadline".equals(field) || "priority".equals(field))) {
-                        throw new FlowCLIExceptions.InvalidArgumentException(
-                                "Invalid sort field. Use: deadline or priority");
-                    }
-
-                    if (!("ascending".equals(order) || "descending".equals(order))) {
-                        throw new FlowCLIExceptions.InvalidArgumentException(
-                                "Invalid sort order. Use: ascending or descending");
-                    }
+                    CommandValidator.validateSortField(field);
+                    CommandValidator.validateSortOrder(order);
 
                     TaskSorter sorter = new TaskSorter(projects, field, ascending);
                     List<TaskWithProject> sortedTasks = sorter.getSortedTasks();
                     ui.showGlobalSortedTasks(sortedTasks, field, order);
 
                     // Update view state for export
-                    exportHandler.updateViewState(sortedTasks, ExportCommandHandler.ViewType.SORTED, "sorted by " + field + " " + order);
+                    exportHandler.updateViewState(sortedTasks, ExportCommandHandler.ViewType.SORTED, 
+                            "sorted by " + field + " " + order);
                     break;
                 }
 
@@ -228,15 +212,8 @@ public class CommandHandler {
                     String type = parts[2];
                     String value = parts[3];
 
-                    if ("priority".equals(type)) {
-                        // Validate priority value
-                        String normalizedPriority = value.toLowerCase();
-                        if (!normalizedPriority.equals("low") &&
-                                !normalizedPriority.equals("medium") &&
-                                !normalizedPriority.equals("high")) {
-                            throw new FlowCLIExceptions.InvalidArgumentException(
-                                    "Invalid priority: " + value + ". Use low, medium, or high.");
-                        }
+                    if (ValidationConstants.FILTER_TYPE_PRIORITY.equals(type)) {
+                        CommandValidator.validatePriority(value);
 
                         TaskFilter filter = new TaskFilter(projects, value, null);
                         List<TaskWithProject> filteredTasks = filter.getFilteredTasks();
@@ -245,7 +222,7 @@ public class CommandHandler {
                         // Update view state for export
                         exportHandler.updateViewState(filteredTasks, ExportCommandHandler.ViewType.FILTERED,
                                 "filtered by " + type + " " + value);
-                    } else if ("project".equals(type)) {
+                    } else if (ValidationConstants.FILTER_TYPE_PROJECT.equals(type)) {
                         TaskFilter filter = new TaskFilter(projects, null, value);
                         List<TaskWithProject> filteredTasks = filter.getFilteredTasks();
                         ui.showGlobalFilteredTasks(filteredTasks, type, value);
@@ -254,6 +231,7 @@ public class CommandHandler {
                         exportHandler.updateViewState(filteredTasks, ExportCommandHandler.ViewType.FILTERED,
                                 "filtered by " + type + " " + value);
                     } else {
+                        CommandValidator.validateFilterType(type);
                         throw new FlowCLIExceptions.InvalidArgumentException(
                                 "Invalid filter type. Use: priority or project");
                     }

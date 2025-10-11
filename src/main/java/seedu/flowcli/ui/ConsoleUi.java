@@ -4,8 +4,6 @@ import seedu.flowcli.task.Task;
 import seedu.flowcli.task.TaskWithProject;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.project.Project;
-import seedu.flowcli.tools.TaskSorter;
-import seedu.flowcli.tools.TaskFilter;
 import java.util.List;
 
 /**
