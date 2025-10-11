@@ -147,6 +147,9 @@ public class ConsoleUi {
         System.out.println("  sort tasks by deadline/priority ascending/descending - Sort all tasks");
         System.out.println("  filter tasks by priority <value> - Filter tasks by priority");
         System.out.println("  filter tasks by project <name> - Filter tasks by project name");
+        System.out.println("  export tasks to <filename>.txt [<project>] [filter by <type> <value>] "
+                + "[sort by <field> <order>] - Export tasks to TXT file");
+        System.out.println("  export tasks to <filename>.txt --all - Force export all tasks");
         System.out.println("  help                        - Show this help message");
         System.out.println("  bye                         - Exit the application");
         printLine();
@@ -167,6 +170,18 @@ public class ConsoleUi {
         for (TaskFilter.FilteredTask task : tasks) {
             System.out.println(task.toString());
         }
+        printLine();
+    }
+
+    public void showExportSuccess(String filename, int taskCount) {
+        printLine();
+        System.out.println("Successfully exported " + taskCount + " tasks to " + filename);
+        printLine();
+    }
+
+    public void showExportError(String message) {
+        printLine();
+        System.out.println("Export failed: " + message);
         printLine();
     }
 }

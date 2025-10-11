@@ -9,7 +9,7 @@ public class CommandParser {
     private Command command;
 
     public enum Type {
-        LIST, MARK, UNMARK, BYE, ADD, DELETE, HELP, SORT, FILTER, UNKNOWN
+        LIST, MARK, UNMARK, BYE, ADD, DELETE, HELP, SORT, FILTER, EXPORT, UNKNOWN
     }
 
     public CommandParser(String line, ProjectList projects) {
@@ -53,6 +53,10 @@ public class CommandParser {
         }
         case "filter": {
             command = new Command(Type.FILTER, arguments);
+            break;
+        }
+        case "export": {
+            command = new Command(Type.EXPORT, arguments);
             break;
         }
         default: {

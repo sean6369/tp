@@ -48,4 +48,16 @@ public class FlowCLIExceptions {
             super(message);
         }
     }
+
+    public static class FileWriteException extends Exception {
+        public FileWriteException(String message) {
+            super("Failed to write to file: " + message);
+        }
+    }
+
+    public static class NoViewToExportException extends Exception {
+        public NoViewToExportException() {
+            super("No view to export. Please filter, sort, or list tasks first, or specify export parameters.");
+        }
+    }
 }
