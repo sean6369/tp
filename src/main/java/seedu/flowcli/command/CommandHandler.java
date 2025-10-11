@@ -9,17 +9,32 @@ import seedu.flowcli.task.Task;
 import seedu.flowcli.ui.ConsoleUi;
 import seedu.flowcli.tools.TaskSorter;
 import seedu.flowcli.tools.TaskFilter;
+import seedu.flowcli.export.TaskExporter;
 
 import java.time.LocalDate;
 import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
 
 public class CommandHandler {
     private ProjectList projects;
     private ConsoleUi ui;
+    
+    // View state tracking for export functionality
+    private List<TaskExporter.ExportableTask> lastDisplayedTasks;
+    private ViewType lastViewType;
+    private String lastViewMetadata;
+    
+    public enum ViewType {
+        NONE, SORTED, FILTERED, PROJECT
+    }
 
     public CommandHandler(ProjectList projects, ConsoleUi ui) {
         this.projects = projects;
         this.ui = ui;
+        this.lastDisplayedTasks = new ArrayList<>();
+        this.lastViewType = ViewType.NONE;
+        this.lastViewMetadata = "";
     }
 
     public void handleCommands() {
@@ -40,6 +55,7 @@ public class CommandHandler {
                     ArgumentParser parsedArgument = new ArgumentParser(parsedCommand.getCommand().arg, projects);
                     if (parsedArgument.getTargetProject() == null) {
                         ui.showProjectList();
+                        clearViewState();  // Clear filter/sort state when listing all projects
                         break;
                     } else {
                         ui.showTaskList(parsedArgument.getTargetProject());
@@ -198,7 +214,11 @@ public class CommandHandler {
                     }
 
                     TaskSorter sorter = new TaskSorter(projects, field, ascending);
-                    ui.showGlobalSortedTasks(sorter.getSortedTasks(), field, order);
+                    List<TaskSorter.SortedTask> sortedTasks = sorter.getSortedTasks();
+                    ui.showGlobalSortedTasks(sortedTasks, field, order);
+                    
+                    // Update view state for export
+                    updateViewState(sortedTasks, ViewType.SORTED, "sorted by " + field + " " + order);
                     break;
                 }
 
@@ -220,14 +240,27 @@ public class CommandHandler {
 
                     if ("priority".equals(type)) {
                         TaskFilter filter = new TaskFilter(projects, value, null);
-                        ui.showGlobalFilteredTasks(filter.getFilteredTasks(), type, value);
+                        List<TaskFilter.FilteredTask> filteredTasks = filter.getFilteredTasks();
+                        ui.showGlobalFilteredTasks(filteredTasks, type, value);
+                        
+                        // Update view state for export
+                        updateViewState(filteredTasks, ViewType.FILTERED, "filtered by " + type + " " + value);
                     } else if ("project".equals(type)) {
                         TaskFilter filter = new TaskFilter(projects, null, value);
-                        ui.showGlobalFilteredTasks(filter.getFilteredTasks(), type, value);
+                        List<TaskFilter.FilteredTask> filteredTasks = filter.getFilteredTasks();
+                        ui.showGlobalFilteredTasks(filteredTasks, type, value);
+                        
+                        // Update view state for export
+                        updateViewState(filteredTasks, ViewType.FILTERED, "filtered by " + type + " " + value);
                     } else {
                         throw new FlowCLIExceptions.InvalidArgumentException(
                                 "Invalid filter type. Use: priority or project");
                     }
+                    break;
+                }
+
+                case EXPORT: {
+                    handleExportCommand(parsedCommand.getCommand().arg);
                     break;
                 }
 
@@ -245,5 +278,234 @@ public class CommandHandler {
             }
         }
 
+    }
+
+    /**
+     * Updates the view state tracking for export functionality.
+     */
+    private void updateViewState(List<?> tasks, ViewType viewType, String metadata) {
+        lastDisplayedTasks.clear();
+        lastViewType = viewType;
+        lastViewMetadata = metadata;
+        
+        // Convert tasks to ExportableTask format
+        for (Object task : tasks) {
+            if (task instanceof TaskSorter.SortedTask) {
+                TaskSorter.SortedTask sortedTask = (TaskSorter.SortedTask) task;
+                lastDisplayedTasks.add(new TaskExporter.ExportableTask(sortedTask.getProjectName(), 
+                        sortedTask.getTask()));
+            } else if (task instanceof TaskFilter.FilteredTask) {
+                TaskFilter.FilteredTask filteredTask = (TaskFilter.FilteredTask) task;
+                lastDisplayedTasks.add(new TaskExporter.ExportableTask(filteredTask.getProjectName(), 
+                        filteredTask.getTask()));
+            }
+        }
+    }
+
+    /**
+     * Handles the export command with various parameter combinations.
+     */
+    private void handleExportCommand(String args) throws Exception {
+        if (args == null || args.trim().isEmpty()) {
+            throw new FlowCLIExceptions.InvalidArgumentException(
+                    "Invalid export command. Use: export tasks to <filename> [<project>] "
+                    + "[filter by <type> <value>] [sort by <field> <order>]");
+        }
+
+        // Parse the command: "tasks to <filename> [<project>] [filter by <type> <value>] [sort by <field> <order>]"
+        String[] parts = args.trim().split("\\s+");
+        
+        if (parts.length < 3 || !"tasks".equals(parts[0]) || !"to".equals(parts[1])) {
+            throw new FlowCLIExceptions.InvalidArgumentException(
+                    "Invalid export command. Use: export tasks to <filename> [<project>] "
+                    + "[filter by <type> <value>] [sort by <field> <order>]");
+        }
+
+        String filename = parts[2];
+        if (!filename.endsWith(".txt")) {
+            filename += ".txt";
+        }
+
+        // Check if we have additional parameters
+        String remainingArgs = args.substring(args.indexOf(filename) + filename.length()).trim();
+        
+        List<TaskExporter.ExportableTask> tasksToExport;
+        String header = "";
+
+        if (remainingArgs.isEmpty()) {
+            // No additional parameters - check if we have a last view
+            if (lastViewType != ViewType.NONE && !lastDisplayedTasks.isEmpty()) {
+                // Export last displayed view
+                tasksToExport = new ArrayList<>(lastDisplayedTasks);
+                header = "Exported tasks (" + lastViewMetadata + ")";
+            } else {
+                // No last view - export all tasks from all projects
+                tasksToExport = getAllTasks();
+                header = "Exported all tasks";
+            }
+        } else {
+            // Parse additional parameters
+            // Check if parameter is "--all"
+            if (remainingArgs.trim().equals("--all")) {
+                // Force export all tasks, ignore last view
+                tasksToExport = getAllTasks();
+                header = "Exported all tasks";
+            } else {
+                // Normal parameter parsing (project, filter, sort)
+                tasksToExport = parseExportParameters(remainingArgs);
+                header = "Exported tasks (" + remainingArgs + ")";
+            }
+        }
+
+        // Export to file
+        TaskExporter.exportTasksToFile(tasksToExport, filename, header);
+        ui.showExportSuccess(filename, tasksToExport.size());
+    }
+
+    /**
+     * Parses export parameters and returns the appropriate tasks.
+     */
+    private List<TaskExporter.ExportableTask> parseExportParameters(String args) throws Exception {
+        List<TaskExporter.ExportableTask> tasks = new ArrayList<>();
+        
+        // Check for project-specific export
+        String[] parts = args.split("\\s+");
+        String projectName = null;
+        String filterType = null;
+        String filterValue = null;
+        String sortField = null;
+        String sortOrder = null;
+        
+        int i = 0;
+        while (i < parts.length) {
+            if (!parts[i].equals("filter") && !parts[i].equals("sort") && !parts[i].equals("by")) {
+                // This might be a project name
+                projectName = parts[i];
+                i++;
+            } else if (i < parts.length - 2 && "filter".equals(parts[i]) && "by".equals(parts[i + 1])) {
+                filterType = parts[i + 2];
+                if (i + 3 < parts.length) {
+                    filterValue = parts[i + 3];
+                }
+                i += 4;
+            } else if (i < parts.length - 2 && "sort".equals(parts[i]) && "by".equals(parts[i + 1])) {
+                sortField = parts[i + 2];
+                if (i + 3 < parts.length) {
+                    sortOrder = parts[i + 3];
+                }
+                i += 4;
+            } else {
+                i++;
+            }
+        }
+
+        // Get base tasks
+        if (projectName != null) {
+            Project project = projects.getProject(projectName);
+            if (project == null) {
+                throw new FlowCLIExceptions.InvalidArgumentException("Project not found: " + projectName);
+            }
+            for (Task task : project.getProjectTasks().getTasks()) {
+                tasks.add(new TaskExporter.ExportableTask(projectName, task));
+            }
+        } else {
+            // All tasks from all projects
+            for (Project project : projects.getProjectList()) {
+                for (Task task : project.getProjectTasks().getTasks()) {
+                    tasks.add(new TaskExporter.ExportableTask(project.getProjectName(), task));
+                }
+            }
+        }
+
+        // Apply filter if specified
+        if (filterType != null && filterValue != null) {
+            tasks = applyFilter(tasks, filterType, filterValue);
+        }
+
+        // Apply sort if specified
+        if (sortField != null && sortOrder != null) {
+            tasks = applySort(tasks, sortField, sortOrder);
+        }
+
+        return tasks;
+    }
+
+    /**
+     * Applies filter to the list of tasks.
+     */
+    private List<TaskExporter.ExportableTask> applyFilter(List<TaskExporter.ExportableTask> tasks, 
+            String filterType, String filterValue) {
+        List<TaskExporter.ExportableTask> filteredTasks = new ArrayList<>();
+        
+        for (TaskExporter.ExportableTask exportableTask : tasks) {
+            Task task = exportableTask.getTask();
+            
+            if ("priority".equals(filterType)) {
+                if (task.getPriorityString().toLowerCase().equals(filterValue.toLowerCase())) {
+                    filteredTasks.add(exportableTask);
+                }
+            } else if ("project".equals(filterType)) {
+                if (exportableTask.getProjectName().toLowerCase().equals(filterValue.toLowerCase())) {
+                    filteredTasks.add(exportableTask);
+                }
+            }
+        }
+        
+        return filteredTasks;
+    }
+
+    /**
+     * Applies sort to the list of tasks.
+     */
+    private List<TaskExporter.ExportableTask> applySort(List<TaskExporter.ExportableTask> tasks, 
+            String sortField, String sortOrder) {
+        boolean ascending = "ascending".equals(sortOrder);
+        
+        tasks.sort((t1, t2) -> {
+            Task task1 = t1.getTask();
+            Task task2 = t2.getTask();
+            int comparison = 0;
+
+            if ("deadline".equals(sortField)) {
+                // Handle null deadlines
+                if (task1.getDeadline() == null && task2.getDeadline() == null) {
+                    comparison = 0;
+                } else if (task1.getDeadline() == null) {
+                    comparison = 1; // task1 after task2
+                } else if (task2.getDeadline() == null) {
+                    comparison = -1; // task1 before task2
+                } else {
+                    comparison = task1.getDeadline().compareTo(task2.getDeadline());
+                }
+            } else if ("priority".equals(sortField)) {
+                comparison = Integer.compare(task1.getPriority(), task2.getPriority());
+            }
+
+            return ascending ? comparison : -comparison;
+        });
+        
+        return tasks;
+    }
+
+    /**
+     * Retrieves all tasks from all projects.
+     */
+    private List<TaskExporter.ExportableTask> getAllTasks() {
+        List<TaskExporter.ExportableTask> tasks = new ArrayList<>();
+        for (Project project : projects.getProjectList()) {
+            for (Task task : project.getProjectTasks().getTasks()) {
+                tasks.add(new TaskExporter.ExportableTask(project.getProjectName(), task));
+            }
+        }
+        return tasks;
+    }
+
+    /**
+     * Clears the current filter/sort view state.
+     */
+    private void clearViewState() {
+        lastDisplayedTasks.clear();
+        lastViewType = ViewType.NONE;
+        lastViewMetadata = "";
     }
 }

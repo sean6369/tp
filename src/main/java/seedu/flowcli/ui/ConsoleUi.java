@@ -138,7 +138,7 @@ public class ConsoleUi {
         System.out.println("Available Commands:");
         System.out.println("  add project <name>          - Add a new project");
         System.out.println("  add <project> <desc> [--priority high/medium/low] [--deadline YYYY-MM-DD]");
-        System.out.println("  list                        - List all projects");
+        System.out.println("  list                        - List all projects (clears filter/sort state)");
         System.out.println("  list <project>              - List tasks in a project");
         System.out.println("  mark <project> <index>      - Mark task as done");
         System.out.println("  unmark <project> <index>    - Mark task as not done");
@@ -147,6 +147,10 @@ public class ConsoleUi {
         System.out.println("  sort tasks by deadline/priority ascending/descending - Sort all tasks");
         System.out.println("  filter tasks by priority <value> - Filter tasks by priority");
         System.out.println("  filter tasks by project <name> - Filter tasks by project name");
+        System.out.println("  export tasks to <filename> [<project>] [filter by <type> <value>] "
+                + "[sort by <field> <order>] [--all]");
+        System.out.println("                                - Export tasks to TXT file");
+        System.out.println("                                - Use --all to force export all tasks");
         System.out.println("  help                        - Show this help message");
         System.out.println("  bye                         - Exit the application");
         printLine();
@@ -167,6 +171,18 @@ public class ConsoleUi {
         for (TaskFilter.FilteredTask task : tasks) {
             System.out.println(task.toString());
         }
+        printLine();
+    }
+
+    public void showExportSuccess(String filename, int taskCount) {
+        printLine();
+        System.out.println("Successfully exported " + taskCount + " tasks to " + filename);
+        printLine();
+    }
+
+    public void showExportError(String message) {
+        printLine();
+        System.out.println("Export failed: " + message);
         printLine();
     }
 }
