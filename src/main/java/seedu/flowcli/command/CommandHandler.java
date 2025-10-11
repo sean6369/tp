@@ -323,7 +323,8 @@ public class CommandHandler {
 
         String filename = parts[2];
         if (!filename.endsWith(".txt")) {
-            filename += ".txt";
+            throw new FlowCLIExceptions.InvalidArgumentException(
+                "Export filename must end with .txt extension. Use: " + filename + ".txt");
         }
 
         // Check if we have additional parameters
