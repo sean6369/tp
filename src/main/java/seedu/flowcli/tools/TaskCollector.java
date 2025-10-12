@@ -22,9 +22,21 @@ public class TaskCollector {
     public static List<TaskWithProject> getAllTasksWithProjects(ProjectList projects) {
         List<TaskWithProject> tasks = new ArrayList<>();
         for (Project project : projects.getProjectList()) {
-            for (Task task : project.getProjectTasks().getTasks()) {
-                tasks.add(new TaskWithProject(project.getProjectName(), task));
-            }
+            tasks.addAll(getTasksFromProject(project));
+        }
+        return tasks;
+    }
+    
+    /**
+     * Collects all tasks from a specific project with the project name.
+     * 
+     * @param project The project to collect tasks from
+     * @return List of tasks with their associated project name
+     */
+    public static List<TaskWithProject> getTasksFromProject(Project project) {
+        List<TaskWithProject> tasks = new ArrayList<>();
+        for (Task task : project.getProjectTasks().getTasks()) {
+            tasks.add(new TaskWithProject(project.getProjectName(), task));
         }
         return tasks;
     }

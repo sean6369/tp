@@ -115,4 +115,32 @@ public class CommandValidator {
         throw new FlowCLIExceptions.InvalidArgumentException(
             "Invalid sort order: " + sortOrder + ". Use ascending or descending");
     }
+    
+    /**
+     * Validates that a filter command is complete at the given index.
+     * 
+     * @param parts The command parts array
+     * @param index The index where "filter" keyword is found
+     * @throws FlowCLIExceptions.InvalidArgumentException if filter command is incomplete
+     */
+    public static void validateFilterCommand(String[] parts, int index) throws FlowCLIExceptions.InvalidArgumentException {
+        if (index + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[index + 1])) {
+            throw new FlowCLIExceptions.InvalidArgumentException(
+                "Incomplete filter command. Use: filter by <type> <value>");
+        }
+    }
+    
+    /**
+     * Validates that a sort command is complete at the given index.
+     * 
+     * @param parts The command parts array
+     * @param index The index where "sort" keyword is found
+     * @throws FlowCLIExceptions.InvalidArgumentException if sort command is incomplete
+     */
+    public static void validateSortCommand(String[] parts, int index) throws FlowCLIExceptions.InvalidArgumentException {
+        if (index + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[index + 1])) {
+            throw new FlowCLIExceptions.InvalidArgumentException(
+                "Incomplete sort command. Use: sort by <field> <order>");
+        }
+    }
 }

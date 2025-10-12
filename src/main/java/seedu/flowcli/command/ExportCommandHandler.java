@@ -56,7 +56,7 @@ public class ExportCommandHandler {
     public void handleExport(String args) throws Exception {
         if (args == null || args.trim().isEmpty()) {
             throw new FlowCLIExceptions.InvalidArgumentException(
-                    "Invalid export command. Use: export tasks to <filename> [<project>] "
+                    "Invalid export command. Use: export tasks to <filename>.txt [<project>] "
                             + "[filter by <type> <value>] [sort by <field> <order>]");
         }
 
@@ -65,7 +65,7 @@ public class ExportCommandHandler {
 
         if (parts.length < 3 || !"tasks".equals(parts[0]) || !"to".equals(parts[1])) {
             throw new FlowCLIExceptions.InvalidArgumentException(
-                    "Invalid export command. Use: export tasks to <filename> [<project>] "
+                    "Invalid export command. Use: export tasks to <filename>.txt [<project>] "
                             + "[filter by <type> <value>] [sort by <field> <order>]");
         }
 
@@ -117,7 +117,7 @@ public class ExportCommandHandler {
     private List<TaskWithProject> parseExportParameters(String args) throws Exception {
         String[] parts = args.split("\\s+");
         
-        // Validate incomplete filter/sort commands early
+        // Validate incomplete filter/sort commands
         validateFilterSortCommands(parts);
         
         // Parse command tokens
@@ -145,16 +145,10 @@ public class ExportCommandHandler {
     private void validateFilterSortCommands(String[] parts) throws FlowCLIExceptions.InvalidArgumentException {
         for (int j = 0; j < parts.length; j++) {
             if (ValidationConstants.KEYWORD_FILTER.equals(parts[j])) {
-                if (j + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[j + 1])) {
-                    throw new FlowCLIExceptions.InvalidArgumentException(
-                        "Incomplete filter command. Use: filter by <type> <value>");
-                }
+                CommandValidator.validateFilterCommand(parts, j);
             }
             if (ValidationConstants.KEYWORD_SORT.equals(parts[j])) {
-                if (j + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[j + 1])) {
-                    throw new FlowCLIExceptions.InvalidArgumentException(
-                        "Incomplete sort command. Use: sort by <field> <order>");
-                }
+                CommandValidator.validateSortCommand(parts, j);
             }
         }
     }
@@ -201,21 +195,15 @@ public class ExportCommandHandler {
      */
     private List<TaskWithProject> collectBaseTasks(String projectName) 
             throws FlowCLIExceptions.InvalidArgumentException {
-        List<TaskWithProject> tasks = new ArrayList<>();
-        
         if (projectName != null) {
             Project project = projects.getProject(projectName);
             if (project == null) {
                 throw new FlowCLIExceptions.InvalidArgumentException("Project not found: " + projectName);
             }
-            for (Task task : project.getProjectTasks().getTasks()) {
-                tasks.add(new TaskWithProject(projectName, task));
-            }
+            return TaskCollector.getTasksFromProject(project);
         } else {
-            tasks = TaskCollector.getAllTasksWithProjects(projects);
+            return TaskCollector.getAllTasksWithProjects(projects);
         }
-        
-        return tasks;
     }
     
     /**
@@ -231,7 +219,7 @@ public class ExportCommandHandler {
         
         String priorityParam = ValidationConstants.FILTER_TYPE_PRIORITY.equals(filterType) ? filterValue : null;
         String projectParam = ValidationConstants.FILTER_TYPE_PROJECT.equals(filterType) ? filterValue : null;
-        TaskFilter filter = new TaskFilter(projects, priorityParam, projectParam);
+        TaskFilter filter = new TaskFilter(tasks, priorityParam, projectParam);
         return filter.getFilteredTasks();
     }
     
@@ -244,7 +232,7 @@ public class ExportCommandHandler {
         CommandValidator.validateSortOrder(sortOrder);
         
         boolean ascending = ValidationConstants.SORT_ORDER_ASCENDING.equals(sortOrder);
-        TaskSorter sorter = new TaskSorter(projects, sortField, ascending);
+        TaskSorter sorter = new TaskSorter(tasks, sortField, ascending);
         return sorter.getSortedTasks();
     }
     

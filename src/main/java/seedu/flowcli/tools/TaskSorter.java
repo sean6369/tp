@@ -4,6 +4,7 @@ import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
 import seedu.flowcli.task.TaskWithProject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import seedu.flowcli.validation.ValidationConstants;
@@ -15,10 +16,14 @@ public class TaskSorter {
     private static final Logger logger = Logger.getLogger(TaskSorter.class.getName());
 
     private ProjectList projects;
+    private List<TaskWithProject> inputTasks; // Optional list of tasks to sort
     private String sortBy; // "deadline" or "priority"
     private boolean ascending; // true for ascending, false for descending
     private List<TaskWithProject> sortedTasks;
 
+    /**
+     * Constructor for sorting tasks from all projects.
+     */
     public TaskSorter(ProjectList projects, String sortBy, boolean ascending) {
         // Validate parameters
         assert projects != null : "ProjectList cannot be null";
@@ -26,10 +31,31 @@ public class TaskSorter {
             "sortBy must be 'deadline' or 'priority'";
 
         this.projects = projects;
+        this.inputTasks = null; // Will fetch from projects
         this.sortBy = sortBy;
         this.ascending = ascending;
 
         logger.info(String.format("Creating TaskSorter with sortBy='%s', ascending=%b", sortBy, ascending));
+
+        sort();
+    }
+
+    /**
+     * Constructor for sorting a specific list of tasks.
+     */
+    public TaskSorter(List<TaskWithProject> tasks, String sortBy, boolean ascending) {
+        // Validate parameters
+        assert tasks != null : "Task list cannot be null";
+        assert sortBy != null && (sortBy.equals("deadline") || sortBy.equals("priority")) :
+            "sortBy must be 'deadline' or 'priority'";
+
+        this.projects = null; // Not needed when sorting specific tasks
+        this.inputTasks = tasks;
+        this.sortBy = sortBy;
+        this.ascending = ascending;
+
+        logger.info(String.format("Creating TaskSorter with sortBy='%s', ascending=%b on %d tasks", 
+                sortBy, ascending, tasks.size()));
 
         sort();
     }
@@ -41,8 +67,15 @@ public class TaskSorter {
     private void sort() {
         logger.fine("Starting task sorting process");
 
-        sortedTasks = TaskCollector.getAllTasksWithProjects(projects);
-        logger.fine(String.format("Collected %d tasks for sorting by %s", sortedTasks.size(), sortBy));
+        if (inputTasks != null) {
+            // Sort the provided list of tasks
+            sortedTasks = new ArrayList<>(inputTasks);
+            logger.fine(String.format("Sorting %d provided tasks by %s", sortedTasks.size(), sortBy));
+        } else {
+            // Sort tasks from all projects (original behavior)
+            sortedTasks = TaskCollector.getAllTasksWithProjects(projects);
+            logger.fine(String.format("Collected %d tasks for sorting by %s", sortedTasks.size(), sortBy));
+        }
 
         // Sort the tasks
         long startTime = System.nanoTime();
