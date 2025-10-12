@@ -182,7 +182,7 @@ class TaskFilterTest {
         logger.fine("Testing filter with null inputs");
 
         // Test null project list (should throw assertion error in constructor)
-        assertThrows(AssertionError.class, () -> new TaskFilter(null, "high", null),
+        assertThrows(AssertionError.class, () -> new TaskFilter((ProjectList) null, "high", null),
                 "Null project list should trigger assertion error");
 
         // Test with valid project list but null/empty strings
