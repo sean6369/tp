@@ -3,7 +3,6 @@ package seedu.flowcli.command;
 import seedu.flowcli.exception.FlowCLIExceptions;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
-import seedu.flowcli.task.Task;
 import seedu.flowcli.task.TaskWithProject;
 import seedu.flowcli.export.TaskExporter;
 import seedu.flowcli.tools.TaskFilter;

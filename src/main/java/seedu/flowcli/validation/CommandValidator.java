@@ -123,7 +123,8 @@ public class CommandValidator {
      * @param index The index where "filter" keyword is found
      * @throws FlowCLIExceptions.InvalidArgumentException if filter command is incomplete
      */
-    public static void validateFilterCommand(String[] parts, int index) throws FlowCLIExceptions.InvalidArgumentException {
+    public static void validateFilterCommand(String[] parts, int index) 
+            throws FlowCLIExceptions.InvalidArgumentException {
         if (index + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[index + 1])) {
             throw new FlowCLIExceptions.InvalidArgumentException(
                 "Incomplete filter command. Use: filter by <type> <value>");
@@ -137,7 +138,8 @@ public class CommandValidator {
      * @param index The index where "sort" keyword is found
      * @throws FlowCLIExceptions.InvalidArgumentException if sort command is incomplete
      */
-    public static void validateSortCommand(String[] parts, int index) throws FlowCLIExceptions.InvalidArgumentException {
+    public static void validateSortCommand(String[] parts, int index) 
+            throws FlowCLIExceptions.InvalidArgumentException {
         if (index + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[index + 1])) {
             throw new FlowCLIExceptions.InvalidArgumentException(
                 "Incomplete sort command. Use: sort by <field> <order>");
