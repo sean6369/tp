@@ -46,11 +46,19 @@ public class Project {
     }
 
     public String toString() {
-        return projectName + "\n" + projectTasks.render();
+        return projectName  + projectTasks.render();
     }
 
     public String showAllTasks() {
         return projectTasks.render();
+    }
+
+    public void addProjectDescription(String description){
+        this.projectDescription = description;
+    }
+
+    public String getProjectDescription(){
+        return projectDescription;
     }
 
 }

@@ -237,6 +237,17 @@ public class CommandHandler {
                     }
                     break;
                 }
+                case DESC:{
+                    ArgumentParser parsedArgument = new ArgumentParser(parsedCommand.getCommand().arg, projects);
+                    Project targetProject = parsedArgument.getTargetProject();
+                    if(targetProject == null){
+                        throw new MissingArgumentException();
+                    }
+                    String description = parsedArgument.getRemainingArgument();
+                    targetProject.addProjectDescription(description);
+                    ui.showAddedProjectDescription(targetProject);
+                    break;
+                }
 
                 case EXPORT: {
                     exportHandler.handleExport(parsedCommand.getCommand().arg);
