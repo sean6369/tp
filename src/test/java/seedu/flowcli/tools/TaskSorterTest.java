@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
+import seedu.flowcli.task.TaskWithProject;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -65,7 +66,7 @@ class TaskSorterTest {
         logger.fine("Testing sort by deadline ascending");
 
         TaskSorter sorter = new TaskSorter(projects, "deadline", true);
-        List<TaskSorter.SortedTask> sortedTasks = sorter.getSortedTasks();
+        List<TaskWithProject> sortedTasks = sorter.getSortedTasks();
 
         assertAll("Deadline ascending sort validation",
                 () -> assertEquals(5, sortedTasks.size(), "Should return all 5 tasks"),
@@ -89,7 +90,7 @@ class TaskSorterTest {
         logger.fine("Testing sort by deadline descending");
 
         TaskSorter sorter = new TaskSorter(projects, "deadline", false);
-        List<TaskSorter.SortedTask> sortedTasks = sorter.getSortedTasks();
+        List<TaskWithProject> sortedTasks = sorter.getSortedTasks();
 
         assertAll("Deadline descending sort validation",
                 () -> assertEquals(5, sortedTasks.size(), "Should return all 5 tasks"),
@@ -115,8 +116,8 @@ class TaskSorterTest {
         TaskSorter ascSorter = new TaskSorter(projects, "priority", true);
         TaskSorter descSorter = new TaskSorter(projects, "priority", false);
 
-        List<TaskSorter.SortedTask> ascTasks = ascSorter.getSortedTasks();
-        List<TaskSorter.SortedTask> descTasks = descSorter.getSortedTasks();
+        List<TaskWithProject> ascTasks = ascSorter.getSortedTasks();
+        List<TaskWithProject> descTasks = descSorter.getSortedTasks();
 
         assertAll("Priority sorting both directions validation",
                 () -> assertEquals(5, ascTasks.size(), "Ascending should return all 5 tasks"),
@@ -152,7 +153,7 @@ class TaskSorterTest {
 
         ProjectList emptyProjects = new ProjectList();
         TaskSorter sorter = new TaskSorter(emptyProjects, "deadline", true);
-        List<TaskSorter.SortedTask> sortedTasks = sorter.getSortedTasks();
+        List<TaskWithProject> sortedTasks = sorter.getSortedTasks();
 
         assertEquals(0, sortedTasks.size(), "Should return empty list for empty project list");
 
@@ -170,7 +171,7 @@ class TaskSorterTest {
         singleProjectList.getProjectList().add(singleProject);
 
         TaskSorter sorter = new TaskSorter(singleProjectList, "deadline", true);
-        List<TaskSorter.SortedTask> sortedTasks = sorter.getSortedTasks();
+        List<TaskWithProject> sortedTasks = sorter.getSortedTasks();
 
         assertAll("Single task sort validation",
                 () -> assertEquals(1, sortedTasks.size(), "Should return exactly 1 task"),
@@ -198,7 +199,7 @@ class TaskSorterTest {
         nullDeadlineProjects.getProjectList().add(nullProject);
 
         TaskSorter sorter = new TaskSorter(nullDeadlineProjects, "deadline", true);
-        List<TaskSorter.SortedTask> sortedTasks = sorter.getSortedTasks();
+        List<TaskWithProject> sortedTasks = sorter.getSortedTasks();
 
         assertAll("Null deadline sort validation",
                 () -> assertEquals(3, sortedTasks.size(), "Should return all 3 tasks"),

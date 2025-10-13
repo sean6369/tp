@@ -48,4 +48,10 @@ public class FlowCLIExceptions {
             super(message);
         }
     }
+
+    public static class FileWriteException extends Exception {
+        public FileWriteException(String message) {
+            super("Failed to write to file: " + message);
+        }
+    }
 }

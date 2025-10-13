@@ -3,6 +3,7 @@ package seedu.flowcli.tools;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
+import seedu.flowcli.task.TaskWithProject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,41 +17,20 @@ public class TaskFilter {
     private static final Logger logger = Logger.getLogger(TaskFilter.class.getName());
 
     private ProjectList projects;
+    private List<TaskWithProject> inputTasks; // Optional list of tasks to filter
     private String priorityFilter; // "high", "medium", "low", or null
     private String projectNameFilter; // project name or null
-    private List<FilteredTask> filteredTasks;
+    private List<TaskWithProject> filteredTasks;
 
     /**
-     * Represents a task with its associated project information.
+     * Constructor for filtering tasks from all projects.
      */
-    public static class FilteredTask {
-        private final String projectName;
-        private final Task task;
-
-        public FilteredTask(String projectName, Task task) {
-            this.projectName = projectName;
-            this.task = task;
-        }
-
-        public String getProjectName() {
-            return projectName;
-        }
-
-        public Task getTask() {
-            return task;
-        }
-
-        @Override
-        public String toString() {
-            return projectName + ": " + task.toString();
-        }
-    }
-
     public TaskFilter(ProjectList projects, String priority, String projectName) {
         // Validate parameters
         assert projects != null : "ProjectList cannot be null";
 
         this.projects = projects;
+        this.inputTasks = null; // Will fetch from projects
         this.priorityFilter = priority;
         this.projectNameFilter = projectName;
 
@@ -60,7 +40,25 @@ public class TaskFilter {
         filter();
     }
 
-    public List<FilteredTask> getFilteredTasks() {
+    /**
+     * Constructor for filtering a specific list of tasks.
+     */
+    public TaskFilter(List<TaskWithProject> tasks, String priority, String projectName) {
+        // Validate parameters
+        assert tasks != null : "Task list cannot be null";
+
+        this.projects = null; // Not needed when filtering specific tasks
+        this.inputTasks = tasks;
+        this.priorityFilter = priority;
+        this.projectNameFilter = projectName;
+
+        logger.info(String.format("Creating TaskFilter with priority='%s', project='%s' on %d tasks",
+                priorityFilter, projectNameFilter, tasks.size()));
+
+        filter();
+    }
+
+    public List<TaskWithProject> getFilteredTasks() {
         return filteredTasks;
     }
 
@@ -70,16 +68,20 @@ public class TaskFilter {
         filteredTasks = new ArrayList<>();
         int totalTasksProcessed = 0;
 
-        for (Project project : projects.getProjectList()) {
-            // Check project name filter
-            if (projectNameFilter != null) {
-                if (!project.getProjectName().equalsIgnoreCase(projectNameFilter)) {
-                    continue;
-                }
-            }
-
-            for (Task task : project.getProjectTasks().getTasks()) {
+        if (inputTasks != null) {
+            // Filter the provided list of tasks
+            for (TaskWithProject taskWithProject : inputTasks) {
                 totalTasksProcessed++;
+                
+                Task task = taskWithProject.getTask();
+                String projectName = taskWithProject.getProjectName();
+
+                // Check project name filter
+                if (projectNameFilter != null) {
+                    if (!projectName.equalsIgnoreCase(projectNameFilter)) {
+                        continue;
+                    }
+                }
 
                 // Check priority filter
                 if (priorityFilter != null) {
@@ -89,9 +91,35 @@ public class TaskFilter {
                     }
                 }
 
-                filteredTasks.add(new FilteredTask(project.getProjectName(), task));
+                filteredTasks.add(taskWithProject);
                 logger.fine(String.format("Added task '%s' from project '%s' to filtered results",
-                        task.getDescription(), project.getProjectName()));
+                        task.getDescription(), projectName));
+            }
+        } else {
+            // Filter tasks from all projects (original behavior)
+            for (Project project : projects.getProjectList()) {
+                // Check project name filter
+                if (projectNameFilter != null) {
+                    if (!project.getProjectName().equalsIgnoreCase(projectNameFilter)) {
+                        continue;
+                    }
+                }
+
+                for (Task task : project.getProjectTasks().getTasks()) {
+                    totalTasksProcessed++;
+
+                    // Check priority filter
+                    if (priorityFilter != null) {
+                        String taskPriority = task.getPriorityString().toLowerCase();
+                        if (!taskPriority.equals(priorityFilter.toLowerCase())) {
+                            continue;
+                        }
+                    }
+
+                    filteredTasks.add(new TaskWithProject(project.getProjectName(), task));
+                    logger.fine(String.format("Added task '%s' from project '%s' to filtered results",
+                            task.getDescription(), project.getProjectName()));
+                }
             }
         }
 

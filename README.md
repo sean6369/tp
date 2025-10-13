@@ -17,7 +17,7 @@ FlowCLI allows you to manage projects and tasks via command line. Below are all 
 
 - **List Projects**: `list`
   - Input: `list`
-  - Expected Output: Lists all projects with indices.
+  - Expected Output: Lists all projects with indices and clears filter/sort state.
 
 - **List Tasks in Project**: `list <project>`
   - Input: `list work`
@@ -62,6 +62,25 @@ FlowCLI allows you to manage projects and tasks via command line. Below are all 
 - **Filter Tasks by Project**: `filter tasks by project <name>`
   - Input: `filter tasks by project work`
   - Expected Output: Only tasks from project "work", showing project context.
+
+#### Export Tasks
+- **Export Tasks to TXT File**: `export tasks to <filename> [<project>] [filter by <type> <value>] [sort by <field> <order>] [--all]`
+  - Input: `export tasks to my_tasks.txt`
+  - Expected Output: Exports last displayed view (if any) or all tasks if no view exists to my_tasks.txt file.
+  - Input: `export tasks to all_tasks.txt --all`
+  - Expected Output: Always exports all tasks from all projects to all_tasks.txt file (ignores last view).
+  - Input: `export tasks to work_tasks.txt work`
+  - Expected Output: Exports all tasks from "work" project to work_tasks.txt file.
+  - Input: `export tasks to high_priority.txt filter by priority high`
+  - Expected Output: Exports all high priority tasks to high_priority.txt file.
+  - Input: `export tasks to sorted_tasks.txt sort by deadline ascending`
+  - Expected Output: Exports all tasks sorted by deadline (ascending) to sorted_tasks.txt file.
+  - Input: `export tasks to filtered_sorted.txt work filter by priority high sort by deadline ascending`
+  - Expected Output: Exports high priority tasks from "work" project, sorted by deadline, to filtered_sorted.txt file.
+
+- **Clear View State**: `list`
+  - Input: `list`
+  - Expected Output: Shows all projects and clears filter/sort state.
 
 #### Other
 - **Help**: `help`

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
+import seedu.flowcli.task.TaskWithProject;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -64,15 +65,15 @@ class TaskFilterTest {
 
         // Test HIGH priority
         TaskFilter highFilter = new TaskFilter(projects, "high", null);
-        List<TaskFilter.FilteredTask> highTasks = highFilter.getFilteredTasks();
+        List<TaskWithProject> highTasks = highFilter.getFilteredTasks();
 
         // Test MEDIUM priority
         TaskFilter mediumFilter = new TaskFilter(projects, "medium", null);
-        List<TaskFilter.FilteredTask> mediumTasks = mediumFilter.getFilteredTasks();
+        List<TaskWithProject> mediumTasks = mediumFilter.getFilteredTasks();
 
         // Test LOW priority
         TaskFilter lowFilter = new TaskFilter(projects, "low", null);
-        List<TaskFilter.FilteredTask> lowTasks = lowFilter.getFilteredTasks();
+        List<TaskWithProject> lowTasks = lowFilter.getFilteredTasks();
 
         assertAll("All priority levels validation",
                 () -> assertEquals(2, highTasks.size(), "High priority should return 2 tasks"),
@@ -94,7 +95,7 @@ class TaskFilterTest {
         logger.fine("Testing filter by project name: Project1");
 
         TaskFilter filter = new TaskFilter(projects, null, "Project1");
-        List<TaskFilter.FilteredTask> filteredTasks = filter.getFilteredTasks();
+        List<TaskWithProject> filteredTasks = filter.getFilteredTasks();
 
         assertAll("Project1 filter validation",
                 () -> assertEquals(3, filteredTasks.size(), "Should return exactly 3 tasks from Project1"),
@@ -114,9 +115,9 @@ class TaskFilterTest {
         TaskFilter lowerFilter = new TaskFilter(projects, null, "project1");
         TaskFilter mixedFilter = new TaskFilter(projects, null, "PrOjEcT1");
 
-        List<TaskFilter.FilteredTask> upperTasks = upperFilter.getFilteredTasks();
-        List<TaskFilter.FilteredTask> lowerTasks = lowerFilter.getFilteredTasks();
-        List<TaskFilter.FilteredTask> mixedTasks = mixedFilter.getFilteredTasks();
+        List<TaskWithProject> upperTasks = upperFilter.getFilteredTasks();
+        List<TaskWithProject> lowerTasks = lowerFilter.getFilteredTasks();
+        List<TaskWithProject> mixedTasks = mixedFilter.getFilteredTasks();
 
         assertAll("Case-insensitive project filtering validation",
                 () -> assertEquals(3, upperTasks.size(), "UPPERCASE should return 3 tasks"),
@@ -134,7 +135,7 @@ class TaskFilterTest {
         logger.fine("Testing combined filter: high priority in Project1");
 
         TaskFilter filter = new TaskFilter(projects, "high", "Project1");
-        List<TaskFilter.FilteredTask> filteredTasks = filter.getFilteredTasks();
+        List<TaskWithProject> filteredTasks = filter.getFilteredTasks();
 
         assertAll("Combined filter validation",
                 () -> assertEquals(1, filteredTasks.size(), "Should return exactly 1 task"),
@@ -154,7 +155,7 @@ class TaskFilterTest {
         logger.fine("Testing filter by non-existent project");
 
         TaskFilter filter = new TaskFilter(projects, null, "NonExistentProject");
-        List<TaskFilter.FilteredTask> filteredTasks = filter.getFilteredTasks();
+        List<TaskWithProject> filteredTasks = filter.getFilteredTasks();
 
         assertEquals(0, filteredTasks.size(), "Should return empty list for non-existent project");
 
@@ -168,7 +169,7 @@ class TaskFilterTest {
 
         // Invalid priority should not crash, just return empty results
         TaskFilter filter = new TaskFilter(projects, "invalid", null);
-        List<TaskFilter.FilteredTask> filteredTasks = filter.getFilteredTasks();
+        List<TaskWithProject> filteredTasks = filter.getFilteredTasks();
 
         assertEquals(0, filteredTasks.size(), "Should return empty list for invalid priority");
 
@@ -181,15 +182,15 @@ class TaskFilterTest {
         logger.fine("Testing filter with null inputs");
 
         // Test null project list (should throw assertion error in constructor)
-        assertThrows(AssertionError.class, () -> new TaskFilter(null, "high", null),
+        assertThrows(AssertionError.class, () -> new TaskFilter((ProjectList) null, "high", null),
                 "Null project list should trigger assertion error");
 
         // Test with valid project list but null/empty strings
         TaskFilter emptyPriorityFilter = new TaskFilter(projects, "", null);
         TaskFilter emptyProjectFilter = new TaskFilter(projects, null, "");
 
-        List<TaskFilter.FilteredTask> emptyPriorityTasks = emptyPriorityFilter.getFilteredTasks();
-        List<TaskFilter.FilteredTask> emptyProjectTasks = emptyProjectFilter.getFilteredTasks();
+        List<TaskWithProject> emptyPriorityTasks = emptyPriorityFilter.getFilteredTasks();
+        List<TaskWithProject> emptyProjectTasks = emptyProjectFilter.getFilteredTasks();
 
         assertAll("Null/empty input validation",
                 () -> assertEquals(0, emptyPriorityTasks.size(), "Empty priority should return no tasks"),
@@ -216,12 +217,12 @@ class TaskFilterTest {
 
         // Test filtering by special character project name
         TaskFilter specialFilter = new TaskFilter(specialProjects, null, "project-with-dashes_and_underscores123");
-        List<TaskFilter.FilteredTask> specialTasks = specialFilter.getFilteredTasks();
+        List<TaskWithProject> specialTasks = specialFilter.getFilteredTasks();
 
         // Test filtering by long project name
         TaskFilter longFilter = new TaskFilter(specialProjects, null,
                 "verylongprojectnamethatexceedsnormallengthandcontainsmanycharacters");
-        List<TaskFilter.FilteredTask> longTasks = longFilter.getFilteredTasks();
+        List<TaskWithProject> longTasks = longFilter.getFilteredTasks();
 
         assertAll("Special characters and long names validation",
                 () -> assertEquals(1, specialTasks.size(), "Special character project should return 1 task"),
