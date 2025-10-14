@@ -46,7 +46,9 @@ public class Project {
     }
 
     public String toString() {
-        String description = ( projectDescription == null || projectDescription.isBlank()) ? "" : "-> description: " + projectDescription;
+        String description = (projectDescription == null || projectDescription.isBlank()) 
+                ? "" 
+                : "-> description: " + projectDescription;
         return projectName  + " " + description + projectTasks.render() + '\n';
     }
 
