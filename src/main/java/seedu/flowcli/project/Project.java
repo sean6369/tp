@@ -49,7 +49,7 @@ public class Project {
         String description = (projectDescription == null || projectDescription.isBlank()) 
                 ? "" 
                 : "-> description: " + projectDescription;
-        return projectName  + " " + description + projectTasks.render() + '\n';
+        return projectName  + description + projectTasks.render() + '\n';
     }
 
     public String showAllTasks() {
