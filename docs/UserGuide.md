@@ -33,7 +33,7 @@ create Growth Experiments
 
 ### List projects or tasks: `list [projectName]`
 
-- `list` shows all projects and their decscription if they have one and clears any previous global filter/sort view.
+- `list` shows all projects if they have one and clears any previous global filter/sort view.
 - `list <projectName>` shows the tasks under a specific project.
 
 ```
