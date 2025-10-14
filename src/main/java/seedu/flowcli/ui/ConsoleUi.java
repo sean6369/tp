@@ -119,7 +119,7 @@ public class ConsoleUi {
         System.out.println(" 1. add <project>               - Add a new project");
         System.out.println(" 2. add <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]");
         System.out.println(" 3. list                        - List all projects");
-        System.out.println(" 4. list <project>              - List tasks in a project");
+        System.out.println(" 4. list <project>              - List tasks in a project and their descriptions if they have one");
         System.out.println(" 5. mark <project> <index>      - Mark task as done");
         System.out.println(" 6. unmark <project> <index>    - Mark task as not done");
         System.out.println(" 7. delete <project>            - Delete a project");
@@ -130,8 +130,9 @@ public class ConsoleUi {
         System.out.println("12. export tasks to <filename>.txt [<project>] [filter by <type> <value>] "
                 + "[sort by <field> <order>] - Export tasks to TXT file");
         System.out.println("13. export tasks to <filename>.txt --all - Force export all tasks");
-        System.out.println("14. help                        - Show this help message");
-        System.out.println("15. bye                         - Exit the application");
+        System.out.println("14. desc <project> <description> - Adds a project description");
+        System.out.println("15. help                        - Show this help message");
+        System.out.println("16. bye                         - Exit the application");
         printLine();
     }
 

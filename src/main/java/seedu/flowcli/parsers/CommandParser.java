@@ -6,7 +6,7 @@ import seedu.flowcli.exceptions.MissingIndexException;
 public class CommandParser {
 
     public enum CommandType {
-        LIST, MARK, UNMARK, BYE, ADD, DELETE, HELP, SORT, FILTER, EXPORT, UNKNOWN
+        LIST, MARK, UNMARK, BYE, ADD, DELETE, HELP, SORT, FILTER, EXPORT, UNKNOWN , DESC
     }
 
     public static class ParsedCommand {
@@ -58,6 +58,8 @@ public class CommandParser {
             return new ParsedCommand(CommandType.FILTER, arguments);
         case "export":
             return new ParsedCommand(CommandType.EXPORT, arguments);
+        case "desc":
+            return new ParsedCommand(CommandType.DESC, arguments);
         default:
             return new ParsedCommand(CommandType.UNKNOWN, arguments);
         }

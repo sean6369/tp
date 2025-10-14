@@ -48,9 +48,6 @@ public class ProjectList {
         String output = "";
         for (Project project : projects) {
             output += project + " ";
-            if(project.getProjectDescription() != null){
-                output += project.getProjectDescription();
-            }
             output += "\n";
         }
 
