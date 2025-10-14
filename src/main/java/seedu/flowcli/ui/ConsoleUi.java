@@ -28,7 +28,7 @@ public class ConsoleUi {
     public void printWelcomeMessage() {
         System.out.println(CHATBOT_NAME);
         printLine();
-        System.out.println("Hello! I'm " + CHATBOT_NAME + ", a fast & minimal CLI project task manager.");
+        System.out.println("Hello! I'm " + CHATBOT_NAME + ", a fast, minimal CLI project task manager.");
         System.out.println("What can I do for you today?");
         printLine();
     }
