@@ -1,28 +1,25 @@
 package seedu.flowcli;
 
+import seedu.flowcli.commands.core.CommandHandler;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
-import seedu.flowcli.command.CommandHandler;
 
 public class FlowCLI {
-    private ProjectList projects;
-    private ConsoleUi ui;
+    private final ProjectList projects;
+    private final ConsoleUi ui;
+    private final CommandHandler commandHandler;
 
     public FlowCLI() {
-        projects = new ProjectList();
-        ui = new ConsoleUi(projects);
-
-        ui.welcome();
-
+        this.projects = new ProjectList();
+        this.ui = new ConsoleUi(projects);
+        this.commandHandler = new CommandHandler(projects, ui);
     }
 
     public void run() {
-        new CommandHandler(projects, ui).handleCommands();
+        ui.welcome();
+        commandHandler.handleCommands();
     }
 
-    /**
-     * Main entry-point for the java.FlowCLI.FlowCLI application.
-     */
     public static void main(String[] args) {
         new FlowCLI().run();
     }

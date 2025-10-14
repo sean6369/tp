@@ -1,21 +1,23 @@
-package seedu.flowcli.tools;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.DisplayName;
-import seedu.flowcli.project.Project;
-import seedu.flowcli.project.ProjectList;
-import seedu.flowcli.task.TaskWithProject;
-
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.util.logging.Handler;
+package seedu.flowcli.utility;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import seedu.flowcli.commands.utility.TaskFilter;
+import seedu.flowcli.project.Project;
+import seedu.flowcli.project.ProjectList;
+import seedu.flowcli.task.TaskWithProject;
 
 @DisplayName("TaskFilter Unit Tests")
 class TaskFilterTest {
@@ -58,8 +60,7 @@ class TaskFilterTest {
         logger.info("Test setup completed with " + projects.getProjectList().size() + " projects");
     }
 
-    @Test
-    @DisplayName("filterTasks_byAllPriorities_returnsCorrectTasksForEachLevel")
+    @Test @DisplayName("filterTasks_byAllPriorities_returnsCorrectTasksForEachLevel")
     void testFilterByAllPriorities() {
         logger.fine("Testing filter by all priority levels");
 
@@ -76,21 +77,24 @@ class TaskFilterTest {
         List<TaskWithProject> lowTasks = lowFilter.getFilteredTasks();
 
         assertAll("All priority levels validation",
-                () -> assertEquals(2, highTasks.size(), "High priority should return 2 tasks"),
-                () -> assertEquals(2, mediumTasks.size(), "Medium priority should return 2 tasks"),
-                () -> assertEquals(1, lowTasks.size(), "Low priority should return 1 task"),
-                () -> assertTrue(highTasks.stream().allMatch(ft -> ft.getTask().getPriority() == 3),
-                        "All high priority tasks should have priority 3"),
-                () -> assertTrue(mediumTasks.stream().allMatch(ft -> ft.getTask().getPriority() == 2),
-                        "All medium priority tasks should have priority 2"),
-                () -> assertTrue(lowTasks.stream().allMatch(ft -> ft.getTask().getPriority() == 1),
-                        "All low priority tasks should have priority 1"));
+                                        () -> assertEquals(2, highTasks.size(), "High priority should return 2 tasks"),
+                                        () -> assertEquals(2, mediumTasks.size(),
+                                                                        "Medium priority should return 2 tasks"),
+                                        () -> assertEquals(1, lowTasks.size(), "Low priority should return 1 task"),
+                                        () -> assertTrue(highTasks.stream().allMatch(
+                                                                        ft -> ft.getTask().getPriority() == 3),
+                                                                        "All high priority tasks should have priority 3"),
+                                        () -> assertTrue(mediumTasks.stream().allMatch(
+                                                                        ft -> ft.getTask().getPriority() == 2),
+                                                                        "All medium priority tasks should have priority 2"),
+                                        () -> assertTrue(lowTasks.stream().allMatch(
+                                                                        ft -> ft.getTask().getPriority() == 1),
+                                                                        "All low priority tasks should have priority 1"));
 
         logger.info("All priority levels filter test passed");
     }
 
-    @Test
-    @DisplayName("filterTasks_byProjectNameProject1_returnsOnlyProject1Tasks")
+    @Test @DisplayName("filterTasks_byProjectNameProject1_returnsOnlyProject1Tasks")
     void testFilterByProjectName() {
         logger.fine("Testing filter by project name: Project1");
 
@@ -98,15 +102,16 @@ class TaskFilterTest {
         List<TaskWithProject> filteredTasks = filter.getFilteredTasks();
 
         assertAll("Project1 filter validation",
-                () -> assertEquals(3, filteredTasks.size(), "Should return exactly 3 tasks from Project1"),
-                () -> assertTrue(filteredTasks.stream().allMatch(ft -> "Project1".equals(ft.getProjectName())),
-                        "All returned tasks should belong to Project1"));
+                                        () -> assertEquals(3, filteredTasks.size(),
+                                                                        "Should return exactly 3 tasks from Project1"),
+                                        () -> assertTrue(filteredTasks.stream().allMatch(
+                                                                        ft -> "Project1".equals(ft.getProjectName())),
+                                                                        "All returned tasks should belong to Project1"));
 
         logger.info("Project1 filter test passed");
     }
 
-    @Test
-    @DisplayName("filterTasks_byProjectNameCaseInsensitive_worksWithDifferentCases")
+    @Test @DisplayName("filterTasks_byProjectNameCaseInsensitive_worksWithDifferentCases")
     void testFilterByProjectNameCaseInsensitive() {
         logger.fine("Testing case-insensitive project name filtering");
 
@@ -120,17 +125,17 @@ class TaskFilterTest {
         List<TaskWithProject> mixedTasks = mixedFilter.getFilteredTasks();
 
         assertAll("Case-insensitive project filtering validation",
-                () -> assertEquals(3, upperTasks.size(), "UPPERCASE should return 3 tasks"),
-                () -> assertEquals(3, lowerTasks.size(), "lowercase should return 3 tasks"),
-                () -> assertEquals(3, mixedTasks.size(), "Mixed case should return 3 tasks"),
-                () -> assertTrue(upperTasks.stream().allMatch(ft -> "Project1".equals(ft.getProjectName())),
-                        "All tasks should belong to Project1 regardless of case"));
+                                        () -> assertEquals(3, upperTasks.size(), "UPPERCASE should return 3 tasks"),
+                                        () -> assertEquals(3, lowerTasks.size(), "lowercase should return 3 tasks"),
+                                        () -> assertEquals(3, mixedTasks.size(), "Mixed case should return 3 tasks"),
+                                        () -> assertTrue(upperTasks.stream().allMatch(
+                                                                        ft -> "Project1".equals(ft.getProjectName())),
+                                                                        "All tasks should belong to Project1 regardless of case"));
 
         logger.info("Case-insensitive project filtering test passed");
     }
 
-    @Test
-    @DisplayName("filterTasks_byPriorityHighAndProject1_returnsHighPriorityTasksFromProject1")
+    @Test @DisplayName("filterTasks_byPriorityHighAndProject1_returnsHighPriorityTasksFromProject1")
     void testFilterByPriorityAndProject() {
         logger.fine("Testing combined filter: high priority in Project1");
 
@@ -138,19 +143,18 @@ class TaskFilterTest {
         List<TaskWithProject> filteredTasks = filter.getFilteredTasks();
 
         assertAll("Combined filter validation",
-                () -> assertEquals(1, filteredTasks.size(), "Should return exactly 1 task"),
-                () -> assertEquals("Task A", filteredTasks.get(0).getTask().getDescription(),
-                        "Task should be Task A"),
-                () -> assertEquals("Project1", filteredTasks.get(0).getProjectName(),
-                        "Task should belong to Project1"),
-                () -> assertEquals(3, filteredTasks.get(0).getTask().getPriority(),
-                        "Task should have high priority"));
+                                        () -> assertEquals(1, filteredTasks.size(), "Should return exactly 1 task"),
+                                        () -> assertEquals("Task A", filteredTasks.get(0).getTask().getDescription(),
+                                                                        "Task should be Task A"),
+                                        () -> assertEquals("Project1", filteredTasks.get(0).getProjectName(),
+                                                                        "Task should belong to Project1"),
+                                        () -> assertEquals(3, filteredTasks.get(0).getTask().getPriority(),
+                                                                        "Task should have high priority"));
 
         logger.info("Combined filter test passed");
     }
 
-    @Test
-    @DisplayName("filterTasks_byNonExistentProject_returnsEmptyList")
+    @Test @DisplayName("filterTasks_byNonExistentProject_returnsEmptyList")
     void testFilterByNonExistentProject() {
         logger.fine("Testing filter by non-existent project");
 
@@ -162,8 +166,7 @@ class TaskFilterTest {
         logger.info("Non-existent project filter test passed");
     }
 
-    @Test
-    @DisplayName("filterTasks_byInvalidPriority_throwsNoException")
+    @Test @DisplayName("filterTasks_byInvalidPriority_throwsNoException")
     void testFilterByInvalidPriority() {
         logger.fine("Testing filter by invalid priority");
 
@@ -176,14 +179,13 @@ class TaskFilterTest {
         logger.info("Invalid priority filter test passed");
     }
 
-    @Test
-    @DisplayName("filterTasks_withNullInputs_handlesGracefully")
+    @Test @DisplayName("filterTasks_withNullInputs_handlesGracefully")
     void testFilterWithNullInputs() {
         logger.fine("Testing filter with null inputs");
 
         // Test null project list (should throw assertion error in constructor)
         assertThrows(AssertionError.class, () -> new TaskFilter((ProjectList) null, "high", null),
-                "Null project list should trigger assertion error");
+                                        "Null project list should trigger assertion error");
 
         // Test with valid project list but null/empty strings
         TaskFilter emptyPriorityFilter = new TaskFilter(projects, "", null);
@@ -193,14 +195,15 @@ class TaskFilterTest {
         List<TaskWithProject> emptyProjectTasks = emptyProjectFilter.getFilteredTasks();
 
         assertAll("Null/empty input validation",
-                () -> assertEquals(0, emptyPriorityTasks.size(), "Empty priority should return no tasks"),
-                () -> assertEquals(0, emptyProjectTasks.size(), "Empty project name should return no tasks"));
+                                        () -> assertEquals(0, emptyPriorityTasks.size(),
+                                                                        "Empty priority should return no tasks"),
+                                        () -> assertEquals(0, emptyProjectTasks.size(),
+                                                                        "Empty project name should return no tasks"));
 
         logger.info("Null input handling test passed");
     }
 
-    @Test
-    @DisplayName("filterTasks_withSpecialCharactersAndLongNames_handlesEdgeCases")
+    @Test @DisplayName("filterTasks_withSpecialCharactersAndLongNames_handlesEdgeCases")
     void testFilterWithSpecialCharactersAndLongNames() {
         logger.fine("Testing filter with special characters and long names");
 
@@ -221,17 +224,19 @@ class TaskFilterTest {
 
         // Test filtering by long project name
         TaskFilter longFilter = new TaskFilter(specialProjects, null,
-                "verylongprojectnamethatexceedsnormallengthandcontainsmanycharacters");
+                                        "verylongprojectnamethatexceedsnormallengthandcontainsmanycharacters");
         List<TaskWithProject> longTasks = longFilter.getFilteredTasks();
 
-        assertAll("Special characters and long names validation",
-                () -> assertEquals(1, specialTasks.size(), "Special character project should return 1 task"),
-                () -> assertEquals(1, longTasks.size(), "Long name project should return 1 task"),
-                () -> assertEquals("Project-With-Dashes_And_Underscores123", specialTasks.get(0).getProjectName(),
-                        "Special character project name should match"),
-                () -> assertEquals("VeryLongProjectNameThatExceedsNormalLengthAndContainsManyCharacters",
-                        longTasks.get(0).getProjectName(),
-                        "Long project name should match"));
+        assertAll("Special characters and long names validation", () -> assertEquals(1, specialTasks.size(),
+                                        "Special character project should return 1 task"),
+                                        () -> assertEquals(1, longTasks.size(),
+                                                                        "Long name project should return 1 task"),
+                                        () -> assertEquals("Project-With-Dashes_And_Underscores123",
+                                                                        specialTasks.get(0).getProjectName(),
+                                                                        "Special character project name should match"),
+                                        () -> assertEquals("VeryLongProjectNameThatExceedsNormalLengthAndContainsManyCharacters",
+                                                                        longTasks.get(0).getProjectName(),
+                                                                        "Long project name should match"));
 
         logger.info("Special characters and long names test passed");
     }

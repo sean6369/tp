@@ -1,15 +1,16 @@
 package seedu.flowcli.ui;
 
-import seedu.flowcli.task.Task;
-import seedu.flowcli.task.TaskWithProject;
-import seedu.flowcli.project.ProjectList;
-import seedu.flowcli.project.Project;
 import java.util.List;
 
+import seedu.flowcli.project.Project;
+import seedu.flowcli.project.ProjectList;
+import seedu.flowcli.task.Task;
+import seedu.flowcli.task.TaskWithProject;
+
 /**
- * Handles all user interface interactions for the FlowCLI application.
- * This class provides methods to display messages, task lists, and errors to
- * the user.
+ * Handles all user interface interactions for the FlowCLI application. This
+ * class provides methods to display messages, task lists, and errors to the
+ * user.
  */
 public class ConsoleUi {
 
@@ -19,13 +20,14 @@ public class ConsoleUi {
     /*
      * private String logo =
      * " _______  _        _______           _______  _       _________\n" +
-     * "(  ____ \\( \\      (  ___  )|\\     /|(  ____ \\( \\      \\__   __/\n" +
-     * "| (    \\/| (      | (   ) || )   ( || (    \\/| (         ) (   \n" +
+     * "(  ____ \\( \\      (  ___  )|\\     /|(  ____ \\( \\      \\__   __/\n"
+     * + "| (    \\/| (      | (   ) || )   ( || (    \\/| (         ) (   \n" +
      * "| (__    | |      | |   | || | _ | || |      | |         | |   \n" +
      * "|  __)   | |      | |   | || |( )| || |      | |         | |   \n" +
      * "| (      | |      | |   | || || || || |      | |         | |   \n" +
      * "| )      | (____/\\| (___) || () () || (____/\\| (____/\\___) (___\n" +
-     * "|/       (_______/(_______)(_______)(_______/(_______/\\_______/\n" + "\n";
+     * "|/       (_______/(_______)(_______)(_______/(_______/\\_______/\n" +
+     * "\n";
      *
      */
     private String logo = "FLOWCLI";
@@ -63,9 +65,8 @@ public class ConsoleUi {
 
     public void showMarked(String projectName, Task t, boolean nowDone) {
         printLine();
-        System.out.println(nowDone
-                ? "Nice! I've marked this task under " + projectName + " as done:"
-                : "OK, I've marked this task under " + projectName + " as not done yet:");
+        System.out.println(nowDone ? "Nice! I've marked this task under " + projectName + " as done:"
+                                        : "OK, I've marked this task under " + projectName + " as not done yet:");
         System.out.println("  " + t);
         printLine();
     }
@@ -76,7 +77,7 @@ public class ConsoleUi {
 
     public void showCurrentTaskListSize(Project targetProject) {
         System.out.println(String.format("Now you have %d task in the %s.", targetProject.size(),
-                targetProject.getProjectName()));
+                                        targetProject.getProjectName()));
     }
 
     public void showAddedProject() {
@@ -147,7 +148,7 @@ public class ConsoleUi {
         System.out.println("  filter tasks by priority <value> - Filter tasks by priority");
         System.out.println("  filter tasks by project <name> - Filter tasks by project name");
         System.out.println("  export tasks to <filename>.txt [<project>] [filter by <type> <value>] "
-                + "[sort by <field> <order>] - Export tasks to TXT file");
+                                        + "[sort by <field> <order>] - Export tasks to TXT file");
         System.out.println("  export tasks to <filename>.txt --all - Force export all tasks");
         System.out.println("  help                        - Show this help message");
         System.out.println("  bye                         - Exit the application");
