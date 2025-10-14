@@ -138,7 +138,6 @@ Tip: Wrap multi-word project names in double quotes (e.g. "Birthday Bash").
  7. delete <project>            - Delete a project
  8. delete <project> <index>    - Delete a task
  9. update <project> <index> [--description <desc>] [--deadline YYYY-MM-DD|none] [--priority low/medium/high] - Update a task
-    Example: update "Birthday Bash" 2 --description Bake cake --deadline 2025-05-10 --priority high
 10. sort tasks by deadline/priority ascending/descending - Sort all tasks
 11. filter tasks by priority <value> - Filter tasks by priority
 12. filter tasks by project <name> - Filter tasks by project name
