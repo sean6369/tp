@@ -30,12 +30,6 @@ Adds a new project. If you repeat the command with the same name (any casing), F
 ```
 create Growth Experiments
 ```
-### Adds description for that task `desc <projectName> <description>`
-
-Adds a description to that specific project
-```
-add "Birthday Bash"
-```
 
 ### List projects or tasks: `list [projectName]`
 
