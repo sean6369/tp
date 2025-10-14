@@ -1,6 +1,6 @@
 add "Project Alpha"
 add "Project Beta"
-add "Empty Project"
+add singleWord
 add "Project Alpha" Task A --priority high --deadline 2025-12-31
 add "Project Alpha" Task B --priority low --deadline 2025-10-15
 add "Project Alpha" Task C --priority medium
