@@ -17,4 +17,5 @@ filter tasks by project Project1
 filter tasks by project project1
 filter tasks by project Project2
 filter tasks by project NonExistent
+help
 bye

@@ -1,23 +1,25 @@
-package seedu.flowcli.tools;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.DisplayName;
-import seedu.flowcli.project.Project;
-import seedu.flowcli.project.ProjectList;
-import seedu.flowcli.task.TaskWithProject;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.util.logging.Handler;
+package seedu.flowcli.utility;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import seedu.flowcli.commands.utility.TaskSorter;
+import seedu.flowcli.project.Project;
+import seedu.flowcli.project.ProjectList;
+import seedu.flowcli.task.TaskWithProject;
 
 @DisplayName("TaskSorter Unit Tests")
 class TaskSorterTest {
@@ -46,12 +48,11 @@ class TaskSorterTest {
         emptyProject = new Project("EmptyProject");
 
         // Add tasks with different priorities and deadlines
-        project1.addTask("Task A", LocalDate.of(2025, 12, 31), 3); // High priority, late deadline
-        project1.addTask("Task B", LocalDate.of(2025, 10, 15), 1); // Low priority, early deadline
-        project1.addTask("Task C", null, 2); // Medium priority, no deadline
-
-        project2.addTask("Task D", LocalDate.of(2025, 11, 20), 2); // Medium priority, mid deadline
-        project2.addTask("Task E", LocalDate.of(2025, 10, 10), 3); // High priority, earliest deadline
+        project1.addTask("Task A", LocalDate.of(2025, 12, 31), 3);
+        project1.addTask("Task B", LocalDate.of(2025, 10, 15), 1);
+        project1.addTask("Task C", null, 2);
+        project2.addTask("Task D", LocalDate.of(2025, 11, 20), 2);
+        project2.addTask("Task E", LocalDate.of(2025, 10, 10), 3);
 
         projects.getProjectList().add(project1);
         projects.getProjectList().add(project2);
@@ -60,8 +61,7 @@ class TaskSorterTest {
         logger.info("Test setup completed with " + projects.getProjectList().size() + " projects");
     }
 
-    @Test
-    @DisplayName("sortTasks_byDeadlineAscending_nullsLast_returnsEarliestDeadlinesFirst")
+    @Test @DisplayName("sortTasks_byDeadlineAscending_nullsLast_returnsEarliestDeadlinesFirst")
     void testSortByDeadlineAscending() {
         logger.fine("Testing sort by deadline ascending");
 
@@ -84,8 +84,7 @@ class TaskSorterTest {
         logger.info("Deadline ascending sort test passed");
     }
 
-    @Test
-    @DisplayName("sortTasks_byDeadlineDescending_nullsFirst_returnsLatestDeadlinesFirst")
+    @Test @DisplayName("sortTasks_byDeadlineDescending_nullsFirst_returnsLatestDeadlinesFirst")
     void testSortByDeadlineDescending() {
         logger.fine("Testing sort by deadline descending");
 
@@ -108,8 +107,7 @@ class TaskSorterTest {
         logger.info("Deadline descending sort test passed");
     }
 
-    @Test
-    @DisplayName("sortTasks_byPriorityAscendingAndDescending_returnsCorrectOrder")
+    @Test @DisplayName("sortTasks_byPriorityAscendingAndDescending_returnsCorrectOrder")
     void testSortByPriorityBothDirections() {
         logger.fine("Testing sort by priority in both directions");
 
@@ -126,19 +124,19 @@ class TaskSorterTest {
                 // Ascending: Low (1) -> Medium (2) -> High (3)
                 () -> assertEquals("Task B", ascTasks.get(0).getTask().getDescription(),
                         "First in ascending should be low priority (Task B)"),
-                () -> assertTrue(ascTasks.get(1).getTask().getPriority() == 2 &&
-                        ascTasks.get(2).getTask().getPriority() == 2,
+                () -> assertTrue(
+                        ascTasks.get(1).getTask().getPriority() == 2 && ascTasks.get(2).getTask().getPriority() == 2,
                         "Second and third should be medium priority"),
-                () -> assertTrue(ascTasks.get(3).getTask().getPriority() == 3 &&
-                        ascTasks.get(4).getTask().getPriority() == 3,
+                () -> assertTrue(
+                        ascTasks.get(3).getTask().getPriority() == 3 && ascTasks.get(4).getTask().getPriority() == 3,
                         "Fourth and fifth should be high priority"),
 
                 // Descending: High (3) -> Medium (2) -> Low (1)
-                () -> assertTrue(descTasks.get(0).getTask().getPriority() == 3 &&
-                        descTasks.get(1).getTask().getPriority() == 3,
+                () -> assertTrue(
+                        descTasks.get(0).getTask().getPriority() == 3 && descTasks.get(1).getTask().getPriority() == 3,
                         "First and second in descending should be high priority"),
-                () -> assertTrue(descTasks.get(2).getTask().getPriority() == 2 &&
-                        descTasks.get(3).getTask().getPriority() == 2,
+                () -> assertTrue(
+                        descTasks.get(2).getTask().getPriority() == 2 && descTasks.get(3).getTask().getPriority() == 2,
                         "Third and fourth should be medium priority"),
                 () -> assertEquals("Task B", descTasks.get(4).getTask().getDescription(),
                         "Last in descending should be low priority (Task B)"));
@@ -146,8 +144,7 @@ class TaskSorterTest {
         logger.info("Priority sorting both directions test passed");
     }
 
-    @Test
-    @DisplayName("sortTasks_emptyProjectList_returnsEmptyList")
+    @Test @DisplayName("sortTasks_emptyProjectList_returnsEmptyList")
     void testSortEmptyProjectList() {
         logger.fine("Testing sort with empty project list");
 
@@ -160,8 +157,7 @@ class TaskSorterTest {
         logger.info("Empty project list sort test passed");
     }
 
-    @Test
-    @DisplayName("sortTasks_singleTask_returnsSingleTask")
+    @Test @DisplayName("sortTasks_singleTask_returnsSingleTask")
     void testSortSingleTask() {
         logger.fine("Testing sort with single task");
 
@@ -177,14 +173,12 @@ class TaskSorterTest {
                 () -> assertEquals(1, sortedTasks.size(), "Should return exactly 1 task"),
                 () -> assertEquals("Single Task", sortedTasks.get(0).getTask().getDescription(),
                         "Task description should match"),
-                () -> assertEquals("SingleProject", sortedTasks.get(0).getProjectName(),
-                        "Project name should match"));
+                () -> assertEquals("SingleProject", sortedTasks.get(0).getProjectName(), "Project name should match"));
 
         logger.info("Single task sort test passed");
     }
 
-    @Test
-    @DisplayName("sortTasks_nullDeadlines_handledCorrectly")
+    @Test @DisplayName("sortTasks_nullDeadlines_handledCorrectly")
     void testSortNullDeadlines() {
         logger.fine("Testing sort with multiple null deadlines");
 
@@ -205,10 +199,8 @@ class TaskSorterTest {
                 () -> assertEquals(3, sortedTasks.size(), "Should return all 3 tasks"),
                 () -> assertNotNull(sortedTasks.get(0).getTask().getDeadline(),
                         "First task should have a deadline (Dated Task)"),
-                () -> assertNull(sortedTasks.get(1).getTask().getDeadline(),
-                        "Second task should have null deadline"),
-                () -> assertNull(sortedTasks.get(2).getTask().getDeadline(),
-                        "Third task should have null deadline"));
+                () -> assertNull(sortedTasks.get(1).getTask().getDeadline(), "Second task should have null deadline"),
+                () -> assertNull(sortedTasks.get(2).getTask().getDeadline(), "Third task should have null deadline"));
 
         logger.info("Null deadline sort test passed");
     }

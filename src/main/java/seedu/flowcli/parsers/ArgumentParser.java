@@ -1,4 +1,4 @@
-package seedu.flowcli.command;
+package seedu.flowcli.parsers;
 
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
@@ -26,12 +26,8 @@ public class ArgumentParser {
         return remainingArgument;
     }
 
-
-
-
-
     public void parseArgument() {
-        if(argument.isEmpty()) {
+        if (argument.isEmpty()) {
             targetProject = null;
             remainingArgument = null;
             return;
@@ -44,7 +40,7 @@ public class ArgumentParser {
         if (projects.getProject(projectName) != null) {
             targetProject = projects.getProject(projectName);
             remainingArgument = arguments;
-        } else  {
+        } else {
             targetProject = null;
             remainingArgument = argument;
         }
