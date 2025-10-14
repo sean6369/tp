@@ -14,7 +14,6 @@ import seedu.flowcli.commands.SortCommand;
 import seedu.flowcli.commands.UnmarkCommand;
 import seedu.flowcli.commands.UnknownCommand;
 import seedu.flowcli.commands.DescCommand;
-import seedu.flowcli.commands.CreateCommand;
 import seedu.flowcli.parsers.CommandParser;
 
 public class CommandFactory {

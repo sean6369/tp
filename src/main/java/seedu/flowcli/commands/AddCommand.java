@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.commands.validation.CommandValidator;
 import seedu.flowcli.exceptions.InvalidArgumentException;
-import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.exceptions.MissingDescriptionException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
