@@ -23,14 +23,14 @@ public class FilterCommand extends Command {
                     "Invalid filter command. Use: filter tasks by priority <value> or project <name>");
         }
 
-        String[] parts = arguments.split("\\s+");
+        String[] parts = arguments.split("\\s+", 4);
         if (parts.length < 4) {
             throw new InvalidArgumentException(
                     "Invalid filter command. Use: filter tasks by priority <value> or project <name>");
         }
 
         String type = parts[2];
-        String value = parts[3];
+        String value = normalizeValue(parts[3]);
 
         if (ValidationConstants.FILTER_TYPE_PRIORITY.equals(type)) {
             CommandValidator.validatePriority(value);
@@ -53,5 +53,13 @@ public class FilterCommand extends Command {
             throw new InvalidArgumentException("Invalid filter type. Use: priority or project");
         }
         return true;
+    }
+
+    private String normalizeValue(String rawValue) {
+        String value = rawValue.trim();
+        if (value.startsWith("\"") && value.endsWith("\"") && value.length() >= 2) {
+            value = value.substring(1, value.length() - 1);
+        }
+        return value.replace("\\\"", "\"");
     }
 }

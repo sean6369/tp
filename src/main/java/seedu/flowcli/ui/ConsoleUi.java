@@ -119,6 +119,7 @@ public class ConsoleUi {
     public void showHelp() {
         printLine();
         System.out.println("Available Commands:");
+        System.out.println("Tip: Wrap multi-word project names in double quotes (e.g. \"Birthday Bash\").");
         System.out.println(" 1. add <project>               - Add a new project");
         System.out.println(" 2. add <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]");
         System.out.println(" 3. list                        - List all projects");
@@ -127,9 +128,10 @@ public class ConsoleUi {
         System.out.println(" 6. unmark <project> <index>    - Mark task as not done");
         System.out.println(" 7. delete <project>            - Delete a project");
         System.out.println(" 8. delete <project> <index>    - Delete a task");
+        System.out.println(" 9. update <project> <index> [--description <desc>] [--deadline YYYY-MM-DD|none]"
+                + " [--priority low/medium/high] - Update a task");
         System.out.println(
-                " 9. update <project> <index> [--description <desc>] [--deadline YYYY-MM-DD|none]"
-                        + " [--priority low/medium/high] - Update a task");
+                "    Example: update \"Birthday Bash\" 2 --description Bake cake --deadline 2025-05-10 --priority high");
         System.out.println("10. sort tasks by deadline/priority ascending/descending - Sort all tasks");
         System.out.println("11. filter tasks by priority <value> - Filter tasks by priority");
         System.out.println("12. filter tasks by project <name> - Filter tasks by project name");
