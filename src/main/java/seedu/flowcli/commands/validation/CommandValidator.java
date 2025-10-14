@@ -1,6 +1,5 @@
 package seedu.flowcli.commands.validation;
 
-import seedu.flowcli.commands.validation.ValidationConstants;
 import seedu.flowcli.exceptions.InvalidArgumentException;
 
 /**
