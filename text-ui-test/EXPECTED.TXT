@@ -5,115 +5,130 @@ What can I do for you today?
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this project: 
-Project1
+Project Alpha
 
 Now you have 1 projects.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this project: 
-Project2
+Project Beta
 
 Now you have 2 projects.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this project: 
-EmptyProject
+Empty Project
 
 Now you have 3 projects.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task in Project1 : 
+Got it. I've added this task in Project Alpha : 
 [ ] Task A (Due: Dec 31, 2025) [High]
-Now you have 1 task in the Project1.
+Now you have 1 task in the Project Alpha.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task in Project1 : 
+Got it. I've added this task in Project Alpha : 
 [ ] Task B (Due: Oct 15, 2025) [Low]
-Now you have 2 task in the Project1.
+Now you have 2 task in the Project Alpha.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task in Project1 : 
+Got it. I've added this task in Project Alpha : 
 [ ] Task C [Medium]
-Now you have 3 task in the Project1.
+Now you have 3 task in the Project Alpha.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task in Project2 : 
+Got it. I've added this task in Project Beta : 
 [ ] Task D (Due: Nov 20, 2025) [Medium]
-Now you have 1 task in the Project2.
+Now you have 1 task in the Project Beta.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task in Project2 : 
+Got it. I've added this task in Project Beta : 
 [ ] Task E (Due: Oct 10, 2025) [High]
-Now you have 2 task in the Project2.
+Now you have 2 task in the Project Beta.
 ____________________________________________________________
 ____________________________________________________________
 Sorted all tasks by deadline ascending:
-Project2: [ ] Task E (Due: Oct 10, 2025) [High]
-Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
-Project2: [ ] Task D (Due: Nov 20, 2025) [Medium]
-Project1: [ ] Task A (Due: Dec 31, 2025) [High]
-Project1: [ ] Task C [Medium]
+Project Beta: [ ] Task E (Due: Oct 10, 2025) [High]
+Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project Beta: [ ] Task D (Due: Nov 20, 2025) [Medium]
+Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
+Project Alpha: [ ] Task C [Medium]
 ____________________________________________________________
 ____________________________________________________________
 Sorted all tasks by deadline descending:
-Project1: [ ] Task C [Medium]
-Project1: [ ] Task A (Due: Dec 31, 2025) [High]
-Project2: [ ] Task D (Due: Nov 20, 2025) [Medium]
-Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
-Project2: [ ] Task E (Due: Oct 10, 2025) [High]
+Project Alpha: [ ] Task C [Medium]
+Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
+Project Beta: [ ] Task D (Due: Nov 20, 2025) [Medium]
+Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project Beta: [ ] Task E (Due: Oct 10, 2025) [High]
 ____________________________________________________________
 ____________________________________________________________
 Sorted all tasks by priority ascending:
-Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
-Project1: [ ] Task C [Medium]
-Project2: [ ] Task D (Due: Nov 20, 2025) [Medium]
-Project1: [ ] Task A (Due: Dec 31, 2025) [High]
-Project2: [ ] Task E (Due: Oct 10, 2025) [High]
+Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project Alpha: [ ] Task C [Medium]
+Project Beta: [ ] Task D (Due: Nov 20, 2025) [Medium]
+Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
+Project Beta: [ ] Task E (Due: Oct 10, 2025) [High]
 ____________________________________________________________
 ____________________________________________________________
 Sorted all tasks by priority descending:
-Project1: [ ] Task A (Due: Dec 31, 2025) [High]
-Project2: [ ] Task E (Due: Oct 10, 2025) [High]
-Project1: [ ] Task C [Medium]
-Project2: [ ] Task D (Due: Nov 20, 2025) [Medium]
-Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
+Project Beta: [ ] Task E (Due: Oct 10, 2025) [High]
+Project Alpha: [ ] Task C [Medium]
+Project Beta: [ ] Task D (Due: Nov 20, 2025) [Medium]
+Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
 ____________________________________________________________
 ____________________________________________________________
 Filtered tasks by priority high:
-Project1: [ ] Task A (Due: Dec 31, 2025) [High]
-Project2: [ ] Task E (Due: Oct 10, 2025) [High]
+Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
+Project Beta: [ ] Task E (Due: Oct 10, 2025) [High]
 ____________________________________________________________
 ____________________________________________________________
 Filtered tasks by priority medium:
-Project1: [ ] Task C [Medium]
-Project2: [ ] Task D (Due: Nov 20, 2025) [Medium]
+Project Alpha: [ ] Task C [Medium]
+Project Beta: [ ] Task D (Due: Nov 20, 2025) [Medium]
 ____________________________________________________________
 ____________________________________________________________
 Filtered tasks by priority low:
-Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
 ____________________________________________________________
 ____________________________________________________________
-Filtered tasks by project Project1:
-Project1: [ ] Task A (Due: Dec 31, 2025) [High]
-Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
-Project1: [ ] Task C [Medium]
+Filtered tasks by project Project Alpha:
+Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
+Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project Alpha: [ ] Task C [Medium]
 ____________________________________________________________
 ____________________________________________________________
-Filtered tasks by project project1:
-Project1: [ ] Task A (Due: Dec 31, 2025) [High]
-Project1: [ ] Task B (Due: Oct 15, 2025) [Low]
-Project1: [ ] Task C [Medium]
+Filtered tasks by project project alpha:
+Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
+Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project Alpha: [ ] Task C [Medium]
 ____________________________________________________________
 ____________________________________________________________
-Filtered tasks by project Project2:
-Project2: [ ] Task D (Due: Nov 20, 2025) [Medium]
-Project2: [ ] Task E (Due: Oct 10, 2025) [High]
+Filtered tasks by project Project Beta:
+Project Beta: [ ] Task D (Due: Nov 20, 2025) [Medium]
+Project Beta: [ ] Task E (Due: Oct 10, 2025) [High]
 ____________________________________________________________
 ____________________________________________________________
 Filtered tasks by project NonExistent:
 ____________________________________________________________
 ____________________________________________________________
+Got it. I've updated this task in Project Alpha : 
+[ ] Updated Task B (Due: Nov 01, 2025) [High]
+____________________________________________________________
+____________________________________________________________
+Got it. I've updated this task in Project Alpha : 
+[ ] Task C [Low]
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in Project Alpha:
+1. [ ] Task A (Due: Dec 31, 2025) [High]
+2. [ ] Updated Task B (Due: Nov 01, 2025) [High]
+3. [ ] Task C [Low]
+____________________________________________________________
+____________________________________________________________
 Available Commands:
+Tip: Wrap multi-word project names in double quotes (e.g. "Birthday Bash").
  1. add <project>               - Add a new project
  2. add <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]
  3. list                        - List all projects
@@ -122,13 +137,14 @@ Available Commands:
  6. unmark <project> <index>    - Mark task as not done
  7. delete <project>            - Delete a project
  8. delete <project> <index>    - Delete a task
- 9. sort tasks by deadline/priority ascending/descending - Sort all tasks
-10. filter tasks by priority <value> - Filter tasks by priority
-11. filter tasks by project <name> - Filter tasks by project name
-12. export tasks to <filename>.txt [<project>] [filter by <type> <value>] [sort by <field> <order>] - Export tasks to TXT file
-13. export tasks to <filename>.txt --all - Force export all tasks
-14. help                        - Show this help message
-15. bye                         - Exit the application
+ 9. update <project> <index> [--description <desc>] [--deadline YYYY-MM-DD|none] [--priority low/medium/high] - Update a task
+10. sort tasks by deadline/priority ascending/descending - Sort all tasks
+11. filter tasks by priority <value> - Filter tasks by priority
+12. filter tasks by project <name> - Filter tasks by project name
+13. export tasks to <filename>.txt [<project>] [filter by <type> <value>] [sort by <field> <order>] - Export tasks to TXT file
+14. export tasks to <filename>.txt --all - Force export all tasks
+15. help                        - Show this help message
+16. bye                         - Exit the application
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!

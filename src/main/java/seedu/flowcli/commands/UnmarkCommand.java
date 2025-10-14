@@ -23,7 +23,7 @@ public class UnmarkCommand extends Command {
         Integer idx = CommandParser.parseIndexOrNull(parsedArgument.getRemainingArgument(), targetProject.size());
 
         targetProject.getProjectTasks().unmark(idx);
-        context.getUi().showMarked(targetProject.getProjectName(), targetProject.getProjectTasks().get(idx), true);
+        context.getUi().showMarked(targetProject.getProjectName(), targetProject.getProjectTasks().get(idx), false);
         return true;
     }
 }
