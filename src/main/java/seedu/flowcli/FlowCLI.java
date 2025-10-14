@@ -16,7 +16,7 @@ public class FlowCLI {
     }
 
     public void run() {
-        ui.welcome();
+        ui.printWelcomeMessage();
         commandHandler.handleCommands();
     }
 

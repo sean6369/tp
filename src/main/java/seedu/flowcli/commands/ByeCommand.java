@@ -10,7 +10,7 @@ public class ByeCommand extends Command {
 
     @Override
     public boolean execute(CommandContext context) {
-        context.getUi().bye();
+        context.getUi().printByeMessage();
         return false;
     }
 }
