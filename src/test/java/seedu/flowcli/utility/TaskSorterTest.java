@@ -48,24 +48,11 @@ class TaskSorterTest {
         emptyProject = new Project("EmptyProject");
 
         // Add tasks with different priorities and deadlines
-        project1.addTask("Task A", LocalDate.of(2025, 12, 31), 3); // High
-                                                                   // priority,
-                                                                   // late
-                                                                   // deadline
-        project1.addTask("Task B", LocalDate.of(2025, 10, 15), 1); // Low
-                                                                   // priority,
-                                                                   // early
-                                                                   // deadline
-        project1.addTask("Task C", null, 2); // Medium priority, no deadline
-
-        project2.addTask("Task D", LocalDate.of(2025, 11, 20), 2); // Medium
-                                                                   // priority,
-                                                                   // mid
-                                                                   // deadline
-        project2.addTask("Task E", LocalDate.of(2025, 10, 10), 3); // High
-                                                                   // priority,
-                                                                   // earliest
-                                                                   // deadline
+        project1.addTask("Task A", LocalDate.of(2025, 12, 31), 3);
+        project1.addTask("Task B", LocalDate.of(2025, 10, 15), 1);
+        project1.addTask("Task C", null, 2);
+        project2.addTask("Task D", LocalDate.of(2025, 11, 20), 2);
+        project2.addTask("Task E", LocalDate.of(2025, 10, 10), 3);
 
         projects.getProjectList().add(project1);
         projects.getProjectList().add(project2);
@@ -134,8 +121,7 @@ class TaskSorterTest {
                 () -> assertEquals(5, ascTasks.size(), "Ascending should return all 5 tasks"),
                 () -> assertEquals(5, descTasks.size(), "Descending should return all 5 tasks"),
 
-                // Ascending: Low (1) -> Medium (2) ->
-                // High (3)
+                // Ascending: Low (1) -> Medium (2) -> High (3)
                 () -> assertEquals("Task B", ascTasks.get(0).getTask().getDescription(),
                         "First in ascending should be low priority (Task B)"),
                 () -> assertTrue(
@@ -145,8 +131,7 @@ class TaskSorterTest {
                         ascTasks.get(3).getTask().getPriority() == 3 && ascTasks.get(4).getTask().getPriority() == 3,
                         "Fourth and fifth should be high priority"),
 
-                // Descending: High (3) -> Medium (2) ->
-                // Low (1)
+                // Descending: High (3) -> Medium (2) -> Low (1)
                 () -> assertTrue(
                         descTasks.get(0).getTask().getPriority() == 3 && descTasks.get(1).getTask().getPriority() == 3,
                         "First and second in descending should be high priority"),

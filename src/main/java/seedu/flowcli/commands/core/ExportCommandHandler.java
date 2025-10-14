@@ -56,8 +56,8 @@ public class ExportCommandHandler {
     public void handleExport(String args) throws Exception {
         if (args == null || args.trim().isEmpty()) {
             throw new InvalidArgumentException(
-                                            "Invalid export command. Use: export tasks to <filename>.txt [<project>] "
-                                                                            + "[filter by <type> <value>] [sort by <field> <order>]");
+                    "Invalid export command. Use: export tasks to <filename>.txt [<project>] "
+                            + "[filter by <type> <value>] [sort by <field> <order>]");
         }
 
         // Parse the command: "tasks to <filename> [<project>] [filter by <type>
@@ -66,14 +66,14 @@ public class ExportCommandHandler {
 
         if (parts.length < 3 || !"tasks".equals(parts[0]) || !"to".equals(parts[1])) {
             throw new InvalidArgumentException(
-                                            "Invalid export command. Use: export tasks to <filename>.txt [<project>] "
-                                                                            + "[filter by <type> <value>] [sort by <field> <order>]");
+                    "Invalid export command. Use: export tasks to <filename>.txt [<project>] "
+                            + "[filter by <type> <value>] [sort by <field> <order>]");
         }
 
         String filename = parts[2];
         if (!filename.endsWith(".txt")) {
             throw new InvalidArgumentException(
-                                            "Export filename must end with .txt extension. Use: " + filename + ".txt");
+                    "Export filename must end with .txt extension. Use: " + filename + ".txt");
         }
 
         // Check if we have additional parameters
@@ -165,18 +165,18 @@ public class ExportCommandHandler {
             String current = parts[i];
 
             if (ValidationConstants.KEYWORD_FILTER.equals(current) && i + 3 < parts.length
-                                            && ValidationConstants.KEYWORD_BY.equals(parts[i + 1])) {
+                    && ValidationConstants.KEYWORD_BY.equals(parts[i + 1])) {
                 params.filterType = parts[i + 2];
                 params.filterValue = parts[i + 3];
                 i += 4;
             } else if (ValidationConstants.KEYWORD_SORT.equals(current) && i + 3 < parts.length
-                                            && ValidationConstants.KEYWORD_BY.equals(parts[i + 1])) {
+                    && ValidationConstants.KEYWORD_BY.equals(parts[i + 1])) {
                 params.sortField = parts[i + 2];
                 params.sortOrder = parts[i + 3];
                 i += 4;
             } else if (!ValidationConstants.KEYWORD_FILTER.equals(current)
-                                            && !ValidationConstants.KEYWORD_SORT.equals(current)
-                                            && !ValidationConstants.KEYWORD_BY.equals(current)) {
+                    && !ValidationConstants.KEYWORD_SORT.equals(current)
+                    && !ValidationConstants.KEYWORD_BY.equals(current)) {
                 if (params.projectName == null) {
                     params.projectName = current;
                 }
@@ -208,7 +208,7 @@ public class ExportCommandHandler {
      * Applies filtering to tasks.
      */
     private List<TaskWithProject> applyFiltering(List<TaskWithProject> tasks, String filterType, String filterValue)
-                                    throws Exception {
+            throws Exception {
         CommandValidator.validateFilterType(filterType);
 
         if (ValidationConstants.FILTER_TYPE_PRIORITY.equals(filterType)) {
@@ -225,7 +225,7 @@ public class ExportCommandHandler {
      * Applies sorting to tasks.
      */
     private List<TaskWithProject> applySorting(List<TaskWithProject> tasks, String sortField, String sortOrder)
-                                    throws Exception {
+            throws Exception {
         CommandValidator.validateSortField(sortField);
         CommandValidator.validateSortOrder(sortOrder);
 

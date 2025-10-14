@@ -20,13 +20,13 @@ public class SortCommand extends Command {
     public boolean execute(CommandContext context) throws Exception {
         if (arguments.isEmpty() || !arguments.startsWith("tasks by")) {
             throw new InvalidArgumentException(
-                                            "Invalid sort command. Use: sort tasks by deadline/priority ascending/descending");
+                    "Invalid sort command. Use: sort tasks by deadline/priority ascending/descending");
         }
 
         String[] parts = arguments.split("\\s+");
         if (parts.length < 4) {
             throw new InvalidArgumentException(
-                                            "Invalid sort command. Use: sort tasks by deadline/priority ascending/descending");
+                    "Invalid sort command. Use: sort tasks by deadline/priority ascending/descending");
         }
 
         String field = parts[2];
@@ -41,7 +41,7 @@ public class SortCommand extends Command {
         context.getUi().showGlobalSortedTasks(sortedTasks, field, order);
 
         context.getExportHandler().updateViewState(sortedTasks, ExportCommandHandler.ViewType.SORTED,
-                                        "sorted by " + field + " " + order);
+                "sorted by " + field + " " + order);
         return true;
     }
 }
