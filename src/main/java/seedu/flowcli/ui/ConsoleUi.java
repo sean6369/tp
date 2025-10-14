@@ -50,7 +50,7 @@ public class ConsoleUi {
     public void showCurrentProjectListSize() {
         System.out.println(String.format("Now you have %d projects.", projects.getProjectListSize()));
     }
-
+    
     public void showCurrentTaskListSize(Project targetProject) {
         System.out.println(
                 String.format("Now you have %d task in the %s.", targetProject.size(), targetProject.getProjectName()));
@@ -120,7 +120,7 @@ public class ConsoleUi {
         printLine();
         System.out.println("Available Commands:");
         System.out.println("Tip: Wrap multi-word project names in double quotes (e.g. \"Birthday Bash\").");
-        System.out.println(" 1. add <project>               - Add a new project");
+        System.out.println(" 1. create <project>               - Add a new project");
         System.out.println(" 2. add <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]");
         System.out.println(" 3. list                        - List all projects");
         System.out.println(" 4. list <project>              - List tasks in a project");
@@ -164,4 +164,5 @@ public class ConsoleUi {
         System.out.println("Successfully exported " + taskCount + " tasks to " + filename);
         printLine();
     }
+
 }

@@ -129,7 +129,7 @@ ____________________________________________________________
 ____________________________________________________________
 Available Commands:
 Tip: Wrap multi-word project names in double quotes (e.g. "Birthday Bash").
- 1. add <project>               - Add a new project
+ 1. create <project>               - Add a new project
  2. add <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]
  3. list                        - List all projects
  4. list <project>              - List tasks in a project

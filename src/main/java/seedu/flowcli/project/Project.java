@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 public class Project {
     private String projectName;
-    private String projectDescription;
     private String projectStatus;
     private TaskList projectTasks;
 
@@ -61,11 +60,10 @@ public class Project {
     }
 
     public String toString() {
-        return projectName + "\n" + projectTasks.render();
+        return projectName  +  projectTasks.render() + '\n';
     }
 
     public String showAllTasks() {
         return projectTasks.render();
     }
-
 }
