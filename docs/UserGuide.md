@@ -24,17 +24,22 @@ Projects and tasks exist only for the current session. Use the export feature to
 - Project names and task descriptions can contain spaces. Separate options from the description with `--`.
 - Deadlines use the `YYYY-MM-DD` format. Priorities accept `low`, `medium`, or `high`.
 
-### Create a project: `add <projectName>`
+### Create a project: `create <projectName>`
 
 Adds a new project. If you repeat the command with the same name (any casing), FlowCLI reports a duplicate.
-
 ```
-add Growth Experiments
+create Growth Experiments
+```
+### Adds description for that task `desc <projectName> <description>`
+
+Adds a description to that specific project
+```
+desc Growth Experiments experiments on growing
 ```
 
 ### List projects or tasks: `list [projectName]`
 
-- `list` shows all projects and clears any previous global filter/sort view.
+- `list` shows all projects and their decscription if they have one and clears any previous global filter/sort view.
 - `list <projectName>` shows the tasks under a specific project.
 
 ```

@@ -1,6 +1,6 @@
-add Project1
-add Project2
-add EmptyProject
+create Project1
+create Project2
+create EmptyProject
 add project1 Task A --priority high --deadline 2025-12-31
 add project1 Task B --priority low --deadline 2025-10-15
 add project1 Task C --priority medium

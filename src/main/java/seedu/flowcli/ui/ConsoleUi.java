@@ -116,7 +116,7 @@ public class ConsoleUi {
     public void showHelp() {
         printLine();
         System.out.println("Available Commands:");
-        System.out.println(" 1. add <project>               - Add a new project");
+        System.out.println(" 1. create <project>               - Add a new project");
         System.out.println(" 2. add <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]");
         System.out.println(" 3. list                        - List all projects");
         System.out.println(" 4. list <project>              - List tasks in a project"

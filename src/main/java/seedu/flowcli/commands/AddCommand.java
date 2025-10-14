@@ -21,7 +21,7 @@ public class AddCommand extends Command {
         ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
         Project targetProject = parsedArgument.getTargetProject();
         if (targetProject == null) {
-            throw new InvalidArgumentException("Invalid use of add ");
+            throw new InvalidArgumentException("No such project with that name ");
         }
 
         if (parsedArgument.getRemainingArgument() == null) {
