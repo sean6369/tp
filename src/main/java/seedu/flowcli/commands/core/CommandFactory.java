@@ -9,6 +9,7 @@ import seedu.flowcli.commands.FilterCommand;
 import seedu.flowcli.commands.HelpCommand;
 import seedu.flowcli.commands.ListCommand;
 import seedu.flowcli.commands.MarkCommand;
+import seedu.flowcli.commands.UpdateCommand;
 import seedu.flowcli.commands.SortCommand;
 import seedu.flowcli.commands.UnmarkCommand;
 import seedu.flowcli.commands.UnknownCommand;
@@ -30,6 +31,8 @@ public class CommandFactory {
             return new AddCommand(arguments);
         case DELETE:
             return new DeleteCommand(arguments);
+        case UPDATE:
+            return new UpdateCommand(arguments);
         case HELP:
             return new HelpCommand(arguments);
         case SORT:

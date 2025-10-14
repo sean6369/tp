@@ -49,6 +49,19 @@ Adds a task under an existing project with optional priority and deadline. Prior
 add Growth Experiments Launch onboarding flow --priority high --deadline 2025-01-31
 ```
 
+### Update a task: `update <projectName> <index> [--description <desc>] [--deadline <YYYY-MM-DD|none>] [--priority <level>]`
+
+Edits the specified task in place. You can change one field or combine multiple options in the same command.
+
+- `--description` replaces the task description.
+- `--deadline` updates the due date; pass `none` (or `clear`) to remove an existing deadline.
+- `--priority` accepts `low`, `medium`, or `high`.
+
+```
+update Growth Experiments 2 --description Polish onboarding copy --deadline 2025-02-15 --priority medium
+update Growth Experiments 3 --deadline none
+```
+
 ### Mark or unmark a task: `mark <projectName> <index>` / `unmark <projectName> <index>`
 
 Marks the specified task (based on the number shown in `list <projectName>`) as done or not done.
@@ -122,6 +135,7 @@ Saves tasks to a plain-text file.
 | List projects | `list` | `list` |
 | List tasks | `list <projectName>` | `list Marketing` |
 | Add task | `add <projectName> <desc> [--priority <level>] [--deadline <YYYY-MM-DD>]` | `add Marketing Update landing page --priority high --deadline 2024-12-01` |
+| Update task | `update <projectName> <index> [--description <desc>] [--deadline <YYYY-MM-DD|none>] [--priority <level>]` | `update Marketing 1 --priority medium` |
 | Mark / Unmark | `mark <projectName> <index>` / `unmark <projectName> <index>` | `mark Marketing 1` |
 | Delete project | `delete <projectName>` | `delete Marketing` |
 | Delete task | `delete <projectName> <index>` | `delete Marketing 2` |

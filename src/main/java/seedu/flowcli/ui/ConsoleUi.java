@@ -88,6 +88,13 @@ public class ConsoleUi {
         printLine();
     }
 
+    public void showUpdatedTask(Project targetProject, Task updatedTask) {
+        printLine();
+        System.out.println("Got it. I've updated this task in " + targetProject.getProjectName() + " : ");
+        System.out.println(updatedTask);
+        printLine();
+    }
+
     public void showProjectList() {
         printLine();
         System.out.println("Here is your whole project list:");
@@ -120,14 +127,17 @@ public class ConsoleUi {
         System.out.println(" 6. unmark <project> <index>    - Mark task as not done");
         System.out.println(" 7. delete <project>            - Delete a project");
         System.out.println(" 8. delete <project> <index>    - Delete a task");
-        System.out.println(" 9. sort tasks by deadline/priority ascending/descending - Sort all tasks");
-        System.out.println("10. filter tasks by priority <value> - Filter tasks by priority");
-        System.out.println("11. filter tasks by project <name> - Filter tasks by project name");
-        System.out.println("12. export tasks to <filename>.txt [<project>] [filter by <type> <value>] "
+        System.out.println(
+                " 9. update <project> <index> [--description <desc>] [--deadline YYYY-MM-DD|none]"
+                        + " [--priority low/medium/high] - Update a task");
+        System.out.println("10. sort tasks by deadline/priority ascending/descending - Sort all tasks");
+        System.out.println("11. filter tasks by priority <value> - Filter tasks by priority");
+        System.out.println("12. filter tasks by project <name> - Filter tasks by project name");
+        System.out.println("13. export tasks to <filename>.txt [<project>] [filter by <type> <value>] "
                 + "[sort by <field> <order>] - Export tasks to TXT file");
-        System.out.println("13. export tasks to <filename>.txt --all - Force export all tasks");
-        System.out.println("14. help                        - Show this help message");
-        System.out.println("15. bye                         - Exit the application");
+        System.out.println("14. export tasks to <filename>.txt --all - Force export all tasks");
+        System.out.println("15. help                        - Show this help message");
+        System.out.println("16. bye                         - Exit the application");
         printLine();
     }
 
