@@ -58,29 +58,42 @@ public class UpdateCommand extends Command {
         boolean updatePriority = false;
         Integer newPriority = null;
 
-        String[] parts = options.split(" --");
-        for (String part : parts) {
-            String option = part.trim();
-            if (option.isEmpty()) {
-                continue;
+        String[] tokens = options.split("\\s+");
+        int i = 0;
+        while (i < tokens.length) {
+            String token = tokens[i];
+            if (!token.startsWith("--")) {
+                throw new InvalidArgumentException(
+                        "Unknown option: " + token + ". Use --description, --deadline, or --priority.");
             }
 
-            if (option.startsWith("description ")) {
+            switch (token) {
+            case "--description":
+                i++;
+                if (i >= tokens.length || tokens[i].startsWith("--")) {
+                    throw new InvalidArgumentException("Description cannot be empty.");
+                }
                 updateDescription = true;
-                newDescription = option.substring("description ".length()).trim();
+                StringBuilder descriptionBuilder = new StringBuilder(tokens[i]);
+                i++;
+                while (i < tokens.length && !tokens[i].startsWith("--")) {
+                    descriptionBuilder.append(" ").append(tokens[i]);
+                    i++;
+                }
+                newDescription = descriptionBuilder.toString().trim();
                 if (newDescription.isEmpty()) {
                     throw new InvalidArgumentException("Description cannot be empty.");
                 }
-            } else if ("description".equals(option)) {
-                throw new InvalidArgumentException("Description cannot be empty.");
-            } else if (option.startsWith("deadline ")) {
-                updateDeadline = true;
-                String deadlineValue = option.substring("deadline ".length()).trim();
-                if (deadlineValue.isEmpty()) {
+                continue;
+            case "--deadline":
+                i++;
+                if (i >= tokens.length || tokens[i].startsWith("--")) {
                     throw new InvalidArgumentException(
                             "Deadline cannot be empty. Use YYYY-MM-DD or 'none' to clear it.");
                 }
-
+                updateDeadline = true;
+                String deadlineValue = tokens[i];
+                i++;
                 String normalized = deadlineValue.toLowerCase();
                 if ("none".equals(normalized) || "clear".equals(normalized)) {
                     newDeadline = null;
@@ -92,19 +105,21 @@ public class UpdateCommand extends Command {
                                 "Invalid deadline format: " + deadlineValue + ". Use YYYY-MM-DD or 'none'.");
                     }
                 }
-            } else if ("deadline".equals(option)) {
-                throw new InvalidArgumentException(
-                        "Deadline cannot be empty. Use YYYY-MM-DD or 'none' to clear it.");
-            } else if (option.startsWith("priority ")) {
+                continue;
+            case "--priority":
+                i++;
+                if (i >= tokens.length || tokens[i].startsWith("--")) {
+                    throw new InvalidArgumentException("Priority cannot be empty. Use low, medium, or high.");
+                }
                 updatePriority = true;
-                String priorityValue = option.substring("priority ".length()).trim();
+                String priorityValue = tokens[i];
+                i++;
                 String validatedPriority = CommandValidator.validatePriority(priorityValue);
                 newPriority = CommandValidator.priorityToInt(validatedPriority);
-            } else if ("priority".equals(option)) {
-                throw new InvalidArgumentException("Priority cannot be empty. Use low, medium, or high.");
-            } else {
+                continue;
+            default:
                 throw new InvalidArgumentException(
-                        "Unknown option: " + option + ". Use --description, --deadline, or --priority.");
+                        "Unknown option: " + token + ". Use --description, --deadline, or --priority.");
             }
         }
 
@@ -121,12 +136,11 @@ public class UpdateCommand extends Command {
         Task updatedTask = targetProject.updateTask(taskIndex, newDescription, updateDescription, newDeadline,
                 updateDeadline, newPriority, updatePriority);
 
-        assert !updateDescription || !Objects.equals(originalDescription, updatedTask.getDescription())
-                : "Description unchanged after update";
-        assert !updateDeadline || !Objects.equals(originalDeadline, updatedTask.getDeadline())
-                : "Deadline unchanged after update";
-        assert !updatePriority || originalPriority != updatedTask.getPriority()
-                : "Priority unchanged after update";
+        assert !updateDescription || !Objects.equals(originalDescription,
+                updatedTask.getDescription()) : "Description unchanged after update";
+        assert !updateDeadline
+                || !Objects.equals(originalDeadline, updatedTask.getDeadline()) : "Deadline unchanged after update";
+        assert !updatePriority || originalPriority != updatedTask.getPriority() : "Priority unchanged after update";
         context.getUi().showUpdatedTask(targetProject, updatedTask);
         return true;
     }
