@@ -117,7 +117,7 @@ Available Commands:
  1. add <project>               - Add a new project
  2. add <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]
  3. list                        - List all projects
- 4. list <project>              - List tasks in a project
+ 4. list <project>              - List tasks in a project and their descriptions if they have one
  5. mark <project> <index>      - Mark task as done
  6. unmark <project> <index>    - Mark task as not done
  7. delete <project>            - Delete a project
@@ -127,8 +127,9 @@ Available Commands:
 11. filter tasks by project <name> - Filter tasks by project name
 12. export tasks to <filename>.txt [<project>] [filter by <type> <value>] [sort by <field> <order>] - Export tasks to TXT file
 13. export tasks to <filename>.txt --all - Force export all tasks
-14. help                        - Show this help message
-15. bye                         - Exit the application
+14. desc <project> <description> - Adds a project description
+15. help                        - Show this help message
+16. bye                         - Exit the application
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
