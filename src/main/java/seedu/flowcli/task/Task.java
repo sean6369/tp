@@ -64,6 +64,18 @@ public class Task {
         this.isDone = false;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
     public String marker() {
         return isDone ? "[X]" : "[ ]";
     }
