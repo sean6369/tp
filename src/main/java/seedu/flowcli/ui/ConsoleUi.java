@@ -1,70 +1,47 @@
 package seedu.flowcli.ui;
 
-import seedu.flowcli.task.Task;
-import seedu.flowcli.task.TaskWithProject;
-import seedu.flowcli.project.ProjectList;
-import seedu.flowcli.project.Project;
 import java.util.List;
 
+import seedu.flowcli.project.Project;
+import seedu.flowcli.project.ProjectList;
+import seedu.flowcli.task.Task;
+import seedu.flowcli.task.TaskWithProject;
+
 /**
- * Handles all user interface interactions for the FlowCLI application.
- * This class provides methods to display messages, task lists, and errors to
- * the user.
+ * Handles all user interface interactions for the FlowCLI application. This
+ * class provides methods to display messages, task lists, and errors to the
+ * user.
  */
 public class ConsoleUi {
 
+    private static final String CHATBOT_NAME = "FlowCLI";
     private ProjectList projects;
-    private String line = "____________________________________________________________";
-
-    /*
-     * private String logo =
-     * " _______  _        _______           _______  _       _________\n" +
-     * "(  ____ \\( \\      (  ___  )|\\     /|(  ____ \\( \\      \\__   __/\n" +
-     * "| (    \\/| (      | (   ) || )   ( || (    \\/| (         ) (   \n" +
-     * "| (__    | |      | |   | || | _ | || |      | |         | |   \n" +
-     * "|  __)   | |      | |   | || |( )| || |      | |         | |   \n" +
-     * "| (      | |      | |   | || || || || |      | |         | |   \n" +
-     * "| )      | (____/\\| (___) || () () || (____/\\| (____/\\___) (___\n" +
-     * "|/       (_______/(_______)(_______)(_______/(_______/\\_______/\n" + "\n";
-     *
-     */
-    private String logo = "FLOWCLI";
-
-    private String helloMessage = "Hello! I'm FlowCLI, a fast minimal CLI task manager";
-    private String byeMessage = "Bye. Hope to see you again soon!";
 
     public ConsoleUi(ProjectList projects) {
         this.projects = projects;
     }
 
-    public void printHelloMessage() {
-        System.out.println(helloMessage);
-    }
-
     public void printLine() {
-        System.out.println(line);
+        System.out.println("____________________________________________________________");
     }
 
-    public void printLogo() {
-        System.out.println(logo);
-    }
-
-    public void welcome() {
-        printLogo();
+    public void printWelcomeMessage() {
+        System.out.println(CHATBOT_NAME);
         printLine();
-        printHelloMessage();
+        System.out.println("Hello! I'm " + CHATBOT_NAME + ", a fast, minimal CLI project task manager.");
+        System.out.println("What can I do for you today?");
+        printLine();
     }
 
-    public void bye() {
+    public void printByeMessage() {
         printLine();
-        System.out.println(byeMessage);
+        System.out.println("Bye. Hope to see you again soon!");
         printLine();
     }
 
     public void showMarked(String projectName, Task t, boolean nowDone) {
         printLine();
-        System.out.println(nowDone
-                ? "Nice! I've marked this task under " + projectName + " as done:"
+        System.out.println(nowDone ? "Nice! I've marked this task under " + projectName + " as done:"
                 : "OK, I've marked this task under " + projectName + " as not done yet:");
         System.out.println("  " + t);
         printLine();
@@ -75,8 +52,8 @@ public class ConsoleUi {
     }
 
     public void showCurrentTaskListSize(Project targetProject) {
-        System.out.println(String.format("Now you have %d task in the %s.", targetProject.size(),
-                targetProject.getProjectName()));
+        System.out.println(
+                String.format("Now you have %d task in the %s.", targetProject.size(), targetProject.getProjectName()));
     }
 
     public void showAddedProject() {
@@ -135,22 +112,22 @@ public class ConsoleUi {
     public void showHelp() {
         printLine();
         System.out.println("Available Commands:");
-        System.out.println("  add project <name>          - Add a new project");
-        System.out.println("  add <project> <desc> [--priority high/medium/low] [--deadline YYYY-MM-DD]");
-        System.out.println("  list                        - List all projects");
-        System.out.println("  list <project>              - List tasks in a project");
-        System.out.println("  mark <project> <index>      - Mark task as done");
-        System.out.println("  unmark <project> <index>    - Mark task as not done");
-        System.out.println("  delete project <name>       - Delete a project");
-        System.out.println("  delete task <project> <idx> - Delete a task");
-        System.out.println("  sort tasks by deadline/priority ascending/descending - Sort all tasks");
-        System.out.println("  filter tasks by priority <value> - Filter tasks by priority");
-        System.out.println("  filter tasks by project <name> - Filter tasks by project name");
-        System.out.println("  export tasks to <filename>.txt [<project>] [filter by <type> <value>] "
+        System.out.println(" 1. add <project>               - Add a new project");
+        System.out.println(" 2. add <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]");
+        System.out.println(" 3. list                        - List all projects");
+        System.out.println(" 4. list <project>              - List tasks in a project");
+        System.out.println(" 5. mark <project> <index>      - Mark task as done");
+        System.out.println(" 6. unmark <project> <index>    - Mark task as not done");
+        System.out.println(" 7. delete <project>            - Delete a project");
+        System.out.println(" 8. delete <project> <index>    - Delete a task");
+        System.out.println(" 9. sort tasks by deadline/priority ascending/descending - Sort all tasks");
+        System.out.println("10. filter tasks by priority <value> - Filter tasks by priority");
+        System.out.println("11. filter tasks by project <name> - Filter tasks by project name");
+        System.out.println("12. export tasks to <filename>.txt [<project>] [filter by <type> <value>] "
                 + "[sort by <field> <order>] - Export tasks to TXT file");
-        System.out.println("  export tasks to <filename>.txt --all - Force export all tasks");
-        System.out.println("  help                        - Show this help message");
-        System.out.println("  bye                         - Exit the application");
+        System.out.println("13. export tasks to <filename>.txt --all - Force export all tasks");
+        System.out.println("14. help                        - Show this help message");
+        System.out.println("15. bye                         - Exit the application");
         printLine();
     }
 

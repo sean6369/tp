@@ -1,21 +1,23 @@
-package seedu.flowcli.tools;
+package seedu.flowcli.commands.utility;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
 import seedu.flowcli.task.TaskWithProject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Utility class for collecting tasks from projects.
  */
-public class TaskCollector {
-    
+public final class TaskCollector {
+    private TaskCollector() {
+    }
+
     /**
      * Collects all tasks from all projects with their project names.
-     * 
+     *
      * @param projects The project list to collect tasks from
      * @return List of tasks with their associated project names
      */
@@ -26,10 +28,10 @@ public class TaskCollector {
         }
         return tasks;
     }
-    
+
     /**
      * Collects all tasks from a specific project with the project name.
-     * 
+     *
      * @param project The project to collect tasks from
      * @return List of tasks with their associated project name
      */

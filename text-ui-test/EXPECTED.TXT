@@ -1,6 +1,8 @@
-FLOWCLI
+FlowCLI
 ____________________________________________________________
-Hello! I'm FlowCLI, a fast minimal CLI task manager
+Hello! I'm FlowCLI, a fast, minimal CLI project task manager.
+What can I do for you today?
+____________________________________________________________
 ____________________________________________________________
 Got it. I've added this project: 
 Project1
@@ -109,6 +111,24 @@ Project2: [ ] Task E (Due: Oct 10, 2025) [High]
 ____________________________________________________________
 ____________________________________________________________
 Filtered tasks by project NonExistent:
+____________________________________________________________
+____________________________________________________________
+Available Commands:
+ 1. add <project>               - Add a new project
+ 2. add <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]
+ 3. list                        - List all projects
+ 4. list <project>              - List tasks in a project
+ 5. mark <project> <index>      - Mark task as done
+ 6. unmark <project> <index>    - Mark task as not done
+ 7. delete <project>            - Delete a project
+ 8. delete <project> <index>    - Delete a task
+ 9. sort tasks by deadline/priority ascending/descending - Sort all tasks
+10. filter tasks by priority <value> - Filter tasks by priority
+11. filter tasks by project <name> - Filter tasks by project name
+12. export tasks to <filename>.txt [<project>] [filter by <type> <value>] [sort by <field> <order>] - Export tasks to TXT file
+13. export tasks to <filename>.txt --all - Force export all tasks
+14. help                        - Show this help message
+15. bye                         - Exit the application
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
