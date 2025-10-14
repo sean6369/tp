@@ -51,10 +51,6 @@ public class ConsoleUi {
         System.out.println(String.format("Now you have %d projects.", projects.getProjectListSize()));
     }
     
-    public void showAddedProjectDescription(Project targetProject ){
-        System.out.println("added the description to the project: " + "'" + targetProject.getProjectName() +"'");
-    }
-
     public void showCurrentTaskListSize(Project targetProject) {
         System.out.println(
                 String.format("Now you have %d task in the %s.", targetProject.size(), targetProject.getProjectName()));

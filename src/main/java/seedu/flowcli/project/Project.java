@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 public class Project {
     private String projectName;
-    private String projectDescription;
     private String projectStatus;
     private TaskList projectTasks;
 
@@ -67,13 +66,4 @@ public class Project {
     public String showAllTasks() {
         return projectTasks.render();
     }
-
-    public void addProjectDescription(String description){
-        this.projectDescription = description;
-    }
-
-    public String getProjectDescription(){
-        return projectDescription;
-    }
-
 }
