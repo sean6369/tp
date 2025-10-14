@@ -130,8 +130,6 @@ public class ConsoleUi {
         System.out.println(" 8. delete <project> <index>    - Delete a task");
         System.out.println(" 9. update <project> <index> [--description <desc>] [--deadline YYYY-MM-DD|none]"
                 + " [--priority low/medium/high] - Update a task");
-        System.out.println(
-                "    Example: update \"Birthday Bash\" 2 --description Bake cake --deadline 2025-05-10 --priority high");
         System.out.println("10. sort tasks by deadline/priority ascending/descending - Sort all tasks");
         System.out.println("11. filter tasks by priority <value> - Filter tasks by priority");
         System.out.println("12. filter tasks by project <name> - Filter tasks by project name");

@@ -66,7 +66,7 @@ public class CommandParser {
     }
 
     public static Integer parseIndexOrNull(String indexText, int maxIndex)
-                                    throws IndexOutOfRangeException, MissingIndexException {
+            throws IndexOutOfRangeException, MissingIndexException {
         if (indexText == null) {
             throw new MissingIndexException();
         }
