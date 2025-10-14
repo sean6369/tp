@@ -82,17 +82,17 @@ class TaskSorterTest {
         List<TaskWithProject> sortedTasks = sorter.getSortedTasks();
 
         assertAll("Deadline ascending sort validation",
-                                        () -> assertEquals(5, sortedTasks.size(), "Should return all 5 tasks"),
-                                        () -> assertEquals("Task E", sortedTasks.get(0).getTask().getDescription(),
-                                                                        "First task should be Task E (earliest deadline)"),
-                                        () -> assertEquals("Task B", sortedTasks.get(1).getTask().getDescription(),
-                                                                        "Second task should be Task B"),
-                                        () -> assertEquals("Task D", sortedTasks.get(2).getTask().getDescription(),
-                                                                        "Third task should be Task D"),
-                                        () -> assertEquals("Task A", sortedTasks.get(3).getTask().getDescription(),
-                                                                        "Fourth task should be Task A"),
-                                        () -> assertNull(sortedTasks.get(4).getTask().getDeadline(),
-                                                                        "Last task should have null deadline (Task C)"));
+                () -> assertEquals(5, sortedTasks.size(), "Should return all 5 tasks"),
+                () -> assertEquals("Task E", sortedTasks.get(0).getTask().getDescription(),
+                        "First task should be Task E (earliest deadline)"),
+                () -> assertEquals("Task B", sortedTasks.get(1).getTask().getDescription(),
+                        "Second task should be Task B"),
+                () -> assertEquals("Task D", sortedTasks.get(2).getTask().getDescription(),
+                        "Third task should be Task D"),
+                () -> assertEquals("Task A", sortedTasks.get(3).getTask().getDescription(),
+                        "Fourth task should be Task A"),
+                () -> assertNull(sortedTasks.get(4).getTask().getDeadline(),
+                        "Last task should have null deadline (Task C)"));
 
         logger.info("Deadline ascending sort test passed");
     }
@@ -105,17 +105,17 @@ class TaskSorterTest {
         List<TaskWithProject> sortedTasks = sorter.getSortedTasks();
 
         assertAll("Deadline descending sort validation",
-                                        () -> assertEquals(5, sortedTasks.size(), "Should return all 5 tasks"),
-                                        () -> assertNull(sortedTasks.get(0).getTask().getDeadline(),
-                                                                        "First task should have null deadline (Task C)"),
-                                        () -> assertEquals("Task A", sortedTasks.get(1).getTask().getDescription(),
-                                                                        "Second task should be Task A (latest deadline)"),
-                                        () -> assertEquals("Task D", sortedTasks.get(2).getTask().getDescription(),
-                                                                        "Third task should be Task D"),
-                                        () -> assertEquals("Task B", sortedTasks.get(3).getTask().getDescription(),
-                                                                        "Fourth task should be Task B"),
-                                        () -> assertEquals("Task E", sortedTasks.get(4).getTask().getDescription(),
-                                                                        "Last task should be Task E (earliest deadline)"));
+                () -> assertEquals(5, sortedTasks.size(), "Should return all 5 tasks"),
+                () -> assertNull(sortedTasks.get(0).getTask().getDeadline(),
+                        "First task should have null deadline (Task C)"),
+                () -> assertEquals("Task A", sortedTasks.get(1).getTask().getDescription(),
+                        "Second task should be Task A (latest deadline)"),
+                () -> assertEquals("Task D", sortedTasks.get(2).getTask().getDescription(),
+                        "Third task should be Task D"),
+                () -> assertEquals("Task B", sortedTasks.get(3).getTask().getDescription(),
+                        "Fourth task should be Task B"),
+                () -> assertEquals("Task E", sortedTasks.get(4).getTask().getDescription(),
+                        "Last task should be Task E (earliest deadline)"));
 
         logger.info("Deadline descending sort test passed");
     }
@@ -131,30 +131,30 @@ class TaskSorterTest {
         List<TaskWithProject> descTasks = descSorter.getSortedTasks();
 
         assertAll("Priority sorting both directions validation",
-                                        () -> assertEquals(5, ascTasks.size(), "Ascending should return all 5 tasks"),
-                                        () -> assertEquals(5, descTasks.size(), "Descending should return all 5 tasks"),
+                () -> assertEquals(5, ascTasks.size(), "Ascending should return all 5 tasks"),
+                () -> assertEquals(5, descTasks.size(), "Descending should return all 5 tasks"),
 
-                                        // Ascending: Low (1) -> Medium (2) ->
-                                        // High (3)
-                                        () -> assertEquals("Task B", ascTasks.get(0).getTask().getDescription(),
-                                                                        "First in ascending should be low priority (Task B)"),
-                                        () -> assertTrue(ascTasks.get(1).getTask().getPriority() == 2
-                                                                        && ascTasks.get(2).getTask().getPriority() == 2,
-                                                                        "Second and third should be medium priority"),
-                                        () -> assertTrue(ascTasks.get(3).getTask().getPriority() == 3
-                                                                        && ascTasks.get(4).getTask().getPriority() == 3,
-                                                                        "Fourth and fifth should be high priority"),
+                // Ascending: Low (1) -> Medium (2) ->
+                // High (3)
+                () -> assertEquals("Task B", ascTasks.get(0).getTask().getDescription(),
+                        "First in ascending should be low priority (Task B)"),
+                () -> assertTrue(
+                        ascTasks.get(1).getTask().getPriority() == 2 && ascTasks.get(2).getTask().getPriority() == 2,
+                        "Second and third should be medium priority"),
+                () -> assertTrue(
+                        ascTasks.get(3).getTask().getPriority() == 3 && ascTasks.get(4).getTask().getPriority() == 3,
+                        "Fourth and fifth should be high priority"),
 
-                                        // Descending: High (3) -> Medium (2) ->
-                                        // Low (1)
-                                        () -> assertTrue(descTasks.get(0).getTask().getPriority() == 3 && descTasks
-                                                                        .get(1).getTask().getPriority() == 3,
-                                                                        "First and second in descending should be high priority"),
-                                        () -> assertTrue(descTasks.get(2).getTask().getPriority() == 2 && descTasks
-                                                                        .get(3).getTask().getPriority() == 2,
-                                                                        "Third and fourth should be medium priority"),
-                                        () -> assertEquals("Task B", descTasks.get(4).getTask().getDescription(),
-                                                                        "Last in descending should be low priority (Task B)"));
+                // Descending: High (3) -> Medium (2) ->
+                // Low (1)
+                () -> assertTrue(
+                        descTasks.get(0).getTask().getPriority() == 3 && descTasks.get(1).getTask().getPriority() == 3,
+                        "First and second in descending should be high priority"),
+                () -> assertTrue(
+                        descTasks.get(2).getTask().getPriority() == 2 && descTasks.get(3).getTask().getPriority() == 2,
+                        "Third and fourth should be medium priority"),
+                () -> assertEquals("Task B", descTasks.get(4).getTask().getDescription(),
+                        "Last in descending should be low priority (Task B)"));
 
         logger.info("Priority sorting both directions test passed");
     }
@@ -185,11 +185,10 @@ class TaskSorterTest {
         List<TaskWithProject> sortedTasks = sorter.getSortedTasks();
 
         assertAll("Single task sort validation",
-                                        () -> assertEquals(1, sortedTasks.size(), "Should return exactly 1 task"),
-                                        () -> assertEquals("Single Task", sortedTasks.get(0).getTask().getDescription(),
-                                                                        "Task description should match"),
-                                        () -> assertEquals("SingleProject", sortedTasks.get(0).getProjectName(),
-                                                                        "Project name should match"));
+                () -> assertEquals(1, sortedTasks.size(), "Should return exactly 1 task"),
+                () -> assertEquals("Single Task", sortedTasks.get(0).getTask().getDescription(),
+                        "Task description should match"),
+                () -> assertEquals("SingleProject", sortedTasks.get(0).getProjectName(), "Project name should match"));
 
         logger.info("Single task sort test passed");
     }
@@ -212,13 +211,11 @@ class TaskSorterTest {
         List<TaskWithProject> sortedTasks = sorter.getSortedTasks();
 
         assertAll("Null deadline sort validation",
-                                        () -> assertEquals(3, sortedTasks.size(), "Should return all 3 tasks"),
-                                        () -> assertNotNull(sortedTasks.get(0).getTask().getDeadline(),
-                                                                        "First task should have a deadline (Dated Task)"),
-                                        () -> assertNull(sortedTasks.get(1).getTask().getDeadline(),
-                                                                        "Second task should have null deadline"),
-                                        () -> assertNull(sortedTasks.get(2).getTask().getDeadline(),
-                                                                        "Third task should have null deadline"));
+                () -> assertEquals(3, sortedTasks.size(), "Should return all 3 tasks"),
+                () -> assertNotNull(sortedTasks.get(0).getTask().getDeadline(),
+                        "First task should have a deadline (Dated Task)"),
+                () -> assertNull(sortedTasks.get(1).getTask().getDeadline(), "Second task should have null deadline"),
+                () -> assertNull(sortedTasks.get(2).getTask().getDeadline(), "Third task should have null deadline"));
 
         logger.info("Null deadline sort test passed");
     }

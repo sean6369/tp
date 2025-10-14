@@ -3,12 +3,12 @@ package seedu.flowcli.commands;
 import java.time.LocalDate;
 
 import seedu.flowcli.commands.core.CommandContext;
+import seedu.flowcli.commands.validation.CommandValidator;
 import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.exceptions.MissingDescriptionException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
-import seedu.flowcli.commands.validation.CommandValidator;
 
 public class AddCommand extends Command {
 
@@ -50,12 +50,10 @@ public class AddCommand extends Command {
                 try {
                     deadline = LocalDate.parse(dateStr);
                 } catch (Exception e) {
-                    throw new InvalidArgumentException(
-                            "Invalid deadline format: " + dateStr + ". Use YYYY-MM-DD.");
+                    throw new InvalidArgumentException("Invalid deadline format: " + dateStr + ". Use YYYY-MM-DD.");
                 }
             } else {
-                throw new InvalidArgumentException(
-                        "Unknown option: " + option + ". Use --priority or --deadline.");
+                throw new InvalidArgumentException("Unknown option: " + option + ". Use --priority or --deadline.");
             }
         }
 
