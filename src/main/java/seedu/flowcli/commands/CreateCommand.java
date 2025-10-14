@@ -21,10 +21,10 @@ public class CreateCommand extends Command {
             throw new ProjectAlreadyExistsException();
         }
         if (parsedArgument.getRemainingArgument() == null) {
-                throw new MissingArgumentException();
-            }
-            context.getProjects().addProject(parsedArgument.getRemainingArgument());
-            context.getUi().showAddedProject();
-            return true;
+            throw new MissingArgumentException();
+        }
+        context.getProjects().addProject(parsedArgument.getRemainingArgument());
+        context.getUi().showAddedProject();
+        return true;
     }
 }
