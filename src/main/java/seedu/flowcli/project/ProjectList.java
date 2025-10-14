@@ -47,7 +47,7 @@ public class ProjectList {
     public String render() {
         String output = "";
         for (Project project : projects) {
-            output += project + " ";
+            output += project;
             output += "\n";
         }
 
