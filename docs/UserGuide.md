@@ -7,7 +7,7 @@ FlowCLI is a fast keyboard-driven task manager for teams who organise work aroun
 ## Quick Start
 
 1. Ensure Java 17 or a newer Java runtime is installed: `java -version` should report 17.x.
-2. Download the latest `flowcli.jar`, or clone this repository and build it with `./gradlew shadowJar`. The runnable JAR is generated at `build/libs/flowcli.jar`.
+2. Download the latest `flowcli.jar` from [here](https://github.com/AY2526S1-CS2113-W13-2/tp/releases/tag/v1.0).
 3. Run the application from a terminal in the same folder as the JAR:
    ```
    java -jar flowcli.jar
@@ -27,8 +27,9 @@ Projects and tasks exist only for the current session. Use the export feature to
 ### Create a project: `create <projectName>`
 
 Adds a new project. If you repeat the command with the same name (any casing), FlowCLI reports a duplicate.
+
 ```
-create Growth Experiments
+create "Birthday Bash"
 ```
 
 ### List projects or tasks: `list [projectName]`
