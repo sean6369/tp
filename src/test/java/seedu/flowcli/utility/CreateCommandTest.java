@@ -60,7 +60,7 @@ class CreateCommandTest {
 
     @Test
     @DisplayName("execute successful and addsProject returnsTrue and then Calls Ui")
-    void execute_success_addsProject_andCallsUi() throws Exception {
+    void executesuccess_addsProjectandCallsUi() throws Exception {
         // Arrange
         ProjectList projects = new ProjectList();
         SpyUi ui = new SpyUi(projects);
