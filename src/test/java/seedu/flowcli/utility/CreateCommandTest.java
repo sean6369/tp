@@ -1,134 +1,111 @@
 package seedu.flowcli.utility;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockedConstruction;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import seedu.flowcli.commands.CreateCommand;
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.exceptions.ProjectAlreadyExistsException;
-import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
 
-@ExtendWith(MockitoExtension.class)
-public class CreateCommandTest {
 
-    /** Minimal JUL handler to capture log records. */
-    private static class CapturingHandler extends Handler {
-        final List<LogRecord> records = new ArrayList<>();
-        @Override public void publish(LogRecord record) { records.add(record); }
-        @Override public void flush() {}
-        @Override public void close() throws SecurityException {}
-        boolean hasLevel(Level level) {
-            return records.stream().anyMatch(r -> r.getLevel().intValue() == level.intValue());
+@DisplayName("CreateCommand Unit Tests")
+class CreateCommandTest {
+
+    private static final Logger logger = Logger.getLogger(CreateCommandTest.class.getName());
+
+    
+    static class SpyUi extends ConsoleUi {
+        boolean addedShown = false;
+        SpyUi(ProjectList projects) {
+            super(projects); 
+        }
+        @Override
+        public void showAddedProject() {
+            addedShown = true;
         }
     }
 
-    @Test
-    void execute_success_addsProject_showsUi_andLogsInfo() throws Exception {
-        // Arrange
-        CreateCommand cmd = new CreateCommand("create MyNewProject");
-        CommandContext context = mock(CommandContext.class);
-        ProjectList projectList = mock(ProjectList.class);
-        ConsoleUi ui = mock(ConsoleUi.class);
-        when(context.getProjects()).thenReturn(projectList);
-        when(context.getUi()).thenReturn(ui);
-
-        Logger logger = Logger.getLogger(CreateCommand.class.getName());
-        Level original = logger.getLevel();
-        CapturingHandler cap = new CapturingHandler();
-        logger.addHandler(cap);
-        logger.setLevel(Level.FINE);
-
-        try (MockedConstruction<ArgumentParser> mocked =
-                     mockConstruction(ArgumentParser.class, (parser, ctorCtx) -> {
-                         when(parser.getTargetProject()).thenReturn(null);
-                         when(parser.getRemainingArgument()).thenReturn("MyNewProject");
-                     })) {
-
-            // Act
-            boolean ok = cmd.execute(context);
-
-            // Assert behavior
-            assertTrue(ok);
-            verify(projectList).addProject("MyNewProject");
-            verify(ui).showAddedProject();
-
-            // Assert at least one INFO log occurred
-            assertTrue(cap.hasLevel(Level.INFO), "Expected at least one INFO log on success");
-        } finally {
-            logger.removeHandler(cap);
-            logger.setLevel(original);
+    @BeforeEach
+    void setUpLogging() {
+        Logger root = Logger.getLogger("");
+        root.setLevel(Level.FINE);
+        for (Handler h : root.getHandlers()) {
+            h.setLevel(Level.FINE);
         }
+        logger.info("Setting up CreateCommand tests");
+    }
+
+    /** Build a minimal CommandContext; CreateCommand only uses getProjects()/getUi(). */
+    private CommandContext makeContext(ProjectList projects, ConsoleUi ui) {
+        // Your constructor is CommandContext(ProjectList, ConsoleUi, ExportCommandHandler)
+        // CreateCommand doesn't use the export handler, so pass null.
+        return new CommandContext(projects, ui, null);
     }
 
     @Test
-    void execute_projectAlreadyExists_logsWarning_andThrows() throws Exception {
+    @DisplayName("execute_success_addsProject_returnsTrue_andCallsUi")
+    void execute_success_addsProject_andCallsUi() throws Exception {
         // Arrange
-        CreateCommand cmd = new CreateCommand("create Existing");
-        CommandContext context = mock(CommandContext.class);
-        when(context.getProjects()).thenReturn(mock(ProjectList.class));
-        Project existing = mock(Project.class);
+        ProjectList projects = new ProjectList();
+        SpyUi ui = new SpyUi(projects);
+        CommandContext ctx = makeContext(projects, ui);
+        CreateCommand cmd = new CreateCommand("MyNewProject"); // parser expects the name as the argument
 
-        Logger logger = Logger.getLogger(CreateCommand.class.getName());
-        Level original = logger.getLevel();
-        CapturingHandler cap = new CapturingHandler();
-        logger.addHandler(cap);
-        logger.setLevel(Level.FINE);
-
-        try (MockedConstruction<ArgumentParser> mocked =
-                     mockConstruction(ArgumentParser.class, (parser, ctorCtx) -> {
-                         when(parser.getTargetProject()).thenReturn(existing); // early throw
-                     })) {
-
-            // Act & Assert
-            assertThrows(ProjectAlreadyExistsException.class, () -> cmd.execute(context));
-            assertTrue(cap.hasLevel(Level.WARNING), "Expected a WARNING log when project exists");
-        } finally {
-            logger.removeHandler(cap);
-            logger.setLevel(original);
-        }
+        
+        boolean ok = cmd.execute(ctx);
+        assertAll("Success path",
+                () -> assertTrue(ok, "execute() should return true"),
+                () -> assertTrue(ui.addedShown, "UI.showAddedProject() should be called"),
+                () -> assertEquals(1, projects.getProjectList().size(),
+                        "Project list should contain exactly one project after creation")
+        );
+        logger.info("Success case passed");
     }
 
     @Test
-    void execute_missingArgument_logsWarning_andThrows() throws Exception {
+    @DisplayName("execute_existingProject_throwsProjectAlreadyExistsException")
+    void execute_existingProject_throwsAlreadyExists() {
         // Arrange
-        CreateCommand cmd = new CreateCommand("create");
-        CommandContext context = mock(CommandContext.class);
-        when(context.getProjects()).thenReturn(mock(ProjectList.class));
+        ProjectList projects = new ProjectList();
+        projects.getProjectList().add(new Project("Existing")); // pre-existing
+        SpyUi ui = new SpyUi(projects);
+        CommandContext ctx = makeContext(projects, ui);
+        CreateCommand cmd = new CreateCommand("Existing");
 
-        Logger logger = Logger.getLogger(CreateCommand.class.getName());
-        Level original = logger.getLevel();
-        CapturingHandler cap = new CapturingHandler();
-        logger.addHandler(cap);
-        logger.setLevel(Level.FINE);
+        // Act & Assert
+        assertThrows(ProjectAlreadyExistsException.class, () -> cmd.execute(ctx),
+                "Should throw when project name already exists");
+        assertFalse(ui.addedShown, "UI.showAddedProject() must not be called on failure");
+        // Ensure we didn't add duplicates
+        assertEquals(1, projects.getProjectList().size(), "No new project should be added on failure");
+        logger.info("Existing-project case passed");
+    }
 
-        try (MockedConstruction<ArgumentParser> mocked =
-                     mockConstruction(ArgumentParser.class, (parser, ctorCtx) -> {
-                         when(parser.getTargetProject()).thenReturn(null);
-                         when(parser.getRemainingArgument()).thenReturn(null); // triggers MissingArgumentException
-                     })) {
+    @Test
+    @DisplayName("execute_missingName_throwsMissingArgumentException")
+    void execute_missingName_throwsMissingArgument() {
+        // Arrange
+        ProjectList projects = new ProjectList();
+        SpyUi ui = new SpyUi(projects);
+        CommandContext ctx = makeContext(projects, ui);
+        CreateCommand cmd = new CreateCommand(""); // empty => parser should treat as missing
 
-            // Act & Assert
-            assertThrows(MissingArgumentException.class, () -> cmd.execute(context));
-            assertTrue(cap.hasLevel(Level.WARNING), "Expected a WARNING log for missing argument");
-        } finally {
-            logger.removeHandler(cap);
-            logger.setLevel(original);
-        }
+        // Act & Assert
+        assertThrows(MissingArgumentException.class, () -> cmd.execute(ctx),
+                "Should throw when project name is missing");
+        assertFalse(ui.addedShown, "UI.showAddedProject() must not be called on failure");
+        assertEquals(0, projects.getProjectList().size(), "No project should be created on failure");
+        logger.info("Missing-argument case passed");
     }
 }
