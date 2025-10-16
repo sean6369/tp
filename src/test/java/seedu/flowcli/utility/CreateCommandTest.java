@@ -1,6 +1,9 @@
 package seedu.flowcli.utility;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -54,7 +57,7 @@ class CreateCommandTest {
     }
 
     @Test
-    @DisplayName("execute_success_addsProject_returnsTrue_andCallsUi")
+    @DisplayName("execute successful and addsProject returnsTrue and then Calls Ui")
     void execute_success_addsProject_andCallsUi() throws Exception {
         // Arrange
         ProjectList projects = new ProjectList();
