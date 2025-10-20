@@ -17,6 +17,8 @@ public class CreateCommand extends Command {
 
     @Override
     public boolean execute(CommandContext context) throws Exception {
+        assert context != null : "CommandContext must not be null";
+        assert arguments != null : "CreateCommand arguments must not be null";
         logger.fine(() -> "CreateCommand.execute() called with args=\"" + arguments + "\"");
 
         ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
