@@ -2,7 +2,6 @@ package seedu.flowcli.commands.core;
 
 import java.util.Scanner;
 import java.util.logging.Logger;
-import java.util.logging.Level;
 
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
@@ -129,7 +128,8 @@ public class InteractivePromptHandler {
         for (int i = 0; i < projects.getProjectListSize(); i++) {
             System.out.println((i + 1) + ". " + projects.getProjectList().get(i).getProjectName());
         }
-        System.out.println((projects.getProjectListSize() + 1) + ". All projects [default, this will always be last option]");
+        System.out.println((projects.getProjectListSize() + 1) +
+                           ". All projects [default, this will always be last option]");
 
         while (true) {
             System.out.print("Enter choice (1-" + (projects.getProjectListSize() + 1) + "): ");
@@ -245,7 +245,8 @@ public class InteractivePromptHandler {
             System.out.println((i + 1) + ". [x] " + project.getProjectTasks().get(i).getDescription());
         }
 
-        System.out.println("Enter task number to mark as not done [for multiple tasks, separate by commas e.g. 1,2,3,4]:");
+        System.out.println("Enter task number to mark as not done " +
+                           "[for multiple tasks, separate by commas e.g. 1,2,3,4]:");
         String input = scanner.nextLine().trim();
 
         if (input.isEmpty()) {
@@ -514,19 +515,25 @@ public class InteractivePromptHandler {
             switch (input) {
             case "1":
                 String newDesc = promptForNewDescription();
-                if (newDesc == null) continue; // Stay in loop
+                if (newDesc == null) {
+                    continue; // Stay in loop
+                }
                 args.append(" --description \"").append(newDesc).append("\"");
                 System.out.println("Description updated!");
                 break;
             case "2":
                 String newPriority = promptForNewPriority();
-                if (newPriority == null) continue;
+                if (newPriority == null) {
+                    continue;
+                }
                 args.append(" --priority ").append(newPriority);
                 System.out.println("Priority updated!");
                 break;
             case "3":
                 String newDeadline = promptForNewDeadline();
-                if (newDeadline == null) continue;
+                if (newDeadline == null) {
+                    continue;
+                }
                 if (!newDeadline.isEmpty()) {
                     args.append(" --deadline ").append(newDeadline);
                 } else {
@@ -814,24 +821,34 @@ public class InteractivePromptHandler {
                 break;
             case "2":
                 String projectName = promptForProject(false);
-                if (projectName == null) return null;
+                if (projectName == null) {
+                    return null;
+                }
                 args.append(" \"").append(projectName).append("\"");
                 break;
             case "3":
                 String filterArgs = handleFilterCommand();
-                if (filterArgs == null) return null;
+                if (filterArgs == null) {
+                    return null;
+                }
                 args.append(" ").append(filterArgs);
                 break;
             case "4":
                 String sortArgs = handleSortCommand();
-                if (sortArgs == null) return null;
+                if (sortArgs == null) {
+                    return null;
+                }
                 args.append(" ").append(sortArgs);
                 break;
             case "5":
                 String filterArgs2 = handleFilterCommand();
-                if (filterArgs2 == null) return null;
+                if (filterArgs2 == null) {
+                    return null;
+                }
                 String sortArgs2 = handleSortCommand();
-                if (sortArgs2 == null) return null;
+                if (sortArgs2 == null) {
+                    return null;
+                }
                 args.append(" ").append(filterArgs2).append(" ").append(sortArgs2);
                 break;
             default:
@@ -860,7 +877,8 @@ public class InteractivePromptHandler {
      * @return The selected project name, or null if cancelled
      */
     private String promptForProject(boolean allowCreateNew) {
-        System.out.println("Hmph, fine... What project should this task be for? Don't think I care which one you pick!");
+        System.out.println("Hmph, fine... What project should this task be for? " +
+                           "Don't think I care which one you pick!");
 
         if (projects.getProjectListSize() == 0) {
             if (!allowCreateNew) {
@@ -880,7 +898,9 @@ public class InteractivePromptHandler {
         }
 
         while (true) {
-            System.out.print("Enter choice (1-" + (allowCreateNew ? projects.getProjectListSize() + 1 : projects.getProjectListSize()) + "): ");
+            System.out.print("Enter choice (1-" +
+                             (allowCreateNew ? projects.getProjectListSize() + 1 : projects.getProjectListSize()) +
+                             "): ");
             String input = scanner.nextLine().trim();
 
             if (input.isEmpty()) {
