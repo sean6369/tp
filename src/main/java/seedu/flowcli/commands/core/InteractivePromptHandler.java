@@ -119,27 +119,31 @@ public class InteractivePromptHandler {
         logger.info("Starting interactive list command flow");
 
         System.out.println("What do you want to list, forgetful one?");
+        if (projects.getProjectListSize() == 0) {
+            System.out.println("No projects available.");
+            return null;
+        }
+
         System.out.println("Available projects:");
         for (int i = 0; i < projects.getProjectListSize(); i++) {
             System.out.println((i + 1) + ". " + projects.getProjectList().get(i).getProjectName());
         }
-        System.out.println((projects.getProjectListSize() + 1) +
-                           ". All projects [default, this will always be last option]");
+
+        System.out.println("Do you want to look into the tasks for any of these projects?");
+        System.out.println("Enter the project number to view its tasks, or press Enter to exit.");
 
         while (true) {
-            System.out.print("Enter choice (1-" + (projects.getProjectListSize() + 1) + "): ");
+            System.out.print("Enter choice (1-" + projects.getProjectListSize() + "): ");
             String input = scanner.nextLine().trim();
 
             if (input.isEmpty()) {
-                return ""; // Default to all projects
+                return null; // Exit list command
             }
 
             try {
                 int choice = Integer.parseInt(input);
                 if (choice >= 1 && choice <= projects.getProjectListSize()) {
                     return "\"" + projects.getProjectList().get(choice - 1).getProjectName() + "\"";
-                } else if (choice == projects.getProjectListSize() + 1) {
-                    return ""; // All projects
                 } else {
                     System.out.println("Invalid choice. Try again.");
                 }
