@@ -126,8 +126,8 @@ public class ConsoleUi {
         System.out.println(" 4. list <project>              - List tasks in a project");
         System.out.println(" 5. mark <project> <index>      - Mark task as done");
         System.out.println(" 6. unmark <project> <index>    - Mark task as not done");
-        System.out.println(" 7. delete <project>            - Delete a project");
-        System.out.println(" 8. delete <project> <index>    - Delete a task");
+        System.out.println(" 7. delete-project <project>            - Delete a project");
+        System.out.println(" 8. delete-task <project> <index>    - Delete a task");
         System.out.println(" 9. update <project> <index> [--description <desc>] [--deadline YYYY-MM-DD|none]"
                 + " [--priority low/medium/high] - Update a task");
         System.out.println("10. sort tasks by deadline/priority ascending/descending - Sort all tasks");

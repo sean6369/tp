@@ -49,7 +49,7 @@ class CommandParserTest {
                 () -> assertEquals(CommandType.LIST, parser.parse("list").getType()),
                 () -> assertEquals(CommandType.MARK, parser.parse("mark Project1 1").getType()),
                 () -> assertEquals(CommandType.ADD, parser.parse("add Project1 Task").getType()),
-                () -> assertEquals(CommandType.DELETE, parser.parse("delete Project1").getType()),
+                () -> assertEquals(CommandType.DELETEPROJECT, parser.parse("delete Project1").getType()),
                 () -> assertEquals(CommandType.UPDATE, parser.parse("update Project1 1").getType()),
                 () -> assertEquals(CommandType.SORT, parser.parse("sort tasks by deadline").getType()),
                 () -> assertEquals(CommandType.FILTER, parser.parse("filter tasks by priority").getType()));

@@ -4,7 +4,8 @@ import seedu.flowcli.commands.AddCommand;
 import seedu.flowcli.commands.ByeCommand;
 import seedu.flowcli.commands.Command;
 import seedu.flowcli.commands.CreateCommand;
-import seedu.flowcli.commands.DeleteCommand;
+import seedu.flowcli.commands.DeleteTaskCommand;
+import seedu.flowcli.commands.DeleteProjectCommand;
 import seedu.flowcli.commands.ExportCommand;
 import seedu.flowcli.commands.FilterCommand;
 import seedu.flowcli.commands.HelpCommand;
@@ -32,8 +33,10 @@ public class CommandFactory {
             return new AddCommand(arguments);
         case CREATE:
             return new CreateCommand(arguments);
-        case DELETE:
-            return new DeleteCommand(arguments);
+        case DELETEPROJECT:
+            return new DeleteProjectCommand(arguments);
+        case DELETETASK:
+            return new DeleteTaskCommand(arguments);
         case UPDATE:
             return new UpdateCommand(arguments);
         case HELP:
