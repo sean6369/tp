@@ -10,6 +10,7 @@ public class ArgumentParser {
 
     private Project targetProject;
     private String remainingArgument;
+    private String parsedProjectName;
 
     public ArgumentParser(String argument, ProjectList projects) {
         this.argument = argument;
@@ -24,6 +25,10 @@ public class ArgumentParser {
 
     public String getRemainingArgument() {
         return remainingArgument;
+    }
+
+    public String getParsedProjectName() {
+        return parsedProjectName;
     }
 
     public void parseArgument() {
@@ -43,6 +48,8 @@ public class ArgumentParser {
         ParsedProject parsedProject = parseProjectIdentifier(trimmed);
         String projectIdentifier = parsedProject.projectName;
         String arguments = parsedProject.remainingArguments;
+
+        parsedProjectName = projectIdentifier; // Store the parsed project name
 
         Project existingProject = projects.getProject(projectIdentifier);
         if (existingProject != null) {

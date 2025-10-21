@@ -119,11 +119,6 @@ public class InteractivePromptHandler {
         logger.info("Starting interactive list command flow");
 
         System.out.println("What do you want to list, forgetful one?");
-        if (projects.getProjectListSize() == 0) {
-            System.out.println("No projects available. All projects selected by default.");
-            return ""; // List all projects (empty args)
-        }
-
         System.out.println("Available projects:");
         for (int i = 0; i < projects.getProjectListSize(); i++) {
             System.out.println((i + 1) + ". " + projects.getProjectList().get(i).getProjectName());
@@ -885,7 +880,25 @@ public class InteractivePromptHandler {
                 System.out.println("No projects available. Going back...");
                 return null;
             }
-            return promptForNewProjectName();
+            // When no projects exist, directly offer to create new project
+            System.out.println("Available projects:");
+            System.out.println("1. Create new project");
+
+            while (true) {
+                System.out.print("Enter choice (1): ");
+                String input = scanner.nextLine().trim();
+
+                if (input.isEmpty()) {
+                    System.out.println("Going back...");
+                    return null;
+                }
+
+                if (input.equals("1")) {
+                    return promptForNewProjectName();
+                } else {
+                    System.out.println("Invalid choice. Try again.");
+                }
+            }
         }
 
         System.out.println("Available projects:");

@@ -19,8 +19,17 @@ public class AddCommand extends Command {
     public boolean execute(CommandContext context) throws Exception {
         ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
         Project targetProject = parsedArgument.getTargetProject();
+        
+        // If project doesn't exist, create it (for interactive mode)
         if (targetProject == null) {
-            throw new InvalidArgumentException("No such project with that name ");
+            String projectName = parsedArgument.getParsedProjectName();
+            if (projectName == null || projectName.trim().isEmpty()) {
+                throw new InvalidArgumentException("No project specified");
+            }
+            // Create the new project
+            context.getProjects().addProject(projectName);
+            targetProject = context.getProjects().getProject(projectName);
+            context.getUi().showAddedProject();
         }
 
         if (parsedArgument.getRemainingArgument() == null) {

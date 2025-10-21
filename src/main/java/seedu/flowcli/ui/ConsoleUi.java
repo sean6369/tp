@@ -118,6 +118,8 @@ public class ConsoleUi {
 
     public void showHelp() {
         printLine();
+        System.out.println("I see, another forgetful human who needs help remembering commands.");
+        System.out.println();
         System.out.println("Available Commands:");
         System.out.println("Tip: Wrap multi-word project names in double quotes (e.g. \"Birthday Bash\").");
         System.out.println(" 1. create <project>               - Add a new project");
@@ -139,7 +141,7 @@ public class ConsoleUi {
         System.out.println("15. help                        - Show this help message");
         System.out.println("16. bye                         - Exit the application");
         System.out.println();
-        System.out.println("Hmph, if you're too lazy or forgetful to remember these commands, baka...");
+        System.out.println("Hmph, if you're too lazy or forgetful to remember these commands...");
         System.out.println("just type the main command like 'add', 'create', 'list', etc.");
         System.out.println("It's not like I'll guide you through everything step by step or anything!");
         System.out.println("Don't get the wrong idea - I'm only doing this because I have to...");
