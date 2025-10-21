@@ -138,6 +138,8 @@ public class ConsoleUi {
         System.out.println("14. export tasks to <filename>.txt --all - Force export all tasks");
         System.out.println("15. help                        - Show this help message");
         System.out.println("16. bye                         - Exit the application");
+        System.out.println();
+        System.out.println("Hmph, if you're too lazy or forgetful to remember these commands, baka... just type the main command like 'add', 'create', 'list', etc. It's not like I'll guide you through everything step by step or anything! Don't get the wrong idea - I'm only doing this because I have to...");
         printLine();
     }
 
