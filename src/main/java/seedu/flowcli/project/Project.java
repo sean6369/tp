@@ -60,7 +60,7 @@ public class Project {
     }
 
     public String toString() {
-        return projectName  +  projectTasks.render() + '\n';
+        return projectName  + "\n" + projectTasks.render() + '\n';
     }
 
     public String showAllTasks() {

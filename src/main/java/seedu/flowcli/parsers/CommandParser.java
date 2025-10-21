@@ -38,6 +38,7 @@ public class CommandParser {
         String arguments = parts.length > 1 ? parts[1] : "";
 
         switch (commandWord) {
+        case "list-all":
         case "list":
             return new ParsedCommand(CommandType.LIST, arguments);
         case "mark":
@@ -46,8 +47,10 @@ public class CommandParser {
             return new ParsedCommand(CommandType.UNMARK, arguments);
         case "bye":
             return new ParsedCommand(CommandType.BYE, arguments);
+        case "add-task":
         case "add":
             return new ParsedCommand(CommandType.ADD, arguments);
+        case "create-project":
         case "create":
             return new ParsedCommand(CommandType.CREATE, arguments);
         case "delete":

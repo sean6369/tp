@@ -48,7 +48,7 @@ public class ProjectList {
         String output = "";
         for (Project project : projects) {
             output += project;
-            output += "\n";
+            //output += "\n";
         }
 
         return output;

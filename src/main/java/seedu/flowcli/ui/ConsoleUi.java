@@ -120,9 +120,9 @@ public class ConsoleUi {
         printLine();
         System.out.println("Available Commands:");
         System.out.println("Tip: Wrap multi-word project names in double quotes (e.g. \"Birthday Bash\").");
-        System.out.println(" 1. create <project>               - Add a new project");
-        System.out.println(" 2. add <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]");
-        System.out.println(" 3. list                        - List all projects");
+        System.out.println(" 1. create-project <project>               - Add a new project");
+        System.out.println(" 2. add-task <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]");
+        System.out.println(" 3. list-all                        - List all projects");
         System.out.println(" 4. list <project>              - List tasks in a project");
         System.out.println(" 5. mark <project> <index>      - Mark task as done");
         System.out.println(" 6. unmark <project> <index>    - Mark task as not done");
@@ -138,6 +138,12 @@ public class ConsoleUi {
         System.out.println("14. export tasks to <filename>.txt --all - Force export all tasks");
         System.out.println("15. help                        - Show this help message");
         System.out.println("16. bye                         - Exit the application");
+        System.out.println("\n");
+        System.out.println("Shortcut commands");
+        System.out.println(" 1. create <project>               - Add a new project");
+        System.out.println(" 2. add <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]");
+        System.out.println(" 3. list                        - List all projects");
+        
         printLine();
     }
 
