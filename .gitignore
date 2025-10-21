@@ -16,8 +16,14 @@ bin/
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT
 
+
 # Formatter config file
 *formatter.xml
 
 # JAR file
 *.jar
+
+# Others
+plans/
+.github/chatmodes/
+run.bat
