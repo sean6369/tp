@@ -330,7 +330,8 @@ Tip: Wrap multi-word project names in double quotes (e.g. "Birthday Bash").
 16. bye                         - Exit the application
 
 Hmph, if you're too lazy or forgetful to remember these commands...
-just type the main command like 'add', 'create', 'list', etc.
+just type the main command like 'add', 'create', 'list', 'mark', 'unmark', 'delete',
+'update', 'sort', 'filter', 'export', or 'help'.
 It's not like I'll guide you through everything step by step or anything!
 Don't get the wrong idea - I'm only doing this because I have to...
 ____________________________________________________________

@@ -142,7 +142,8 @@ public class ConsoleUi {
         System.out.println("16. bye                         - Exit the application");
         System.out.println();
         System.out.println("Hmph, if you're too lazy or forgetful to remember these commands...");
-        System.out.println("just type the main command like 'add', 'create', 'list', etc.");
+        System.out.println("just type the main command like 'add', 'create', 'list', 'mark', 'unmark', 'delete',");
+        System.out.println("'update', 'sort', 'filter', 'export', or 'help'.");
         System.out.println("It's not like I'll guide you through everything step by step or anything!");
         System.out.println("Don't get the wrong idea - I'm only doing this because I have to...");
         printLine();
