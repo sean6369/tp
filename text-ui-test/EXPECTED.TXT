@@ -8,7 +8,6 @@ ____________________________________________________________
 Got it. I've added this project: 
 Project Alpha
 
-
 Now you have 1 projects.
 ____________________________________________________________
 Hmph, enter project name already:
@@ -16,14 +15,12 @@ ____________________________________________________________
 Got it. I've added this project: 
 Project Beta
 
-
 Now you have 2 projects.
 ____________________________________________________________
 Hmph, enter project name already:
 ____________________________________________________________
 Got it. I've added this project: 
 singleWord
-
 
 Now you have 3 projects.
 ____________________________________________________________
