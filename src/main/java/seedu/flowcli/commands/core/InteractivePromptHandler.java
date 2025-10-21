@@ -779,14 +779,18 @@ public class InteractivePromptHandler {
                 if (filterArgs == null) {
                     return null;
                 }
-                args.append(" ").append(filterArgs);
+                // Convert from "tasks by priority medium" to "filter by priority medium"
+                String exportFilterArgs = filterArgs.replace("tasks by", "filter by");
+                args.append(" ").append(exportFilterArgs);
                 break;
             case "4":
                 String sortArgs = handleSortCommand();
                 if (sortArgs == null) {
                     return null;
                 }
-                args.append(" ").append(sortArgs);
+                // Convert from "tasks by deadline descending" to "sort by deadline descending"
+                String exportSortArgs = sortArgs.replace("tasks by", "sort by");
+                args.append(" ").append(exportSortArgs);
                 break;
             case "5":
                 String filterArgs2 = handleFilterCommand();
@@ -797,7 +801,10 @@ public class InteractivePromptHandler {
                 if (sortArgs2 == null) {
                     return null;
                 }
-                args.append(" ").append(filterArgs2).append(" ").append(sortArgs2);
+                // Convert both to export format
+                String exportFilterArgs2 = filterArgs2.replace("tasks by", "filter by");
+                String exportSortArgs2 = sortArgs2.replace("tasks by", "sort by");
+                args.append(" ").append(exportFilterArgs2).append(" ").append(exportSortArgs2);
                 break;
             default:
                 System.out.println("Invalid choice. Try again.");
