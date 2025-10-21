@@ -50,7 +50,7 @@ public class ConsoleUi {
     public void showCurrentProjectListSize() {
         System.out.println(String.format("Now you have %d projects.", projects.getProjectListSize()));
     }
-    
+
     public void showCurrentTaskListSize(Project targetProject) {
         System.out.println(
                 String.format("Now you have %d task in the %s.", targetProject.size(), targetProject.getProjectName()));
@@ -118,6 +118,8 @@ public class ConsoleUi {
 
     public void showHelp() {
         printLine();
+        System.out.println("I see, another forgetful human who needs help remembering commands.");
+        System.out.println();
         System.out.println("Available Commands:");
         System.out.println("Tip: Wrap multi-word project names in double quotes (e.g. \"Birthday Bash\").");
         System.out.println(" 1. create-project <project>               - Add a new project");
@@ -138,12 +140,12 @@ public class ConsoleUi {
         System.out.println("14. export tasks to <filename>.txt --all - Force export all tasks");
         System.out.println("15. help                        - Show this help message");
         System.out.println("16. bye                         - Exit the application");
-        System.out.println("\n");
-        System.out.println("Shortcut commands");
-        System.out.println(" 1. create <project>               - Add a new project");
-        System.out.println(" 2. add <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]");
-        System.out.println(" 3. list                        - List all projects");
-        
+        System.out.println();
+        System.out.println("Hmph, if you're too lazy or forgetful to remember these commands...");
+        System.out.println("just type the main command like 'add', 'create', 'list', 'mark', 'unmark', 'delete',");
+        System.out.println("'update', 'sort', 'filter', 'export', or 'help'.");
+        System.out.println("It's not like I'll guide you through everything step by step or anything!");
+        System.out.println("Don't get the wrong idea - I'm only doing this because I have to...");
         printLine();
     }
 
@@ -171,4 +173,15 @@ public class ConsoleUi {
         printLine();
     }
 
+    public void showAllTasksAcrossProjects() {
+        printLine();
+        System.out.println("Here are all tasks across all projects:");
+        for (Project project : projects.getProjectList()) {
+            if (project.size() > 0) {
+                System.out.println(project.getProjectName() + ":");
+                System.out.print(project.showAllTasks());
+            }
+        }
+        printLine();
+    }
 }

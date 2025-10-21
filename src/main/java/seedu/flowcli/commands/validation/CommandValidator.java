@@ -9,7 +9,7 @@ public class CommandValidator {
 
     /**
      * Validates and normalizes priority value.
-     * 
+     *
      * @param priority The priority string to validate
      * @return Normalized lowercase priority string
      * @throws InvalidArgumentException if priority is invalid
@@ -31,7 +31,7 @@ public class CommandValidator {
 
     /**
      * Converts priority string to integer value.
-     * 
+     *
      * @param priority The validated priority string
      * @return Integer value (1=low, 2=medium, 3=high)
      */
@@ -50,7 +50,7 @@ public class CommandValidator {
 
     /**
      * Validates filter type.
-     * 
+     *
      * @param filterType The filter type to validate
      * @throws InvalidArgumentException if filter type is invalid
      */
@@ -70,7 +70,7 @@ public class CommandValidator {
 
     /**
      * Validates sort field.
-     * 
+     *
      * @param sortField The sort field to validate
      * @throws InvalidArgumentException if sort field is invalid
      */
@@ -90,7 +90,7 @@ public class CommandValidator {
 
     /**
      * Validates sort order.
-     * 
+     *
      * @param sortOrder The sort order to validate
      * @throws InvalidArgumentException if sort order is invalid
      */
@@ -110,7 +110,7 @@ public class CommandValidator {
 
     /**
      * Validates that a filter command is complete at the given index.
-     * 
+     *
      * @param parts The command parts array
      * @param index The index where "filter" keyword is found
      * @throws InvalidArgumentException if filter command is incomplete
@@ -123,7 +123,7 @@ public class CommandValidator {
 
     /**
      * Validates that a sort command is complete at the given index.
-     * 
+     *
      * @param parts The command parts array
      * @param index The index where "sort" keyword is found
      * @throws InvalidArgumentException if sort command is incomplete
