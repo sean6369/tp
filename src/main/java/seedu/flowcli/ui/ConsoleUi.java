@@ -50,7 +50,7 @@ public class ConsoleUi {
     public void showCurrentProjectListSize() {
         System.out.println(String.format("Now you have %d projects.", projects.getProjectListSize()));
     }
-    
+
     public void showCurrentTaskListSize(Project targetProject) {
         System.out.println(
                 String.format("Now you have %d task in the %s.", targetProject.size(), targetProject.getProjectName()));
@@ -139,8 +139,10 @@ public class ConsoleUi {
         System.out.println("15. help                        - Show this help message");
         System.out.println("16. bye                         - Exit the application");
         System.out.println();
-        System.out.println("Hmph, if you're too lazy or forgetful to remember these commands, baka... just type the main command like 'add', 'create', 'list', etc.");
-        System.out.println("It's not like I'll guide you through everything step by step or anything! Don't get the wrong idea - I'm only doing this because I have to...");
+        System.out.println("Hmph, if you're too lazy or forgetful to remember these commands, baka...");
+        System.out.println("just type the main command like 'add', 'create', 'list', etc.");
+        System.out.println("It's not like I'll guide you through everything step by step or anything!");
+        System.out.println("Don't get the wrong idea - I'm only doing this because I have to...");
         printLine();
     }
 
