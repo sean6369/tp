@@ -3,108 +3,309 @@ ____________________________________________________________
 Hello! I'm FlowCLI, a fast, minimal CLI project task manager.
 What can I do for you today?
 ____________________________________________________________
+Hmph, enter project name already:
 ____________________________________________________________
-Got it. I've added this project:
+Got it. I've added this project: 
 Project Alpha
+
 
 Now you have 1 projects.
 ____________________________________________________________
+Hmph, enter project name already:
 ____________________________________________________________
-Got it. I've added this project:
+Got it. I've added this project: 
 Project Beta
+
 
 Now you have 2 projects.
 ____________________________________________________________
+Hmph, enter project name already:
 ____________________________________________________________
-Got it. I've added this project:
+Got it. I've added this project: 
 singleWord
+
 
 Now you have 3 projects.
 ____________________________________________________________
+Hmph, fine... What project should this task be for? Don't think I care which one you pick!
+Available projects:
+1. Project Alpha
+2. Project Beta
+3. singleWord
+4. Create new project
+Enter choice (1-4): Enter task name:
+What priority level? Default is Medium [skip by pressing Enter]
+1. High
+2. Medium
+3. Low
+Enter choice (1-3): Do you want to set a deadline? [default is no, it's not like I mind either way]
+1. Yes
+2. No
+Enter choice (1-2): Enter deadline (YYYY-MM-DD):
 ____________________________________________________________
-Got it. I've added this task in Project Alpha :
-[ ] Task A (Due: Dec 31, 2025) [High]
+Got it. I've added this task in Project Alpha : 
+[ ] "Task A" (Due: Dec 31, 2025) [High]
 Now you have 1 task in the Project Alpha.
 ____________________________________________________________
+Hmph, fine... What project should this task be for? Don't think I care which one you pick!
+Available projects:
+1. Project Alpha
+2. Project Beta
+3. singleWord
+4. Create new project
+Enter choice (1-4): Enter task name:
+What priority level? Default is Medium [skip by pressing Enter]
+1. High
+2. Medium
+3. Low
+Enter choice (1-3): Do you want to set a deadline? [default is no, it's not like I mind either way]
+1. Yes
+2. No
+Enter choice (1-2): Enter deadline (YYYY-MM-DD):
 ____________________________________________________________
-Got it. I've added this task in Project Alpha :
-[ ] Task B (Due: Oct 15, 2025) [Low]
+Got it. I've added this task in Project Alpha : 
+[ ] "Task B" (Due: Oct 15, 2025) [Low]
 Now you have 2 task in the Project Alpha.
 ____________________________________________________________
-____________________________________________________________
-Got it. I've added this task in Project Alpha :
-[ ] Task C [Medium]
+Hmph, fine... What project should this task be for? Don't think I care which one you pick!
+Available projects:
+1. Project Alpha
+2. Project Beta
+3. singleWord
+4. Create new project
+Enter choice (1-4): Enter task name:
+What priority level? Default is Medium [skip by pressing Enter]
+1. High
+2. Medium
+3. Low
+Enter choice (1-3): Do you want to set a deadline? [default is no, it's not like I mind either way]
+1. Yes
+2. No
+Enter choice (1-2): ____________________________________________________________
+Got it. I've added this task in Project Alpha : 
+[ ] "Task C" [Medium]
 Now you have 3 task in the Project Alpha.
 ____________________________________________________________
+Hmph, fine... What project should this task be for? Don't think I care which one you pick!
+Available projects:
+1. Project Alpha
+2. Project Beta
+3. singleWord
+4. Create new project
+Enter choice (1-4): Enter task name:
+What priority level? Default is Medium [skip by pressing Enter]
+1. High
+2. Medium
+3. Low
+Enter choice (1-3): Do you want to set a deadline? [default is no, it's not like I mind either way]
+1. Yes
+2. No
+Enter choice (1-2): Enter deadline (YYYY-MM-DD):
 ____________________________________________________________
-Got it. I've added this task in Project Beta :
-[ ] Task D (Due: Nov 20, 2025) [Medium]
+Got it. I've added this task in Project Beta : 
+[ ] "Task D" (Due: Nov 20, 2025) [Medium]
 Now you have 1 task in the Project Beta.
 ____________________________________________________________
+Hmph, fine... What project should this task be for? Don't think I care which one you pick!
+Available projects:
+1. Project Alpha
+2. Project Beta
+3. singleWord
+4. Create new project
+Enter choice (1-4): Enter task name:
+What priority level? Default is Medium [skip by pressing Enter]
+1. High
+2. Medium
+3. Low
+Enter choice (1-3): Do you want to set a deadline? [default is no, it's not like I mind either way]
+1. Yes
+2. No
+Enter choice (1-2): Enter deadline (YYYY-MM-DD):
 ____________________________________________________________
-Got it. I've added this task in Project Beta :
-[ ] Task E (Due: Oct 10, 2025) [High]
+Got it. I've added this task in Project Beta : 
+[ ] "Task E" (Due: Oct 10, 2025) [High]
 Now you have 2 task in the Project Beta.
 ____________________________________________________________
 ____________________________________________________________
 Sorted all tasks by deadline ascending:
-Project Beta: [ ] Task E (Due: Oct 10, 2025) [High]
-Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
-Project Beta: [ ] Task D (Due: Nov 20, 2025) [Medium]
-Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
-Project Alpha: [ ] Task C [Medium]
+Project Beta: [ ] "Task E" (Due: Oct 10, 2025) [High]
+Project Alpha: [ ] "Task B" (Due: Oct 15, 2025) [Low]
+Project Beta: [ ] "Task D" (Due: Nov 20, 2025) [Medium]
+Project Alpha: [ ] "Task A" (Due: Dec 31, 2025) [High]
+Project Alpha: [ ] "Task C" [Medium]
 ____________________________________________________________
 ____________________________________________________________
 Sorted all tasks by deadline descending:
-Project Alpha: [ ] Task C [Medium]
-Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
-Project Beta: [ ] Task D (Due: Nov 20, 2025) [Medium]
-Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
-Project Beta: [ ] Task E (Due: Oct 10, 2025) [High]
+Project Alpha: [ ] "Task C" [Medium]
+Project Alpha: [ ] "Task A" (Due: Dec 31, 2025) [High]
+Project Beta: [ ] "Task D" (Due: Nov 20, 2025) [Medium]
+Project Alpha: [ ] "Task B" (Due: Oct 15, 2025) [Low]
+Project Beta: [ ] "Task E" (Due: Oct 10, 2025) [High]
 ____________________________________________________________
 ____________________________________________________________
 Sorted all tasks by priority ascending:
-Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
-Project Alpha: [ ] Task C [Medium]
-Project Beta: [ ] Task D (Due: Nov 20, 2025) [Medium]
-Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
-Project Beta: [ ] Task E (Due: Oct 10, 2025) [High]
+Project Alpha: [ ] "Task B" (Due: Oct 15, 2025) [Low]
+Project Alpha: [ ] "Task C" [Medium]
+Project Beta: [ ] "Task D" (Due: Nov 20, 2025) [Medium]
+Project Alpha: [ ] "Task A" (Due: Dec 31, 2025) [High]
+Project Beta: [ ] "Task E" (Due: Oct 10, 2025) [High]
 ____________________________________________________________
 ____________________________________________________________
 Sorted all tasks by priority descending:
-Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
-Project Beta: [ ] Task E (Due: Oct 10, 2025) [High]
-Project Alpha: [ ] Task C [Medium]
-Project Beta: [ ] Task D (Due: Nov 20, 2025) [Medium]
-Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project Alpha: [ ] "Task A" (Due: Dec 31, 2025) [High]
+Project Beta: [ ] "Task E" (Due: Oct 10, 2025) [High]
+Project Alpha: [ ] "Task C" [Medium]
+Project Beta: [ ] "Task D" (Due: Nov 20, 2025) [Medium]
+Project Alpha: [ ] "Task B" (Due: Oct 15, 2025) [Low]
 ____________________________________________________________
 ____________________________________________________________
 Filtered tasks by priority high:
-Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
-Project Beta: [ ] Task E (Due: Oct 10, 2025) [High]
+Project Alpha: [ ] "Task A" (Due: Dec 31, 2025) [High]
+Project Beta: [ ] "Task E" (Due: Oct 10, 2025) [High]
 ____________________________________________________________
 ____________________________________________________________
 Filtered tasks by priority medium:
-Project Alpha: [ ] Task C [Medium]
-Project Beta: [ ] Task D (Due: Nov 20, 2025) [Medium]
+Project Alpha: [ ] "Task C" [Medium]
+Project Beta: [ ] "Task D" (Due: Nov 20, 2025) [Medium]
 ____________________________________________________________
 ____________________________________________________________
 Filtered tasks by priority low:
-Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
+Project Alpha: [ ] "Task B" (Due: Oct 15, 2025) [Low]
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've updated this task in Project Alpha :
-[ ] Updated Task B (Due: Nov 01, 2025) [High]
+Filtered tasks by project Project Alpha:
+Project Alpha: [ ] "Task A" (Due: Dec 31, 2025) [High]
+Project Alpha: [ ] "Task B" (Due: Oct 15, 2025) [Low]
+Project Alpha: [ ] "Task C" [Medium]
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've updated this task in Project Alpha :
-[ ] Task C [Low]
+Filtered tasks by project project alpha:
+Project Alpha: [ ] "Task A" (Due: Dec 31, 2025) [High]
+Project Alpha: [ ] "Task B" (Due: Oct 15, 2025) [Low]
+Project Alpha: [ ] "Task C" [Medium]
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in Project Alpha:
-1. [ ] Task A (Due: Dec 31, 2025) [High]
-2. [ ] Updated Task B (Due: Nov 01, 2025) [High]
-3. [ ] Task C [Low]
+Filtered tasks by project Project Beta:
+Project Beta: [ ] "Task D" (Due: Nov 20, 2025) [Medium]
+Project Beta: [ ] "Task E" (Due: Oct 10, 2025) [High]
+____________________________________________________________
+____________________________________________________________
+Filtered tasks by project NonExistent:
+____________________________________________________________
+Hmph you want to update? Which project contains the task?
+Don't keep me waiting!
+Available projects:
+1. Project Alpha
+2. Project Beta
+3. singleWord
+4. Sorry, my fault.
+Enter choice (1-4): Tasks in Project Alpha:
+1. "Task A" - Priority: 3 - Deadline: 2025-12-31
+2. "Task B" - Priority: 1 - Deadline: 2025-10-15
+3. "Task C" - Priority: 2 - Deadline: None
+Enter task number to update: What do you want to update about this task? Make up your mind!
+1. Description
+2. Priority
+3. Deadline
+4. Reselect task
+5. Reselect project
+6. Done
+Enter choice (1-6): Enter new task name:
+Description updated!
+What do you want to update about this task? Make up your mind!
+1. Description
+2. Priority
+3. Deadline
+4. Reselect task
+5. Reselect project
+6. Done
+Enter choice (1-6): Enter new deadline (YYYY-MM-DD, 'none', or press Enter to skip):
+Deadline updated!
+What do you want to update about this task? Make up your mind!
+1. Description
+2. Priority
+3. Deadline
+4. Reselect task
+5. Reselect project
+6. Done
+Enter choice (1-6): What priority level? I think everything is high priority!
+1. High
+2. Medium
+3. Low
+4. Keep current
+Enter choice (1-4): Priority updated!
+What do you want to update about this task? Make up your mind!
+1. Description
+2. Priority
+3. Deadline
+4. Reselect task
+5. Reselect project
+6. Done
+Enter choice (1-6): ____________________________________________________________
+Got it. I've updated this task in Project Alpha : 
+[ ] "Updated Task B" (Due: Nov 01, 2025) [High]
+____________________________________________________________
+Hmph you want to update? Which project contains the task?
+Don't keep me waiting!
+Available projects:
+1. Project Alpha
+2. Project Beta
+3. singleWord
+4. Sorry, my fault.
+Enter choice (1-4): Tasks in Project Alpha:
+1. "Task A" - Priority: 3 - Deadline: 2025-12-31
+2. "Updated Task B" - Priority: 3 - Deadline: 2025-11-01
+3. "Task C" - Priority: 2 - Deadline: None
+Enter task number to update: What do you want to update about this task? Make up your mind!
+1. Description
+2. Priority
+3. Deadline
+4. Reselect task
+5. Reselect project
+6. Done
+Enter choice (1-6): Enter new deadline (YYYY-MM-DD, 'none', or press Enter to skip):
+What do you want to update about this task? Make up your mind!
+1. Description
+2. Priority
+3. Deadline
+4. Reselect task
+5. Reselect project
+6. Done
+Enter choice (1-6): What priority level? I think everything is high priority!
+1. High
+2. Medium
+3. Low
+4. Keep current
+Enter choice (1-4): Priority updated!
+What do you want to update about this task? Make up your mind!
+1. Description
+2. Priority
+3. Deadline
+4. Reselect task
+5. Reselect project
+6. Done
+Enter choice (1-6): ____________________________________________________________
+Got it. I've updated this task in Project Alpha : 
+[ ] "Task C" [Low]
+____________________________________________________________
+____________________________________________________________
+Here is your whole project list:
+Project Alpha
+1. [ ] "Task A" (Due: Dec 31, 2025) [High]
+2. [ ] "Updated Task B" (Due: Nov 01, 2025) [High]
+3. [ ] "Task C" [Low]
+
+
+Project Beta
+1. [ ] "Task D" (Due: Nov 20, 2025) [Medium]
+2. [ ] "Task E" (Due: Oct 10, 2025) [High]
+
+
+singleWord
+
+
+____________________________________________________________
+Unknown command. Type 'help' to see all available commands.
 ____________________________________________________________
 ____________________________________________________________
 I see, another forgetful human who needs help remembering commands.

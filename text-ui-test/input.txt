@@ -1,11 +1,38 @@
-create "Project Alpha"
-create "Project Beta"
-create singleWord
-add "Project Alpha" Task A --priority high --deadline 2025-12-31
-add "Project Alpha" Task B --priority low --deadline 2025-10-15
-add "Project Alpha" Task C --priority medium
-add "Project Beta" Task D --priority medium --deadline 2025-11-20
-add "Project Beta" Task E --priority high --deadline 2025-10-10
+create
+Project Alpha
+create
+Project Beta
+create
+singleWord
+add
+1
+Task A
+1
+1
+2025-12-31
+add
+1
+Task B
+3
+1
+2025-10-15
+add
+1
+Task C
+2
+2
+add
+2
+Task D
+2
+1
+2025-11-20
+add
+2
+Task E
+1
+1
+2025-10-10
 sort tasks by deadline ascending
 sort tasks by deadline descending
 sort tasks by priority ascending
@@ -13,8 +40,29 @@ sort tasks by priority descending
 filter tasks by priority high
 filter tasks by priority medium
 filter tasks by priority low
-update "Project Alpha" 2 --description Updated Task B --deadline 2025-11-01 --priority high
-update "Project Alpha" 3 --deadline none --priority low
-list "Project Alpha"
+filter tasks by project "Project Alpha"
+filter tasks by project "project alpha"
+filter tasks by project "Project Beta"
+filter tasks by project NonExistent
+update
+1
+2
+1
+Updated Task B
+3
+2025-11-01
+2
+1
+6
+update
+1
+3
+3
+
+2
+3
+6
+list
+1
 help
 bye
