@@ -54,6 +54,8 @@ public class CommandParser {
         case "create-project":
         case "create":
             return new ParsedCommand(CommandType.CREATE, arguments);
+        case "delete":
+            return new ParsedCommand(CommandType.DELETE, arguments);
         case "delete-project":
             return new ParsedCommand(CommandType.DELETEPROJECT, arguments);
         case "delete-task":
