@@ -8,7 +8,6 @@ ____________________________________________________________
 Got it. I've added this project: 
 Project Alpha
 
-
 Now you have 1 projects.
 ____________________________________________________________
 Hmph, enter project name already:
@@ -16,14 +15,12 @@ ____________________________________________________________
 Got it. I've added this project: 
 Project Beta
 
-
 Now you have 2 projects.
 ____________________________________________________________
 Hmph, enter project name already:
 ____________________________________________________________
 Got it. I've added this project: 
 singleWord
-
 
 Now you have 3 projects.
 ____________________________________________________________
@@ -294,16 +291,10 @@ Project Alpha
 1. [ ] "Task A" (Due: Dec 31, 2025) [High]
 2. [ ] "Updated Task B" (Due: Nov 01, 2025) [High]
 3. [ ] "Task C" [Low]
-
-
 Project Beta
 1. [ ] "Task D" (Due: Nov 20, 2025) [Medium]
 2. [ ] "Task E" (Due: Oct 10, 2025) [High]
-
-
 singleWord
-
-
 ____________________________________________________________
 Unknown command. Type 'help' to see all available commands.
 ____________________________________________________________
