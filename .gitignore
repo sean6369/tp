@@ -18,3 +18,9 @@ text-ui-test/EXPECTED-UNIX.TXT
 
 plans/
 .github/chatmodes/
+# Formatter config file
+*formatter.xml
+
+# JAR file
+*.jar
+>>>>>>> 983090b764a57402d6e405e1a477a06ca573683a

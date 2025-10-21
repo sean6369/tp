@@ -32,7 +32,7 @@ public class ProjectList {
 
     public Project getProject(String projectName) {
         for (Project project : projects) {
-            if(project.getProjectName().equals(projectName)) {
+            if (project.getProjectName().equalsIgnoreCase(projectName)) {
                 return project;
             }
         }
@@ -46,7 +46,7 @@ public class ProjectList {
 
     public String render() {
         String output = "";
-        for(Project project : projects) {
+        for (Project project : projects) {
             output += project;
             output += "\n";
         }

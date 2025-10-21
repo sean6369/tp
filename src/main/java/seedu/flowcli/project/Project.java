@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 public class Project {
     private String projectName;
-    private String projectDescription;
     private String projectStatus;
     private TaskList projectTasks;
 
@@ -45,12 +44,26 @@ public class Project {
 
     }
 
+    public Task updateTask(int index, String newDescription, boolean updateDescription,
+            LocalDate newDeadline, boolean updateDeadline, Integer newPriority, boolean updatePriority) {
+        Task task = projectTasks.get(index);
+        if (updateDescription) {
+            task.setDescription(newDescription);
+        }
+        if (updateDeadline) {
+            task.setDeadline(newDeadline);
+        }
+        if (updatePriority) {
+            task.setPriority(newPriority);
+        }
+        return task;
+    }
+
     public String toString() {
-        return projectName + "\n" + projectTasks.render();
+        return projectName  +  projectTasks.render() + '\n';
     }
 
     public String showAllTasks() {
         return projectTasks.render();
     }
-
 }
