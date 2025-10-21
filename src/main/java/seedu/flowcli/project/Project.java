@@ -62,8 +62,7 @@ public class Project {
     public String toString() {
         if(projectTasks==null){
             return projectName;
-        }
-        else{ 
+        } else{ 
             return projectName  + "\n" + projectTasks.render();
         }
     }
