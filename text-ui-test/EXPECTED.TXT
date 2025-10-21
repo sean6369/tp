@@ -4,45 +4,45 @@ Hello! I'm FlowCLI, a fast, minimal CLI project task manager.
 What can I do for you today?
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this project: 
+Got it. I've added this project:
 Project Alpha
 
 Now you have 1 projects.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this project: 
+Got it. I've added this project:
 Project Beta
 
 Now you have 2 projects.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this project: 
+Got it. I've added this project:
 singleWord
 
 Now you have 3 projects.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task in Project Alpha : 
+Got it. I've added this task in Project Alpha :
 [ ] Task A (Due: Dec 31, 2025) [High]
 Now you have 1 task in the Project Alpha.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task in Project Alpha : 
+Got it. I've added this task in Project Alpha :
 [ ] Task B (Due: Oct 15, 2025) [Low]
 Now you have 2 task in the Project Alpha.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task in Project Alpha : 
+Got it. I've added this task in Project Alpha :
 [ ] Task C [Medium]
 Now you have 3 task in the Project Alpha.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task in Project Beta : 
+Got it. I've added this task in Project Beta :
 [ ] Task D (Due: Nov 20, 2025) [Medium]
 Now you have 1 task in the Project Beta.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task in Project Beta : 
+Got it. I've added this task in Project Beta :
 [ ] Task E (Due: Oct 10, 2025) [High]
 Now you have 2 task in the Project Beta.
 ____________________________________________________________
@@ -93,31 +93,11 @@ Filtered tasks by priority low:
 Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
 ____________________________________________________________
 ____________________________________________________________
-Filtered tasks by project Project Alpha:
-Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
-Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
-Project Alpha: [ ] Task C [Medium]
-____________________________________________________________
-____________________________________________________________
-Filtered tasks by project project alpha:
-Project Alpha: [ ] Task A (Due: Dec 31, 2025) [High]
-Project Alpha: [ ] Task B (Due: Oct 15, 2025) [Low]
-Project Alpha: [ ] Task C [Medium]
-____________________________________________________________
-____________________________________________________________
-Filtered tasks by project Project Beta:
-Project Beta: [ ] Task D (Due: Nov 20, 2025) [Medium]
-Project Beta: [ ] Task E (Due: Oct 10, 2025) [High]
-____________________________________________________________
-____________________________________________________________
-Filtered tasks by project NonExistent:
-____________________________________________________________
-____________________________________________________________
-Got it. I've updated this task in Project Alpha : 
+Got it. I've updated this task in Project Alpha :
 [ ] Updated Task B (Due: Nov 01, 2025) [High]
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've updated this task in Project Alpha : 
+Got it. I've updated this task in Project Alpha :
 [ ] Task C [Low]
 ____________________________________________________________
 ____________________________________________________________
@@ -127,6 +107,8 @@ Here are the tasks in Project Alpha:
 3. [ ] Task C [Low]
 ____________________________________________________________
 ____________________________________________________________
+I see, another forgetful human who needs help remembering commands.
+
 Available Commands:
 Tip: Wrap multi-word project names in double quotes (e.g. "Birthday Bash").
  1. create <project>               - Add a new project
@@ -145,6 +127,11 @@ Tip: Wrap multi-word project names in double quotes (e.g. "Birthday Bash").
 14. export tasks to <filename>.txt --all - Force export all tasks
 15. help                        - Show this help message
 16. bye                         - Exit the application
+
+Hmph, if you're too lazy or forgetful to remember these commands...
+just type the main command like 'add', 'create', 'list', etc.
+It's not like I'll guide you through everything step by step or anything!
+Don't get the wrong idea - I'm only doing this because I have to...
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!

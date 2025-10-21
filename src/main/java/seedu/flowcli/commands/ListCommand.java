@@ -12,7 +12,10 @@ public class ListCommand extends Command {
     @Override
     public boolean execute(CommandContext context) {
         ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
-        if (parsedArgument.getTargetProject() == null) {
+        if (parsedArgument.getTargetProject() == null && "--all".equals(parsedArgument.getRemainingArgument())) {
+            context.getUi().showAllTasksAcrossProjects();
+            context.getExportHandler().clearViewState();
+        } else if (parsedArgument.getTargetProject() == null) {
             context.getUi().showProjectList();
             context.getExportHandler().clearViewState();
         } else {

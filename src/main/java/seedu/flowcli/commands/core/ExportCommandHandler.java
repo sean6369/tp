@@ -178,7 +178,7 @@ public class ExportCommandHandler {
                     && !ValidationConstants.KEYWORD_SORT.equals(current)
                     && !ValidationConstants.KEYWORD_BY.equals(current)) {
                 if (params.projectName == null) {
-                    params.projectName = current;
+                    params.projectName = stripQuotes(current);
                 }
                 i++;
             } else {
@@ -246,11 +246,25 @@ public class ExportCommandHandler {
     }
 
     /**
-     * Clears the current filter/sort view state.
+     * Clears the current view state.
      */
     public void clearViewState() {
         lastDisplayedTasks.clear();
         lastViewType = ViewType.NONE;
         lastViewMetadata = "";
+    }
+
+    /**
+     * Strips surrounding quotes from a string if present.
+     */
+    private String stripQuotes(String input) {
+        if (input == null) {
+            return null;
+        }
+        String trimmed = input.trim();
+        if (trimmed.startsWith("\"") && trimmed.endsWith("\"") && trimmed.length() >= 2) {
+            return trimmed.substring(1, trimmed.length() - 1);
+        }
+        return trimmed;
     }
 }

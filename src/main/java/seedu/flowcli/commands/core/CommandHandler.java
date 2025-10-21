@@ -39,6 +39,10 @@ public class CommandHandler {
                 }
 
                 Command command = resolveCommand(line, scanner);
+                if (command == null) {
+                    // Interactive mode was cancelled, continue to next input
+                    continue;
+                }
                 try {
                     shouldContinue = command.execute(context);
                 } catch (Exception e) {
@@ -58,8 +62,8 @@ public class CommandHandler {
         if (shouldUseInteractiveMode(parsed)) {
             String interactiveArgs = handleInteractiveMode(parsed.getType(), scanner);
             if (interactiveArgs == null) {
-                // Interactive mode was cancelled, return unknown command to continue
-                return factory.create(CommandParser.CommandType.UNKNOWN, "");
+                // Interactive mode was cancelled, continue to next input
+                return null;
             }
             // Create command with interactively collected arguments
             return factory.create(parsed.getType(), interactiveArgs);
@@ -83,7 +87,7 @@ public class CommandHandler {
         case CREATE:
             return parsed.getArguments().trim().isEmpty();
         case LIST:
-            return parsed.getArguments().trim().isEmpty();
+            return false; // Don't trigger interactive mode for list - it has valid behavior with no args
         case MARK:
         case UNMARK:
             return parsed.getArguments().trim().isEmpty();

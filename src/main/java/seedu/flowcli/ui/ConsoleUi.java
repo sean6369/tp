@@ -172,4 +172,15 @@ public class ConsoleUi {
         printLine();
     }
 
+    public void showAllTasksAcrossProjects() {
+        printLine();
+        System.out.println("Here are all tasks across all projects:");
+        for (Project project : projects.getProjectList()) {
+            if (project.size() > 0) {
+                System.out.println(project.getProjectName() + ":");
+                System.out.print(project.showAllTasks());
+            }
+        }
+        printLine();
+    }
 }

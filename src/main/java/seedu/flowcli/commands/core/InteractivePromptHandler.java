@@ -52,11 +52,11 @@ public class InteractivePromptHandler {
             return null; // Cancelled
         }
 
-        // Step 2: Task description
-        System.out.println("Enter task description:");
+        // Step 2: Task name
+        System.out.println("Enter task name:");
         String description = scanner.nextLine().trim();
         if (description.isEmpty()) {
-            System.out.println("Description cannot be empty. Going back...");
+            System.out.println("Task name cannot be empty. Going back...");
             return null;
         }
 
@@ -128,12 +128,14 @@ public class InteractivePromptHandler {
         for (int i = 0; i < projects.getProjectListSize(); i++) {
             System.out.println((i + 1) + ". " + projects.getProjectList().get(i).getProjectName());
         }
+        System.out.println((projects.getProjectListSize() + 1) + ". All tasks (across all projects)");
 
-        System.out.println("Do you want to look into the tasks for any of these projects?");
-        System.out.println("Enter the project number to view its tasks, or press Enter to exit.");
+        System.out.println("Do you want to look into the tasks for any of these projects, or all tasks?");
+        System.out.println("Enter the project number, '" + (projects.getProjectListSize() + 1) +
+                           "' for all tasks, or press Enter to exit.");
 
         while (true) {
-            System.out.print("Enter choice (1-" + projects.getProjectListSize() + "): ");
+            System.out.print("Enter choice (1-" + (projects.getProjectListSize() + 1) + "): ");
             String input = scanner.nextLine().trim();
 
             if (input.isEmpty()) {
@@ -144,6 +146,8 @@ public class InteractivePromptHandler {
                 int choice = Integer.parseInt(input);
                 if (choice >= 1 && choice <= projects.getProjectListSize()) {
                     return "\"" + projects.getProjectList().get(choice - 1).getProjectName() + "\"";
+                } else if (choice == projects.getProjectListSize() + 1) {
+                    return "--all";
                 } else {
                     System.out.println("Invalid choice. Try again.");
                 }
@@ -414,7 +418,8 @@ public class InteractivePromptHandler {
     public String handleUpdateCommand() {
         logger.info("Starting interactive update command flow");
 
-        System.out.println("Hmph, what project contains the task?");
+        System.out.println("Hmph you want to update? Which project contains the task?");
+        System.out.println("Don't keep me waiting!");
         if (projects.getProjectListSize() == 0) {
             System.out.println("No projects available. Going back...");
             return null;
@@ -500,7 +505,7 @@ public class InteractivePromptHandler {
 
         boolean continueUpdating = true;
         while (continueUpdating) {
-            System.out.println("What do you want to update this task? Make up your mind!");
+            System.out.println("What do you want to update about this task? Make up your mind!");
             System.out.println("1. Description");
             System.out.println("2. Priority");
             System.out.println("3. Deadline");
@@ -558,13 +563,13 @@ public class InteractivePromptHandler {
     }
 
     /**
-     * Prompts for new task description.
+     * Prompts for new task name.
      */
     private String promptForNewDescription() {
-        System.out.println("Enter new description:");
+        System.out.println("Enter new task name:");
         String desc = scanner.nextLine().trim();
         if (desc.isEmpty()) {
-            System.out.println("Description cannot be empty. Staying in update menu...");
+            System.out.println("Task name cannot be empty. Staying in update menu...");
             return null;
         }
         return desc;
@@ -692,28 +697,8 @@ public class InteractivePromptHandler {
      */
     public String handleFilterCommand() {
         logger.info("Starting interactive filter command flow");
-
-        System.out.println("Filter by what? Priority or project, make up your mind!");
-        System.out.println("1. Priority");
-        System.out.println("2. Project");
-
-        while (true) {
-            System.out.print("Enter choice (1-2): ");
-            String input = scanner.nextLine().trim();
-
-            if (input.isEmpty()) {
-                return null;
-            }
-
-            switch (input) {
-            case "1":
-                return handleFilterByPriority();
-            case "2":
-                return handleFilterByProject();
-            default:
-                System.out.println("Invalid choice. Try again.");
-            }
-        }
+        // Only allow filtering by priority in interactive mode
+        return handleFilterByPriority();
     }
 
     /**
@@ -738,42 +723,6 @@ public class InteractivePromptHandler {
                 return "tasks by priority low";
             default:
                 System.out.println("Invalid choice. Try again.");
-            }
-        }
-    }
-
-    /**
-     * Handles filtering by project.
-     */
-    private String handleFilterByProject() {
-        if (projects.getProjectListSize() == 0) {
-            System.out.println("No projects available. Going back...");
-            return null;
-        }
-
-        System.out.println("Available projects:");
-        for (int i = 0; i < projects.getProjectListSize(); i++) {
-            System.out.println((i + 1) + ". " + projects.getProjectList().get(i).getProjectName());
-        }
-
-        while (true) {
-            System.out.print("Enter project number: ");
-            String input = scanner.nextLine().trim();
-
-            if (input.isEmpty()) {
-                return null;
-            }
-
-            try {
-                int choice = Integer.parseInt(input);
-                if (choice >= 1 && choice <= projects.getProjectListSize()) {
-                    String projectName = projects.getProjectList().get(choice - 1).getProjectName();
-                    return "tasks by project \"" + projectName + "\"";
-                } else {
-                    System.out.println("Invalid choice. Try again.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Please enter a valid number.");
             }
         }
     }
