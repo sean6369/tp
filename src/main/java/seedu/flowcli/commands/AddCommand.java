@@ -19,19 +19,9 @@ public class AddCommand extends Command {
     public boolean execute(CommandContext context) throws Exception {
         ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
         Project targetProject = parsedArgument.getTargetProject();
+        String projectName = parsedArgument.getParsedProjectName();
         
-        // If project doesn't exist, create it (for interactive mode)
-        if (targetProject == null) {
-            String projectName = parsedArgument.getParsedProjectName();
-            if (projectName == null || projectName.trim().isEmpty()) {
-                throw new InvalidArgumentException("No project specified");
-            }
-            // Create the new project
-            context.getProjects().addProject(projectName);
-            targetProject = context.getProjects().getProject(projectName);
-            context.getUi().showAddedProject();
-        }
-
+        // Validate arguments first
         if (parsedArgument.getRemainingArgument() == null) {
             throw new MissingDescriptionException();
         }
@@ -58,6 +48,17 @@ public class AddCommand extends Command {
             } else {
                 throw new InvalidArgumentException("Unknown option: " + option + ". Use --priority or --deadline.");
             }
+        }
+
+        // If project doesn't exist, create it (for interactive mode)
+        if (targetProject == null) {
+            if (projectName == null || projectName.trim().isEmpty()) {
+                throw new InvalidArgumentException("No project specified");
+            }
+            // Create the new project
+            context.getProjects().addProject(projectName);
+            targetProject = context.getProjects().getProject(projectName);
+            context.getUi().showAddedProject();
         }
 
         targetProject.addTask(description, deadline, priority);
