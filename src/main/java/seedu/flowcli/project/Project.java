@@ -60,7 +60,11 @@ public class Project {
     }
 
     public String toString() {
-        return projectName + "\n" + projectTasks.render() + '\n';
+        if(projectTasks==null){
+            return projectName;
+        } else{ 
+            return projectName  + "\n" + projectTasks.render();
+        }
     }
 
     public String showAllTasks() {
