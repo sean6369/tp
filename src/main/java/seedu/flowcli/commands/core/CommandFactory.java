@@ -17,6 +17,7 @@ import seedu.flowcli.commands.SortCommand;
 import seedu.flowcli.commands.UnmarkCommand;
 import seedu.flowcli.commands.UnknownCommand;
 import seedu.flowcli.parsers.CommandParser;
+import seedu.flowcli.commands.StatusCommand;
 
 public class CommandFactory {
 
@@ -50,6 +51,8 @@ public class CommandFactory {
             return new FilterCommand(arguments);
         case EXPORT:
             return new ExportCommand(arguments);
+        case STATUS:
+            return new StatusCommand(arguments);
         case UNKNOWN:
         default:
             return new UnknownCommand(arguments);

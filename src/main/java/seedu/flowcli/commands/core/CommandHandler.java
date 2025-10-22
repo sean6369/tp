@@ -101,6 +101,8 @@ public class CommandHandler {
             return parsed.getArguments().trim().isEmpty();
         case EXPORT:
             return parsed.getArguments().trim().isEmpty();
+        case STATUS:
+            return parsed.getArguments().trim().isEmpty();
         default:
             return false;
         }
@@ -135,6 +137,8 @@ public class CommandHandler {
             return interactiveHandler.handleFilterCommand();
         case EXPORT:
             return interactiveHandler.handleExportCommand();
+        case STATUS:
+            return interactiveHandler.handleStatusCommand();
         default:
             return null;
         }
