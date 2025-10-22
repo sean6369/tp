@@ -63,6 +63,16 @@ update
 3
 6
 list
+mark "Project Alpha" 1
+mark "Project Beta" 2
+status
+1
+1
+status
+2
+status "Project Alpha"
+status --all
+status NonExistentProject
 1
 help
 bye
