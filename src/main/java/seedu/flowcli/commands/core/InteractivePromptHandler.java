@@ -791,6 +791,47 @@ public class InteractivePromptHandler {
     }
 
     /**
+     * Handles interactive prompting for the status command.
+     *
+     * @return The constructed command arguments string, or null if cancelled
+     */
+    public String handleStatusCommand() {
+        logger.info("Starting interactive status command flow");
+
+        System.out.println("Hmph, you want to check progress? At least you're keeping track!");
+        System.out.println("What would you like to see?");
+        System.out.println("1. Display individual project status");
+        System.out.println("2. Display all projects status");
+        System.out.println("3. Sorry, my fault.");
+
+        while (true) {
+            System.out.print("Enter choice (1-3): ");
+            String input = scanner.nextLine().trim();
+
+            if (input.equals("3") || input.isEmpty()) {
+                return null; // Cancelled
+            }
+
+            switch (input) {
+            case "1":
+                // Prompt for project selection
+                String projectName = promptForProject(false);
+                if (projectName == null) {
+                    return null;
+                }
+                String result = "\"" + projectName + "\"";
+                logger.info("Status command arguments constructed: " + result);
+                return result;
+            case "2":
+                logger.info("Status command arguments constructed: --all");
+                return "--all";
+            default:
+                System.out.println("Invalid choice. Try again.");
+            }
+        }
+    }
+
+    /**
      * Prompts user to select a project or create a new one.
      *
      * @param allowCreateNew Whether to include "Create new project" option
