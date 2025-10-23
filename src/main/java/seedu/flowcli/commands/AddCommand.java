@@ -78,11 +78,6 @@ public class AddCommand extends Command {
             // Parse options after the description
             String optionsPart = fullArgs.substring(secondQuoteEnd + 1).trim();
             if (!optionsPart.isEmpty()) {
-                // In interactive mode, options often begin with "--" immediately after trimming.
-                // Ensure splitting by " --" works by normalizing a leading "--" to " --".
-                if (optionsPart.startsWith("--")) {
-                    optionsPart = " " + optionsPart;
-                }
                 String[] parts = optionsPart.split(" --");
                 for (int i = 1; i < parts.length; i++) { // Start from 1 to skip empty first part
                     String option = parts[i].trim();

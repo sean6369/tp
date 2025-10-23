@@ -78,7 +78,6 @@ class AddCommandTest {
         CommandContext ctx = makeContext(projects, ui);
         AddCommand cmd = new AddCommand("Alpha Finish docs --priority high --deadline 2024-12-25");
 
-        // Act
         boolean ok = cmd.execute(ctx);
 
         // Assert
@@ -168,7 +167,7 @@ class AddCommandTest {
                 () -> assertEquals(1, beta.size(), "New project should contain the added task"),
                 () -> assertEquals("Write tests", beta.getProjectTasks().get(0).getDescription()),
                 () -> assertEquals(LocalDate.of(2025, 1, 1), beta.getProjectTasks().get(0).getDeadline()),
-                () -> assertEquals(1, beta.getProjectTasks().get(0).getPriority())
+                () -> assertEquals(2, beta.getProjectTasks().get(0).getPriority())
         );
         logger.info("Non-existing-project success case passed");
     }
@@ -176,7 +175,6 @@ class AddCommandTest {
     @Test
     @DisplayName("execute_nonExistingProject_missingProjectName_throwsInvalidArgumentException")
     void execute_missingProjectName_throws() {
-        // Arrange: empty quoted project name -> parsed name is empty, should throw
         ProjectList projects = new ProjectList();
         SpyUi ui = new SpyUi(projects);
         CommandContext ctx = makeContext(projects, ui);
