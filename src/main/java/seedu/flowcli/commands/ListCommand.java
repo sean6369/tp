@@ -42,22 +42,8 @@ public class ListCommand extends Command {
             context.getUi().showTaskList(targetProject);
             context.getExportHandler().clearViewState();
             return true;
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException e) {
+            throw new InvalidArgumentException(String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE, firstToken));
         }
-
-        ArgumentParser parsedArgument = new ArgumentParser(arguments, projectList);
-        Project targetProject = parsedArgument.getTargetProject();
-        if (targetProject != null) {
-            context.getUi().showTaskList(targetProject);
-            context.getExportHandler().clearViewState();
-            return true;
-        }
-
-        if (parsedArgument.hasNonNumericProjectToken()) {
-            throw new InvalidArgumentException(String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE,
-                    parsedArgument.getParsedProjectName()));
-        }
-
-        throw new MissingArgumentException();
     }
 }

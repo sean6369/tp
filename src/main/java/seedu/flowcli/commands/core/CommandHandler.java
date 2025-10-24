@@ -26,7 +26,7 @@ public class CommandHandler {
     public void handleCommands() {
         Scanner scanner = new Scanner(System.in);
         // Initialize interactive handler with scanner after it's created
-        this.interactiveHandler = new InteractivePromptHandler(ui, context.getProjects(), scanner);
+        this.interactiveHandler = new InteractivePromptHandler(context.getProjects(), scanner);
 
         try {
             boolean shouldContinue = true;

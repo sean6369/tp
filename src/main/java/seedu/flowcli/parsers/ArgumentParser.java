@@ -1,5 +1,6 @@
 package seedu.flowcli.parsers;
 
+import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 
@@ -22,7 +23,7 @@ public class ArgumentParser {
     private String parsedProjectToken;
     private Integer targetProjectIndex;
 
-    public ArgumentParser(String argument, ProjectList projects) {
+    public ArgumentParser(String argument, ProjectList projects) throws InvalidArgumentException {
         this.argument = argument == null ? "" : argument;
         this.projects = projects;
         parseArgument();
@@ -48,7 +49,7 @@ public class ArgumentParser {
         return parsedProjectToken != null && targetProjectIndex == null;
     }
 
-    private void parseArgument() {
+    private void parseArgument() throws InvalidArgumentException {
         targetProject = null;
         remainingArgument = null;
         parsedProjectToken = null;
@@ -87,7 +88,8 @@ public class ArgumentParser {
             if (parsed > 0) {
                 return parsed;
             }
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException e) {
+            return null;
         }
         return null;
     }

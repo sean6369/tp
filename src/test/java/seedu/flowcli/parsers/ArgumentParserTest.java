@@ -2,8 +2,8 @@ package seedu.flowcli.parsers;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.logging.Handler;
@@ -27,7 +27,7 @@ class ArgumentParserTest {
     private Project project2;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.FINE);
         for (Handler handler : rootLogger.getHandlers()) {
@@ -43,65 +43,53 @@ class ArgumentParserTest {
         logger.info("Initialised test projects: " + projects.getProjectListSize());
     }
 
-    @Test
-    @DisplayName("parseArgument_validIndex_setsProjectAndRemaining")
-    void testParseValidIndex() {
+    @Test @DisplayName("parseArgument_validIndex_setsProjectAndRemaining")
+    void testParseValidIndex() throws Exception {
         ArgumentParser parser = new ArgumentParser("1 build docs", projects);
 
-        assertAll("Valid index parsing",
-                () -> assertEquals(project1, parser.getTargetProject()),
+        assertAll("Valid index parsing", () -> assertEquals(project1, parser.getTargetProject()),
                 () -> assertEquals("build docs", parser.getRemainingArgument()),
                 () -> assertEquals(0, parser.getTargetProjectIndex()),
                 () -> assertFalse(parser.hasNonNumericProjectToken()));
     }
 
-    @Test
-    @DisplayName("parseArgument_onlyIndex_setsProjectWithNullRemainder")
-    void testParseIndexOnly() {
+    @Test @DisplayName("parseArgument_onlyIndex_setsProjectWithNullRemainder")
+    void testParseIndexOnly() throws Exception {
         ArgumentParser parser = new ArgumentParser("2", projects);
 
-        assertAll("Index-only parsing",
-                () -> assertEquals(project2, parser.getTargetProject()),
-                () -> assertNull(parser.getRemainingArgument()),
-                () -> assertEquals(1, parser.getTargetProjectIndex()),
+        assertAll("Index-only parsing", () -> assertEquals(project2, parser.getTargetProject()),
+                () -> assertNull(parser.getRemainingArgument()), () -> assertEquals(1, parser.getTargetProjectIndex()),
                 () -> assertFalse(parser.hasNonNumericProjectToken()));
     }
 
-    @Test
-    @DisplayName("parseArgument_outOfRangeIndex_recordsIndexWithoutProject")
-    void testParseOutOfRangeIndex() {
+    @Test @DisplayName("parseArgument_outOfRangeIndex_recordsIndexWithoutProject")
+    void testParseOutOfRangeIndex() throws Exception {
         ArgumentParser parser = new ArgumentParser("5 extra args", projects);
 
-        assertAll("Out-of-range index handling",
-                () -> assertNull(parser.getTargetProject()),
+        assertAll("Out-of-range index handling", () -> assertNull(parser.getTargetProject()),
                 () -> assertEquals("extra args", parser.getRemainingArgument()),
                 () -> assertEquals(4, parser.getTargetProjectIndex()),
                 () -> assertFalse(parser.hasNonNumericProjectToken()));
     }
 
-    @Test
-    @DisplayName("parseArgument_nonNumeric_preservesTokensForManualHandling")
-    void testParseNonNumeric() {
+    @Test @DisplayName("parseArgument_nonNumeric_preservesTokensForManualHandling")
+    void testParseNonNumeric() throws Exception {
         ArgumentParser parser = new ArgumentParser("ProjectAlpha build", projects);
 
-        assertAll("Non-numeric handling",
-                () -> assertNull(parser.getTargetProject()),
+        assertAll("Non-numeric handling", () -> assertNull(parser.getTargetProject()),
                 () -> assertEquals("build", parser.getRemainingArgument()),
                 () -> assertNull(parser.getTargetProjectIndex()),
                 () -> assertEquals("ProjectAlpha", parser.getParsedProjectName()),
                 () -> assertTrue(parser.hasNonNumericProjectToken()));
     }
 
-    @Test
-    @DisplayName("parseArgument_emptyInput_returnsNulls")
-    void testParseEmpty() {
+    @Test @DisplayName("parseArgument_emptyInput_returnsNulls")
+    void testParseEmpty() throws Exception {
         ArgumentParser empty = new ArgumentParser("", projects);
         ArgumentParser whitespace = new ArgumentParser("   ", projects);
 
-        assertAll("Empty input handling",
-                () -> assertNull(empty.getTargetProject()),
-                () -> assertNull(empty.getRemainingArgument()),
-                () -> assertNull(whitespace.getTargetProject()),
+        assertAll("Empty input handling", () -> assertNull(empty.getTargetProject()),
+                () -> assertNull(empty.getRemainingArgument()), () -> assertNull(whitespace.getTargetProject()),
                 () -> assertNull(whitespace.getRemainingArgument()),
                 () -> assertFalse(empty.hasNonNumericProjectToken()),
                 () -> assertFalse(whitespace.hasNonNumericProjectToken()));
