@@ -1,6 +1,7 @@
 package seedu.flowcli.commands;
 
 import seedu.flowcli.commands.core.CommandContext;
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.parsers.CommandParser;
@@ -23,6 +24,10 @@ public class MarkCommand extends Command {
         Project targetProject = parsedArgument.getTargetProject();
 
         if (targetProject == null) {
+            Integer projectIndex = parsedArgument.getTargetProjectIndex();
+            if (projectIndex != null) {
+                throw new IndexOutOfRangeException(context.getProjects().getProjectListSize());
+            }
             logger.warning("Target project not found");
             throw new MissingArgumentException();
         }

@@ -2,12 +2,12 @@ package seedu.flowcli.ui;
 
 import java.util.List;
 
+import seedu.flowcli.commands.utility.ProjectStatusAnalyzer;
+import seedu.flowcli.commands.utility.ProjectStatusAnalyzer.ProjectStatus;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
 import seedu.flowcli.task.TaskWithProject;
-import seedu.flowcli.commands.utility.ProjectStatusAnalyzer;
-import seedu.flowcli.commands.utility.ProjectStatusAnalyzer.ProjectStatus;
 
 /**
  * Handles all user interface interactions for the FlowCLI application. This
@@ -99,8 +99,29 @@ public class ConsoleUi {
 
     public void showProjectList() {
         printLine();
-        System.out.println("Here is your whole project list:");
-        System.out.print(projects.render());
+        System.out.println("Here is your list of projects:");
+
+        if (projects.isEmpty()) {
+            System.out.println("[No projects yet]");
+            printLine();
+            return;
+        }
+
+        for (int taskIdx = 0; taskIdx < projects.getProjectListSize(); taskIdx++) {
+            Project project = projects.getProjectByIndex(taskIdx);
+            System.out.println((taskIdx + 1) + ". " + project.getProjectName());
+
+            String tasks = project.showAllTasks();
+            if (tasks != null && !tasks.isEmpty()) {
+                String[] taskLines = tasks.split("\\R");
+                for (String taskLine : taskLines) {
+                    if (!taskLine.isEmpty()) {
+                        System.out.println("   " + taskLine);
+                    }
+                }
+            }
+        }
+
         printLine();
     }
 
@@ -120,35 +141,32 @@ public class ConsoleUi {
 
     public void showHelp() {
         printLine();
-        System.out.println("I see, another forgetful human who needs help remembering commands.");
-        System.out.println();
-        System.out.println("Available Commands:");
-        System.out.println("Tip: Wrap multi-word project names in double quotes (e.g. \"Birthday Bash\").");
-        System.out.println(" 1. create-project <project>               - Add a new project");
-        System.out.println(" 2. add-task <project> <desc> [--priority low/medium/high] [--deadline YYYY-MM-DD]");
-        System.out.println(" 3. list-all                        - List all projects");
-        System.out.println(" 4. list <project>              - List tasks in a project");
-        System.out.println(" 5. mark <project> <index>      - Mark task as done");
-        System.out.println(" 6. unmark <project> <index>    - Mark task as not done");
-        System.out.println(" 7. delete-project <project>            - Delete a project");
-        System.out.println(" 8. delete-task <project> <index>    - Delete a task");
-        System.out.println(" 9. update <project> <index> [--description <desc>] [--deadline YYYY-MM-DD|none]"
-                + " [--priority low/medium/high] - Update a task");
-        System.out.println("10. sort tasks by deadline/priority ascending/descending - Sort all tasks");
-        System.out.println("11. filter tasks by priority <value> - Filter tasks by priority");
-        System.out.println("12. filter tasks by project <name> - Filter tasks by project name");
-        System.out.println("13. export tasks to <filename>.txt [<project>] [filter by <type> <value>] "
-                + "[sort by <field> <order>] - Export tasks to TXT file");
-        System.out.println("14. export tasks to <filename>.txt --all - Force export all tasks");
-        System.out.println("15. status <project> / --all    - Show project completion status");
-        System.out.println("16. help                        - Show this help message");
-        System.out.println("17. bye                         - Exit the application");
-        System.out.println();
-        System.out.println("Hmph, if you're too lazy or forgetful to remember these commands...");
-        System.out.println("just type the main command like 'add', 'create', 'list', 'mark', 'unmark', 'delete',");
-        System.out.println("'update', 'sort', 'filter', 'export', or 'help'.");
-        System.out.println("It's not like I'll guide you through everything step by step or anything!");
-        System.out.println("Don't get the wrong idea - I'm only doing this because I have to...");
+        System.out.println("Available Commands:\n");
+        System.out.println("Tip: Projects are referenced by their index from `list --all`.\n");
+        System.out
+                .println(" 1. create-project <projectName>               - Creates a new project with the given name");
+        System.out.println(
+                " 2. add-task <projectIndex> <taskDesc> [--priority low/medium/high] [--deadline YYYY-MM-DD] - Adds a new task to the specified project with optional priority and deadline fields");
+        System.out.println(" 3. list --all                        - Lists all existing projects");
+        System.out.println(" 4. list <projectIndex>              - Lists all task entries in the specified project");
+        System.out.println(" 5. mark <projectIndex> <taskIndex>      - Mark a task in a project as done");
+        System.out.println(" 6. unmark <projectIndex> <taskIndex>    - Mark a task in a project as not done");
+        System.out.println(
+                " 7. delete-project <projectIndex> --confirm            - Deletes an entire project repository");
+        System.out.println(
+                " 8. delete-task <projectIndex> <taskIndex>    - Deletes a task entry from the specified project");
+        System.out.println(
+                " 9. update-task <projectIndex> <taskIndex> [--description <newTaskDesc>] [--deadline YYYY-MM-DD] [--priority <low/medium/high>] - Updates details of an existing task, such as description, deadline, or priority");
+        System.out.println(
+                "10. sort-tasks <--deadline/priority> <ascending/descending> - Sorts existing tasks by deadline or priority");
+        System.out.println("11. filter-tasks --priority <low/medium/high> - Filters existing tasks by priority");
+        System.out.println(
+                "12. export-tasks <filename>.txt [projectIndex] [filter-tasks --priority <low/medium/high>] [sort-tasks <--deadline/priority> <ascending/descending>] - Exports tasks to TXT file. Defaults to all tasks if no project is specified.");
+        System.out.println("13. status <projectIndex> / --all    - Shows project completion status");
+        System.out.println("14. help                        - Shows this help message");
+        System.out.println("15. bye                         - Exits the application\n");
+        System.out.println("Alternatively, you may provide the CLI with prompts to assist you with the following:\n");
+        System.out.println("'create', 'add', 'list', 'mark', 'unmark', 'delete', 'update', 'sort', 'filter', 'export'");
         printLine();
     }
 
@@ -178,7 +196,7 @@ public class ConsoleUi {
 
     public void showAllTasksAcrossProjects() {
         printLine();
-        System.out.println("Here are all tasks across all projects:");
+        System.out.println("Here are all your tasks across all projects:");
         for (Project project : projects.getProjectList()) {
             if (project.size() > 0) {
                 System.out.println(project.getProjectName() + ":");
@@ -189,7 +207,8 @@ public class ConsoleUi {
     }
 
     /**
-     * Displays the status of a single project with progress bar and motivational message.
+     * Displays the status of a single project with progress bar and
+     * motivational message.
      *
      * @param project The project to display status for
      */
@@ -214,7 +233,8 @@ public class ConsoleUi {
     }
 
     /**
-     * Displays the status of all projects with progress bars and motivational messages.
+     * Displays the status of all projects with progress bars and motivational
+     * messages.
      *
      * @param projectList The project list containing all projects
      */
@@ -256,8 +276,8 @@ public class ConsoleUi {
      * @return Formatted status string
      */
     private String formatStatusSummary(ProjectStatus status) {
-        return status.getCompletedTasks() + "/" + status.getTotalTasks() +
-                " tasks completed, " + String.format("%.0f%%", status.getPercentage());
+        return status.getCompletedTasks() + "/" + status.getTotalTasks() + " tasks completed, "
+                + String.format("%.0f%%", status.getPercentage());
     }
 
     /**

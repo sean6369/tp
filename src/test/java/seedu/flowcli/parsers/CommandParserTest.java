@@ -40,54 +40,45 @@ class CommandParserTest {
         logger.info("Test setup completed");
     }
 
-    @Test
-    @DisplayName("parse_validCommands_returnsCorrectCommandTypes")
+    @Test @DisplayName("parse_validCommands_returnsCorrectCommandTypes")
     void testParseValidCommands() {
         logger.fine("Testing parsing of valid command types");
 
-        assertAll("Valid command parsing",
-                () -> assertEquals(CommandType.LIST, parser.parse("list").getType()),
+        assertAll("Valid command parsing", () -> assertEquals(CommandType.LIST, parser.parse("list").getType()),
                 () -> assertEquals(CommandType.MARK, parser.parse("mark Project1 1").getType()),
-                () -> assertEquals(CommandType.ADD, parser.parse("add Project1 Task").getType()),
+                () -> assertEquals(CommandType.ADD_TASK, parser.parse("add Project1 Task").getType()),
                 () -> assertEquals(CommandType.DELETE, parser.parse("delete Project1").getType()),
-                () -> assertEquals(CommandType.UPDATE, parser.parse("update Project1 1").getType()),
-                () -> assertEquals(CommandType.SORT, parser.parse("sort tasks by deadline").getType()),
-                () -> assertEquals(CommandType.FILTER, parser.parse("filter tasks by priority").getType()),
-                () -> assertEquals(CommandType.DELETEPROJECT, parser.parse("delete-project Project1").getType()),
-                () -> assertEquals(CommandType.DELETETASK, parser.parse("delete-task Project1 task").getType()));
+                () -> assertEquals(CommandType.UPDATE_TASK, parser.parse("update Project1 1").getType()),
+                () -> assertEquals(CommandType.SORT_TASKS, parser.parse("sort tasks by deadline").getType()),
+                () -> assertEquals(CommandType.FILTER_TASKS, parser.parse("filter tasks by priority").getType()));
 
         logger.info("Valid command types parsing test passed");
     }
 
-    @Test
-    @DisplayName("parse_commandWithArguments_preservesArguments")
+    @Test @DisplayName("parse_commandWithArguments_preservesArguments")
     void testParseCommandWithArguments() {
         logger.fine("Testing command argument preservation");
 
         ParsedCommand result = parser.parse("add Project1 New Task --priority high");
 
-        assertAll("Arguments preservation",
-                () -> assertEquals(CommandType.ADD, result.getType()),
+        assertAll("Arguments preservation", () -> assertEquals(CommandType.ADD_TASK, result.getType()),
                 () -> assertEquals("Project1 New Task --priority high", result.getArguments()));
 
         logger.info("Command argument preservation test passed");
     }
 
-    @Test
-    @DisplayName("parse_commandCaseInsensitive_recognizesCorrectly")
+    @Test @DisplayName("parse_commandCaseInsensitive_recognizesCorrectly")
     void testParseCaseInsensitive() {
         logger.fine("Testing case-insensitive command parsing");
 
-        assertAll("Case insensitive parsing",
-                () -> assertEquals(CommandType.LIST, parser.parse("LIST").getType()),
+        assertAll("Case insensitive parsing", () -> assertEquals(CommandType.LIST, parser.parse("LIST").getType()),
                 () -> assertEquals(CommandType.MARK, parser.parse("MaRk arg").getType()),
-                () -> assertEquals(CommandType.ADD, parser.parse("ADD arg").getType()));
+                () -> assertEquals(CommandType.ADD_TASK, parser.parse("ADD arg").getType()));
 
         logger.info("Case-insensitive command parsing test passed");
     }
 
-    @Test
-    @DisplayName("parse_unknownCommand_returnsUnknownType")
+    @Test @DisplayName("parse_unknownCommand_returnsUnknownType")
     void testParseUnknownCommand() {
         logger.fine("Testing unknown command handling");
 
@@ -98,65 +89,53 @@ class CommandParserTest {
         logger.info("Unknown command handling test passed");
     }
 
-    @Test
-    @DisplayName("parse_emptyOrWhitespace_returnsUnknownType")
+    @Test @DisplayName("parse_emptyOrWhitespace_returnsUnknownType")
     void testParseEmptyInput() {
         logger.fine("Testing empty and whitespace input handling");
 
-        assertAll("Empty input handling",
-                () -> assertEquals(CommandType.UNKNOWN, parser.parse("").getType()),
+        assertAll("Empty input handling", () -> assertEquals(CommandType.UNKNOWN, parser.parse("").getType()),
                 () -> assertEquals(CommandType.UNKNOWN, parser.parse("   ").getType()));
 
         logger.info("Empty input handling test passed");
     }
 
-    @Test
-    @DisplayName("parseIndexOrNull_validIndex_returnsZeroBasedIndex")
+    @Test @DisplayName("parseIndexOrNull_validIndex_returnsZeroBasedIndex")
     void testParseIndexOrNullValid() throws Exception {
         logger.fine("Testing valid index parsing");
 
-        assertAll("Valid index parsing",
-                () -> assertEquals(0, CommandParser.parseIndexOrNull("1", 10)),
+        assertAll("Valid index parsing", () -> assertEquals(0, CommandParser.parseIndexOrNull("1", 10)),
                 () -> assertEquals(2, CommandParser.parseIndexOrNull("3", 10)),
                 () -> assertEquals(9, CommandParser.parseIndexOrNull("10", 10)));
 
         logger.info("Valid index parsing test passed");
     }
 
-    @Test
-    @DisplayName("parseIndexOrNull_nullInput_throwsMissingIndexException")
+    @Test @DisplayName("parseIndexOrNull_nullInput_throwsMissingIndexException")
     void testParseIndexOrNullWithNull() {
         logger.fine("Testing null index input");
 
-        assertThrows(MissingIndexException.class,
-                () -> CommandParser.parseIndexOrNull(null, 5));
+        assertThrows(MissingIndexException.class, () -> CommandParser.parseIndexOrNull(null, 5));
 
         logger.info("Null index input test passed");
     }
 
-    @Test
-    @DisplayName("parseIndexOrNull_outOfRange_throwsIndexOutOfRangeException")
+    @Test @DisplayName("parseIndexOrNull_outOfRange_throwsIndexOutOfRangeException")
     void testParseIndexOrNullOutOfRange() {
         logger.fine("Testing out-of-range index handling");
 
         assertAll("Out of range indices",
-                () -> assertThrows(IndexOutOfRangeException.class,
-                        () -> CommandParser.parseIndexOrNull("0", 5)),
-                () -> assertThrows(IndexOutOfRangeException.class,
-                        () -> CommandParser.parseIndexOrNull("11", 10)),
-                () -> assertThrows(IndexOutOfRangeException.class,
-                        () -> CommandParser.parseIndexOrNull("-1", 5)));
+                () -> assertThrows(IndexOutOfRangeException.class, () -> CommandParser.parseIndexOrNull("0", 5)),
+                () -> assertThrows(IndexOutOfRangeException.class, () -> CommandParser.parseIndexOrNull("11", 10)),
+                () -> assertThrows(IndexOutOfRangeException.class, () -> CommandParser.parseIndexOrNull("-1", 5)));
 
         logger.info("Out-of-range index handling test passed");
     }
 
-    @Test
-    @DisplayName("parseIndexOrNull_invalidFormat_throwsNumberFormatException")
+    @Test @DisplayName("parseIndexOrNull_invalidFormat_throwsNumberFormatException")
     void testParseIndexOrNullInvalidFormat() {
         logger.fine("Testing invalid index format");
 
-        assertThrows(NumberFormatException.class,
-                () -> CommandParser.parseIndexOrNull("abc", 5));
+        assertThrows(NumberFormatException.class, () -> CommandParser.parseIndexOrNull("abc", 5));
 
         logger.info("Invalid index format test passed");
     }

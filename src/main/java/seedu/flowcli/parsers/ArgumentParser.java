@@ -3,20 +3,26 @@ package seedu.flowcli.parsers;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 
+/**
+ * Lightweight parser for commands that begin with a project index argument.
+ * Accepts only integer indices (1-based) and returns the referenced project if
+ * it exists. Any remaining text after the index is preserved for further
+ * command-specific parsing.
+ */
 public class ArgumentParser {
 
-    private String argument;
-    private ProjectList projects;
+    private final String argument;
+    private final ProjectList projects;
 
     private Project targetProject;
     private String remainingArgument;
-    private String parsedProjectName;
+    private String parsedProjectToken;
+    private Integer targetProjectIndex;
 
     public ArgumentParser(String argument, ProjectList projects) {
-        this.argument = argument;
+        this.argument = argument == null ? "" : argument;
         this.projects = projects;
         parseArgument();
-
     }
 
     public Project getTargetProject() {
@@ -28,90 +34,54 @@ public class ArgumentParser {
     }
 
     public String getParsedProjectName() {
-        return parsedProjectName;
+        return parsedProjectToken;
     }
 
-    public void parseArgument() {
-        if (argument.isEmpty()) {
-            targetProject = null;
-            remainingArgument = null;
-            return;
-        }
+    public Integer getTargetProjectIndex() {
+        return targetProjectIndex;
+    }
+
+    private void parseArgument() {
+        targetProject = null;
+        remainingArgument = null;
+        parsedProjectToken = null;
+        targetProjectIndex = null;
 
         String trimmed = argument.trim();
         if (trimmed.isEmpty()) {
-            targetProject = null;
-            remainingArgument = null;
             return;
         }
 
-        ParsedProject parsedProject = parseProjectIdentifier(trimmed);
-        String projectIdentifier = parsedProject.projectName;
-        String arguments = parsedProject.remainingArguments;
+        String[] parts = trimmed.split("\\s+", 2);
+        String firstToken = parts[0];
+        parsedProjectToken = firstToken;
 
-        parsedProjectName = projectIdentifier; // Store the parsed project name
-
-        Project existingProject = projects.getProject(projectIdentifier);
-        if (existingProject != null) {
-            targetProject = existingProject;
-            remainingArgument = arguments;
+        Integer parsedIndex = tryParsePositiveInt(firstToken);
+        if (parsedIndex != null) {
+            int zeroBased = parsedIndex - 1;
+            targetProjectIndex = zeroBased;
+            if (zeroBased >= 0 && zeroBased < projects.getProjectListSize()) {
+                targetProject = projects.getProjectByIndex(zeroBased);
+            }
+            remainingArgument = parts.length > 1 ? parts[1] : null;
             return;
         }
 
-        targetProject = null;
-        if (arguments == null || arguments.isEmpty()) {
-            remainingArgument = projectIdentifier;
-        } else if (projectIdentifier.isEmpty()) {
-            remainingArgument = arguments;
-        } else {
-            remainingArgument = projectIdentifier + " " + arguments;
-        }
-
+        // Non-numeric identifiers are preserved in remainingArgument for
+        // commands
+        // that do their own parsing (e.g. create-project).
+        remainingArgument = trimmed.length() > firstToken.length() ? trimmed.substring(firstToken.length()).trim()
+                : null;
     }
 
-    private ParsedProject parseProjectIdentifier(String input) {
-        if (!input.startsWith("\"")) {
-            String[] parts = input.split("\\s+", 2);
-            String projectName = parts[0].trim();
-            String arguments = parts.length > 1 ? parts[1].trim() : null;
-            return new ParsedProject(projectName, arguments);
-        }
-
-        StringBuilder builder = new StringBuilder();
-        int index = 1;
-        while (index < input.length()) {
-            char current = input.charAt(index);
-            if (current == '\\' && index + 1 < input.length()) {
-                char next = input.charAt(index + 1);
-                if (next == '"' || next == '\\') {
-                    builder.append(next);
-                    index += 2;
-                    continue;
-                }
+    private Integer tryParsePositiveInt(String value) {
+        try {
+            int parsed = Integer.parseInt(value);
+            if (parsed > 0) {
+                return parsed;
             }
-            if (current == '"') {
-                index++;
-                break;
-            }
-            builder.append(current);
-            index++;
+        } catch (NumberFormatException ignored) {
         }
-
-        while (index < input.length() && Character.isWhitespace(input.charAt(index))) {
-            index++;
-        }
-
-        String remaining = index < input.length() ? input.substring(index).trim() : null;
-        return new ParsedProject(builder.toString().trim(), remaining);
-    }
-
-    private static class ParsedProject {
-        private final String projectName;
-        private final String remainingArguments;
-
-        private ParsedProject(String projectName, String remainingArguments) {
-            this.projectName = projectName;
-            this.remainingArguments = remainingArguments;
-        }
+        return null;
     }
 }

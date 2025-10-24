@@ -18,19 +18,45 @@ public class FilterCommand extends Command {
 
     @Override
     public boolean execute(CommandContext context) throws Exception {
-        if (arguments.isEmpty() || !arguments.startsWith("tasks by")) {
+        String trimmed = arguments.trim();
+        if (trimmed.isEmpty()) {
             throw new InvalidArgumentException(
-                    "Invalid filter command. Use: filter tasks by priority <value> or project <name>");
+                    "Invalid filter command. Use: filter-tasks --priority <low/medium/high>");
         }
 
-        String[] parts = arguments.split("\\s+", 4);
-        if (parts.length < 4) {
-            throw new InvalidArgumentException(
-                    "Invalid filter command. Use: filter tasks by priority <value> or project <name>");
-        }
+        String type;
+        String value;
 
-        String type = parts[2];
-        String value = normalizeValue(parts[3]);
+        if (trimmed.startsWith("tasks by")) {
+            String[] parts = trimmed.split("\\s+", 4);
+            if (parts.length < 4) {
+                throw new InvalidArgumentException(
+                        "Invalid filter command. Use: filter tasks by priority <value> or project <name>");
+            }
+            type = parts[2].toLowerCase();
+            value = normalizeValue(parts[3]);
+        } else {
+            if (!trimmed.startsWith("--")) {
+                throw new InvalidArgumentException(
+                        "Invalid filter command. Use: filter-tasks --priority <low/medium/high>");
+            }
+
+            int spaceIndex = trimmed.indexOf(' ');
+            if (spaceIndex == -1) {
+                throw new InvalidArgumentException(
+                        "Invalid filter command. Use: filter-tasks --priority <low/medium/high>");
+            }
+
+            String option = trimmed.substring(0, spaceIndex);
+            String valuePart = trimmed.substring(spaceIndex + 1).trim();
+            if (valuePart.isEmpty()) {
+                throw new InvalidArgumentException(
+                        "Invalid filter command. Use: filter-tasks --priority <low/medium/high>");
+            }
+
+            type = option.substring(2).toLowerCase();
+            value = normalizeValue(valuePart);
+        }
 
         if (ValidationConstants.FILTER_TYPE_PRIORITY.equals(type)) {
             CommandValidator.validatePriority(value);

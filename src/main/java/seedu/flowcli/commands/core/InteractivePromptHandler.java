@@ -8,8 +8,8 @@ import seedu.flowcli.ui.ConsoleUi;
 
 /**
  * Handles interactive prompting for commands that require user guidance.
- * Provides conversational interface with numbered options and validation.
- * Uses tsundere personality in prompts as specified in plan.md.
+ * Provides conversational interface with numbered options and validation. Uses
+ * tsundere personality in prompts as specified in plan.md.
  */
 public class InteractivePromptHandler {
     private static final Logger logger = Logger.getLogger(InteractivePromptHandler.class.getName());
@@ -19,7 +19,8 @@ public class InteractivePromptHandler {
     private final Scanner scanner;
 
     /**
-     * Creates an InteractivePromptHandler with the given UI, projects, and input scanner.
+     * Creates an InteractivePromptHandler with the given UI, projects, and
+     * input scanner.
      *
      * @param ui The console UI for displaying messages
      * @param projects The project list for accessing available projects
@@ -38,8 +39,8 @@ public class InteractivePromptHandler {
     }
 
     /**
-     * Handles interactive prompting for the add command.
-     * Guides user through project selection, description, priority, and deadline.
+     * Handles interactive prompting for the add command. Guides user through
+     * project selection, description, priority, and deadline.
      *
      * @return The constructed command arguments string, or null if cancelled
      */
@@ -47,10 +48,11 @@ public class InteractivePromptHandler {
         logger.info("Starting interactive add command flow");
 
         // Step 1: Project selection
-        String projectName = promptForProject(true); // true = allow creating new project
-        if (projectName == null) {
+        Integer projectSelection = promptForProjectIndex();
+        if (projectSelection == null) {
             return null; // Cancelled
         }
+        String projectName = projects.getProjectList().get(projectSelection - 1).getProjectName();
 
         // Step 2: Task name
         System.out.println("Enter task name:");
@@ -74,8 +76,7 @@ public class InteractivePromptHandler {
 
         // Construct arguments
         StringBuilder args = new StringBuilder();
-        args.append("\"").append(projectName).append("\" ");
-        args.append("\"").append(description).append("\"");
+        args.append(projectSelection).append(" ").append(description);
 
         if (!priority.equals("medium")) { // medium is default, don't include
             args.append(" --priority ").append(priority);
@@ -91,8 +92,8 @@ public class InteractivePromptHandler {
     }
 
     /**
-     * Handles interactive prompting for the create command.
-     * Prompts for project name.
+     * Handles interactive prompting for the create command. Prompts for project
+     * name.
      *
      * @return The constructed command arguments string, or null if cancelled
      */
@@ -104,14 +105,14 @@ public class InteractivePromptHandler {
             return null; // Cancelled
         }
 
-        String result = "\"" + projectName + "\"";
+        String result = projectName;
         logger.info("Create command arguments constructed: " + result);
         return result;
     }
 
     /**
-     * Handles interactive prompting for the list command.
-     * Prompts for project selection or all projects.
+     * Handles interactive prompting for the list command. Prompts for project
+     * selection or all projects.
      *
      * @return The constructed command arguments string, or null if cancelled
      */
@@ -123,26 +124,23 @@ public class InteractivePromptHandler {
     }
 
     /**
-     * Handles interactive prompting for the mark command.
-     * Prompts for project and task selection.
+     * Handles interactive prompting for the mark command. Prompts for project
+     * and task selection.
      *
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleMarkCommand() {
         logger.info("Starting interactive mark command flow");
 
-        String projectName = promptForProject(false); // Don't allow creating new project
-        if (projectName == null) {
+        Integer projectSelection = promptForProjectIndex();
+        if (projectSelection == null) {
             return null; // Cancelled
         }
 
-        // Find the project
-        var project = projects.getProjectList().stream()
-                .filter(p -> p.getProjectName().equals(projectName))
-                .findFirst()
-                .orElse(null);
+        var project = projects.getProjectList().get(projectSelection - 1);
+        String projectName = project.getProjectName();
 
-        if (project == null || project.size() == 0) {
+        if (project.size() == 0) {
             System.out.println("No tasks in this project. Going back...");
             return null;
         }
@@ -163,7 +161,7 @@ public class InteractivePromptHandler {
         // Parse task indices
         String[] indices = input.split(",");
         StringBuilder args = new StringBuilder();
-        args.append("\"").append(projectName).append("\"");
+        args.append(projectSelection);
 
         for (String indexStr : indices) {
             try {
@@ -185,25 +183,23 @@ public class InteractivePromptHandler {
     }
 
     /**
-     * Handles interactive prompting for the unmark command.
-     * Similar to mark command but for unmarking tasks.
+     * Handles interactive prompting for the unmark command. Similar to mark
+     * command but for unmarking tasks.
      *
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleUnmarkCommand() {
         logger.info("Starting interactive unmark command flow");
 
-        String projectName = promptForProject(false);
-        if (projectName == null) {
+        Integer projectSelection = promptForProjectIndex();
+        if (projectSelection == null) {
             return null;
         }
 
-        var project = projects.getProjectList().stream()
-                .filter(p -> p.getProjectName().equals(projectName))
-                .findFirst()
-                .orElse(null);
+        var project = projects.getProjectList().get(projectSelection - 1);
+        String projectName = project.getProjectName();
 
-        if (project == null || project.size() == 0) {
+        if (project.size() == 0) {
             System.out.println("No tasks in this project. Going back...");
             return null;
         }
@@ -213,8 +209,8 @@ public class InteractivePromptHandler {
             System.out.println((i + 1) + ". [x] " + project.getProjectTasks().get(i).getDescription());
         }
 
-        System.out.println("Enter task number to mark as not done " +
-                           "[for multiple tasks, separate by commas e.g. 1,2,3,4]:");
+        System.out.println(
+                "Enter task number to mark as not done " + "[for multiple tasks, separate by commas e.g. 1,2,3,4]:");
         String input = scanner.nextLine().trim();
 
         if (input.isEmpty()) {
@@ -224,7 +220,7 @@ public class InteractivePromptHandler {
 
         String[] indices = input.split(",");
         StringBuilder args = new StringBuilder();
-        args.append("\"").append(projectName).append("\"");
+        args.append(projectSelection);
 
         for (String indexStr : indices) {
             try {
@@ -246,8 +242,8 @@ public class InteractivePromptHandler {
     }
 
     /**
-     * Handles interactive prompting for the delete command.
-     * Prompts for what to delete (project or task) and selections.
+     * Handles interactive prompting for the delete command. Prompts for what to
+     * delete (project or task) and selections.
      *
      * @return The constructed command arguments string, or null if cancelled
      */
@@ -307,7 +303,7 @@ public class InteractivePromptHandler {
                     System.out.print("Are you sure you want to delete project \"" + projectName + "\"? (y/n): ");
                     String confirm = scanner.nextLine().trim().toLowerCase();
                     if (confirm.equals("y") || confirm.equals("yes")) {
-                        return "\"" + projectName + "\"";
+                        return choice + " --confirm";
                     } else {
                         System.out.println("Delete cancelled.");
                         return null;
@@ -325,17 +321,15 @@ public class InteractivePromptHandler {
      * Handles task deletion with confirmation.
      */
     private String handleDeleteTask() {
-        String projectName = promptForProject(false);
-        if (projectName == null) {
+        Integer projectSelection = promptForProjectIndex();
+        if (projectSelection == null) {
             return null;
         }
 
-        var project = projects.getProjectList().stream()
-                .filter(p -> p.getProjectName().equals(projectName))
-                .findFirst()
-                .orElse(null);
+        var project = projects.getProjectList().get(projectSelection - 1);
+        String projectName = project.getProjectName();
 
-        if (project == null || project.size() == 0) {
+        if (project.size() == 0) {
             System.out.println("No tasks in this project. Going back...");
             return null;
         }
@@ -360,7 +354,7 @@ public class InteractivePromptHandler {
                     System.out.print("Are you sure you want to delete this task? (y/n): ");
                     String confirm = scanner.nextLine().trim().toLowerCase();
                     if (confirm.equals("y") || confirm.equals("yes")) {
-                        return "\"" + projectName + "\" " + index;
+                        return projectSelection + " " + index;
                     } else {
                         System.out.println("Delete cancelled.");
                         return null;
@@ -375,8 +369,8 @@ public class InteractivePromptHandler {
     }
 
     /**
-     * Handles interactive prompting for the update command.
-     * Complex flow with recursive field updates.
+     * Handles interactive prompting for the update command. Complex flow with
+     * recursive field updates.
      *
      * @return The constructed command arguments string, or null if cancelled
      */
@@ -407,8 +401,7 @@ public class InteractivePromptHandler {
             try {
                 int choice = Integer.parseInt(input);
                 if (choice >= 1 && choice <= projects.getProjectListSize()) {
-                    String projectName = projects.getProjectList().get(choice - 1).getProjectName();
-                    return handleUpdateTaskInProject(projectName);
+                    return handleUpdateTaskInProject(choice);
                 } else {
                     System.out.println("Invalid choice. Try again.");
                 }
@@ -421,13 +414,11 @@ public class InteractivePromptHandler {
     /**
      * Handles task selection and field updates within a project.
      */
-    private String handleUpdateTaskInProject(String projectName) {
-        var project = projects.getProjectList().stream()
-                .filter(p -> p.getProjectName().equals(projectName))
-                .findFirst()
-                .orElse(null);
+    private String handleUpdateTaskInProject(int projectSelection) {
+        var project = projects.getProjectList().get(projectSelection - 1);
+        String projectName = project.getProjectName();
 
-        if (project == null || project.size() == 0) {
+        if (project.size() == 0) {
             System.out.println("No tasks in this project. Going back...");
             return null;
         }
@@ -435,9 +426,8 @@ public class InteractivePromptHandler {
         System.out.println("Tasks in " + projectName + ":");
         for (int i = 0; i < project.size(); i++) {
             var task = project.getProjectTasks().get(i);
-            System.out.println((i + 1) + ". " + task.getDescription() +
-                             " - Priority: " + task.getPriority() +
-                             " - Deadline: " + (task.getDeadline() != null ? task.getDeadline() : "None"));
+            System.out.println((i + 1) + ". " + task.getDescription() + " - Priority: " + task.getPriority()
+                    + " - Deadline: " + (task.getDeadline() != null ? task.getDeadline() : "None"));
         }
 
         while (true) {
@@ -451,7 +441,7 @@ public class InteractivePromptHandler {
             try {
                 int taskIndex = Integer.parseInt(input);
                 if (taskIndex >= 1 && taskIndex <= project.size()) {
-                    return handleUpdateTaskFields(projectName, taskIndex);
+                    return handleUpdateTaskFields(projectSelection, taskIndex);
                 } else {
                     System.out.println("Invalid task number. Try again.");
                 }
@@ -464,9 +454,12 @@ public class InteractivePromptHandler {
     /**
      * Handles the recursive field update loop for a specific task.
      */
-    private String handleUpdateTaskFields(String projectName, int taskIndex) {
+    private String handleUpdateTaskFields(int projectSelection, int taskIndex) {
+        var project = projects.getProjectList().get(projectSelection - 1);
+        String projectName = project.getProjectName();
+
         StringBuilder args = new StringBuilder();
-        args.append("\"").append(projectName).append("\" ").append(taskIndex);
+        args.append(projectSelection).append(" ").append(taskIndex);
 
         boolean continueUpdating = true;
         while (continueUpdating) {
@@ -487,7 +480,7 @@ public class InteractivePromptHandler {
                 if (newDesc == null) {
                     continue; // Stay in loop
                 }
-                args.append(" --description \"").append(newDesc).append("\"");
+                args.append(" --description ").append(newDesc);
                 System.out.println("Description updated!");
                 break;
             case "2":
@@ -511,7 +504,8 @@ public class InteractivePromptHandler {
                 System.out.println("Deadline updated!");
                 break;
             case "4":
-                return handleUpdateTaskInProject(projectName); // Reselect task
+                return handleUpdateTaskInProject(projectSelection); // Reselect
+                                                                    // task
             case "5":
                 return handleUpdateCommand(); // Reselect project
             case "6":
@@ -648,7 +642,7 @@ public class InteractivePromptHandler {
                     continue;
                 }
 
-                String result = "tasks by " + field + " " + order;
+                String result = "--" + field + " " + order;
                 logger.info("Sort command arguments constructed: " + result);
                 return result;
             }
@@ -681,11 +675,11 @@ public class InteractivePromptHandler {
 
             switch (input) {
             case "1":
-                return "tasks by priority high";
+                return "--priority high";
             case "2":
-                return "tasks by priority medium";
+                return "--priority medium";
             case "3":
-                return "tasks by priority low";
+                return "--priority low";
             default:
                 System.out.println("Invalid choice. Try again.");
             }
@@ -693,8 +687,8 @@ public class InteractivePromptHandler {
     }
 
     /**
-     * Handles interactive prompting for the export command.
-     * Complex flow with multiple options.
+     * Handles interactive prompting for the export command. Complex flow with
+     * multiple options.
      *
      * @return The constructed command arguments string, or null if cancelled
      */
@@ -726,36 +720,32 @@ public class InteractivePromptHandler {
             }
 
             StringBuilder args = new StringBuilder();
-            args.append("tasks to ").append(filename).append(".txt");
+            args.append(filename).append(".txt");
 
             switch (input) {
             case "1":
                 args.append(" --all");
                 break;
             case "2":
-                String projectName = promptForProject(false);
-                if (projectName == null) {
+                Integer projectSelection = promptForProjectIndex();
+                if (projectSelection == null) {
                     return null;
                 }
-                args.append(" \"").append(projectName).append("\"");
+                args.append(" ").append(projectSelection);
                 break;
             case "3":
                 String filterArgs = handleFilterCommand();
                 if (filterArgs == null) {
                     return null;
                 }
-                // Convert from "tasks by priority medium" to "filter by priority medium"
-                String exportFilterArgs = filterArgs.replace("tasks by", "filter by");
-                args.append(" ").append(exportFilterArgs);
+                args.append(" filter-tasks ").append(filterArgs);
                 break;
             case "4":
                 String sortArgs = handleSortCommand();
                 if (sortArgs == null) {
                     return null;
                 }
-                // Convert from "tasks by deadline descending" to "sort by deadline descending"
-                String exportSortArgs = sortArgs.replace("tasks by", "sort by");
-                args.append(" ").append(exportSortArgs);
+                args.append(" sort-tasks ").append(sortArgs);
                 break;
             case "5":
                 String filterArgs2 = handleFilterCommand();
@@ -766,10 +756,7 @@ public class InteractivePromptHandler {
                 if (sortArgs2 == null) {
                     return null;
                 }
-                // Convert both to export format
-                String exportFilterArgs2 = filterArgs2.replace("tasks by", "filter by");
-                String exportSortArgs2 = sortArgs2.replace("tasks by", "sort by");
-                args.append(" ").append(exportFilterArgs2).append(" ").append(exportSortArgs2);
+                args.append(" filter-tasks ").append(filterArgs2).append(" sort-tasks ").append(sortArgs2);
                 break;
             default:
                 System.out.println("Invalid choice. Try again.");
@@ -815,11 +802,11 @@ public class InteractivePromptHandler {
             switch (input) {
             case "1":
                 // Prompt for project selection
-                String projectName = promptForProject(false);
-                if (projectName == null) {
+                Integer projectSelection = promptForProjectIndex();
+                if (projectSelection == null) {
                     return null;
                 }
-                String result = "\"" + projectName + "\"";
+                String result = String.valueOf(projectSelection);
                 logger.info("Status command arguments constructed: " + result);
                 return result;
             case "2":
@@ -832,39 +819,16 @@ public class InteractivePromptHandler {
     }
 
     /**
-     * Prompts user to select a project or create a new one.
+     * Prompts user to select an existing project by index.
      *
-     * @param allowCreateNew Whether to include "Create new project" option
-     * @return The selected project name, or null if cancelled
+     * @return The selected project index (1-based), or null if cancelled.
      */
-    private String promptForProject(boolean allowCreateNew) {
-        System.out.println("Hmph, fine... What project should this task be for? " +
-                           "Don't think I care which one you pick!");
+    private Integer promptForProjectIndex() {
+        System.out.println("Which project should this task be for?");
 
         if (projects.getProjectListSize() == 0) {
-            if (!allowCreateNew) {
-                System.out.println("No projects available. Going back...");
-                return null;
-            }
-            // When no projects exist, directly offer to create new project
-            System.out.println("Available projects:");
-            System.out.println("1. Create new project");
-
-            while (true) {
-                System.out.print("Enter choice (1): ");
-                String input = scanner.nextLine().trim();
-
-                if (input.isEmpty()) {
-                    System.out.println("Going back...");
-                    return null;
-                }
-
-                if (input.equals("1")) {
-                    return promptForNewProjectName();
-                } else {
-                    System.out.println("Invalid choice. Try again.");
-                }
-            }
+            System.out.println("No projects available. Create one with 'create-project <projectName>' first.");
+            return null;
         }
 
         System.out.println("Available projects:");
@@ -872,14 +836,8 @@ public class InteractivePromptHandler {
             System.out.println((i + 1) + ". " + projects.getProjectList().get(i).getProjectName());
         }
 
-        if (allowCreateNew) {
-            System.out.println((projects.getProjectListSize() + 1) + ". Create new project");
-        }
-
         while (true) {
-            System.out.print("Enter choice (1-" +
-                             (allowCreateNew ? projects.getProjectListSize() + 1 : projects.getProjectListSize()) +
-                             "): ");
+            System.out.print("Enter project number (1-" + projects.getProjectListSize() + "): ");
             String input = scanner.nextLine().trim();
 
             if (input.isEmpty()) {
@@ -890,9 +848,7 @@ public class InteractivePromptHandler {
             try {
                 int choice = Integer.parseInt(input);
                 if (choice >= 1 && choice <= projects.getProjectListSize()) {
-                    return projects.getProjectList().get(choice - 1).getProjectName();
-                } else if (allowCreateNew && choice == projects.getProjectListSize() + 1) {
-                    return promptForNewProjectName();
+                    return choice;
                 } else {
                     System.out.println("Invalid choice. Try again.");
                 }

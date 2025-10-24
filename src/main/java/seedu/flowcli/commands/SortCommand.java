@@ -18,19 +18,40 @@ public class SortCommand extends Command {
 
     @Override
     public boolean execute(CommandContext context) throws Exception {
-        if (arguments.isEmpty() || !arguments.startsWith("tasks by")) {
+        String trimmed = arguments.trim();
+        if (trimmed.isEmpty()) {
             throw new InvalidArgumentException(
-                    "Invalid sort command. Use: sort tasks by deadline/priority ascending/descending");
+                    "Invalid sort command. Use: sort-tasks <--deadline/priority> <ascending/descending>");
         }
 
-        String[] parts = arguments.split("\\s+");
-        if (parts.length < 4) {
-            throw new InvalidArgumentException(
-                    "Invalid sort command. Use: sort tasks by deadline/priority ascending/descending");
+        String field;
+        String order;
+
+        if (trimmed.startsWith("tasks by")) {
+            String[] parts = trimmed.split("\\s+");
+            if (parts.length < 4) {
+                throw new InvalidArgumentException(
+                        "Invalid sort command. Use: sort tasks by deadline/priority ascending/descending");
+            }
+            field = parts[2].toLowerCase();
+            order = parts[3].toLowerCase();
+        } else {
+            String[] parts = trimmed.split("\\s+");
+            if (parts.length < 2) {
+                throw new InvalidArgumentException(
+                        "Invalid sort command. Use: sort-tasks <--deadline/priority> <ascending/descending>");
+            }
+
+            String fieldToken = parts[0];
+            if (!fieldToken.startsWith("--")) {
+                throw new InvalidArgumentException(
+                        "Invalid sort command. Use: sort-tasks <--deadline/priority> <ascending/descending>");
+            }
+
+            field = fieldToken.substring(2).toLowerCase();
+            order = parts[1].toLowerCase();
         }
 
-        String field = parts[2];
-        String order = parts[3];
         boolean ascending = ValidationConstants.SORT_ORDER_ASCENDING.equals(order);
 
         CommandValidator.validateSortField(field);

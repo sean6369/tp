@@ -34,7 +34,7 @@ class TaskCommandsTest {
 
     @Test
     void addCommandAddsTaskToProject() throws Exception {
-        AddCommand command = new AddCommand("Alpha Finish docs --priority high --deadline 2024-12-25");
+        AddCommand command = new AddCommand("1 Finish docs --priority high --deadline 2024-12-25");
 
         boolean shouldContinue = command.execute(context);
 
@@ -53,7 +53,7 @@ class TaskCommandsTest {
     @Test
     void markCommandMarksTaskAsDone() throws Exception {
         project.addTask("Initial task");
-        MarkCommand command = new MarkCommand("Alpha 1");
+        MarkCommand command = new MarkCommand("1 1");
 
         boolean shouldContinue = command.execute(context);
 
@@ -69,7 +69,7 @@ class TaskCommandsTest {
     void unmarkCommandMarksTaskAsNotDone() throws Exception {
         project.addTask("Initial task");
         project.getProjectTasks().mark(0);
-        UnmarkCommand command = new UnmarkCommand("Alpha 1");
+        UnmarkCommand command = new UnmarkCommand("1 1");
 
         boolean shouldContinue = command.execute(context);
 
@@ -85,7 +85,7 @@ class TaskCommandsTest {
     void deleteCommandRemovesTask() throws Exception {
         project.addTask("Task to delete");
         Task taskToDelete = project.getProjectTasks().get(0);
-        DeleteCommand command = new DeleteCommand("Alpha 1");
+        DeleteTaskCommand command = new DeleteTaskCommand("1 1");
 
         boolean shouldContinue = command.execute(context);
 
@@ -100,7 +100,7 @@ class TaskCommandsTest {
     void updateCommandUpdatesTaskAttributes() throws Exception {
         project.addTask("Initial task", LocalDate.of(2024, 1, 1), 1);
         UpdateCommand command = new UpdateCommand(
-                "Alpha 1 --description Updated task --deadline 2024-12-31 --priority high");
+                "1 1 --description Updated task --deadline 2024-12-31 --priority high");
 
         boolean shouldContinue = command.execute(context);
 
