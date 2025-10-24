@@ -26,7 +26,7 @@ public class TaskFilter {
      * Constructor for filtering tasks from all projects.
      */
     public TaskFilter(ProjectList projects, String priority, String projectName) {
-        assert projects != null : "ProjectList cannot be null";
+        assert projects != null : "Project list cannot be null";
 
         this.projects = projects;
         this.inputTasks = null;
@@ -34,7 +34,7 @@ public class TaskFilter {
         this.projectNameFilter = projectName;
 
         logger.info(String.format("Creating TaskFilter with priority='%s', project='%s'", priorityFilter,
-                                        projectNameFilter));
+                projectNameFilter));
 
         filter();
     }
@@ -51,7 +51,7 @@ public class TaskFilter {
         this.projectNameFilter = projectName;
 
         logger.info(String.format("Creating TaskFilter with priority='%s', project='%s' on %d tasks", priorityFilter,
-                                        projectNameFilter, tasks.size()));
+                projectNameFilter, tasks.size()));
 
         filter();
     }
@@ -86,7 +86,7 @@ public class TaskFilter {
 
                 filteredTasks.add(taskWithProject);
                 logger.fine(String.format("Added task '%s' from project '%s' to filtered results",
-                                                task.getDescription(), projectName));
+                        task.getDescription(), projectName));
             }
         } else {
             for (Project project : projects.getProjectList()) {
@@ -106,12 +106,12 @@ public class TaskFilter {
 
                     filteredTasks.add(new TaskWithProject(project.getProjectName(), task));
                     logger.fine(String.format("Added task '%s' from project '%s' to filtered results",
-                                                    task.getDescription(), project.getProjectName()));
+                            task.getDescription(), project.getProjectName()));
                 }
             }
         }
 
         logger.info(String.format("Task filtering completed. Processed %d tasks, found %d matches", totalTasksProcessed,
-                                        filteredTasks.size()));
+                filteredTasks.size()));
     }
 }

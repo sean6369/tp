@@ -49,8 +49,8 @@ class CommandParserTest {
                 () -> assertEquals(CommandType.ADD_TASK, parser.parse("add Project1 Task").getType()),
                 () -> assertEquals(CommandType.DELETE, parser.parse("delete Project1").getType()),
                 () -> assertEquals(CommandType.UPDATE_TASK, parser.parse("update Project1 1").getType()),
-                () -> assertEquals(CommandType.SORT_TASKS, parser.parse("sort tasks by deadline").getType()),
-                () -> assertEquals(CommandType.FILTER_TASKS, parser.parse("filter tasks by priority").getType()));
+                () -> assertEquals(CommandType.SORT_TASKS, parser.parse("sort-tasks --deadline ascending").getType()),
+                () -> assertEquals(CommandType.FILTER_TASKS, parser.parse("filter-tasks --priority high").getType()));
 
         logger.info("Valid command types parsing test passed");
     }

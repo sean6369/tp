@@ -17,8 +17,7 @@ public class ValidationConstants {
 
     // Filter type constants
     public static final String FILTER_TYPE_PRIORITY = "priority";
-    public static final String FILTER_TYPE_PROJECT = "project";
-    public static final String[] VALID_FILTER_TYPES = { FILTER_TYPE_PRIORITY, FILTER_TYPE_PROJECT };
+    public static final String[] VALID_FILTER_TYPES = { FILTER_TYPE_PRIORITY };
 
     // Sort field constants
     public static final String SORT_FIELD_DEADLINE = "deadline";

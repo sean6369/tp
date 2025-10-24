@@ -65,85 +65,13 @@ public class ExportCommandHandler {
         }
 
         if (trimmed.startsWith("tasks to ")) {
-            handleLegacyExport(trimmed);
-        } else {
-            handleModernExport(trimmed);
-        }
-    }
-
-    /**
-     * Parses export parameters and returns the appropriate tasks.
-     */
-    private void handleLegacyExport(String args) throws Exception {
-        String[] parts = args.trim().split("\\s+");
-
-        if (parts.length < 3 || !"tasks".equals(parts[0]) || !"to".equals(parts[1])) {
             throw new InvalidArgumentException(
-                    "Invalid export command. Use: export tasks to <filename>.txt [<project>] "
-                            + "[filter by <type> <value>] [sort by <field> <order>]");
+                    "Legacy export syntax is no longer supported. Use: export-tasks <filename>.txt [projectIndex] "
+                            + "[filter-tasks --priority <low/medium/high>] "
+                            + "[sort-tasks <--deadline/priority> <ascending/descending>]");
         }
 
-        String filename = parts[2];
-        if (!filename.endsWith(".txt")) {
-            throw new InvalidArgumentException(
-                    "Export filename must end with .txt extension. Use: " + filename + ".txt");
-        }
-
-        String remainingArgs = args.substring(args.indexOf(filename) + filename.length()).trim();
-
-        List<TaskWithProject> tasksToExport;
-        String header;
-
-        if (remainingArgs.isEmpty()) {
-            if (lastViewType != ViewType.NONE && !lastDisplayedTasks.isEmpty()) {
-                tasksToExport = new ArrayList<>(lastDisplayedTasks);
-                header = "Exported tasks (" + lastViewMetadata + ")";
-            } else {
-                tasksToExport = TaskCollector.getAllTasksWithProjects(projects);
-                header = "Exported all tasks";
-            }
-        } else if ("--all".equals(remainingArgs.trim())) {
-            tasksToExport = TaskCollector.getAllTasksWithProjects(projects);
-            header = "Exported all tasks";
-        } else {
-            tasksToExport = parseExportParameters(remainingArgs);
-            header = "Exported tasks (" + remainingArgs + ")";
-        }
-
-        TaskExporter.exportTasksToFile(tasksToExport, filename, header);
-        ui.showExportSuccess(filename, tasksToExport.size());
-    }
-
-    /**
-     * Parses export parameters and returns the appropriate tasks.
-     */
-    private List<TaskWithProject> parseExportParameters(String args) throws Exception {
-        String[] parts = args.split("\\s+");
-
-        // Validate incomplete filter/sort commands
-        validateFilterSortCommands(parts);
-
-        // Parse command tokens
-        ParsedParams params = parseCommandTokens(parts);
-
-        // Get base tasks
-        List<TaskWithProject> tasks = collectBaseTasks(params.projectName);
-
-        // Apply filter if specified
-        if (params.filterType != null && params.filterValue != null) {
-            tasks = applyFiltering(tasks, params.filterType, params.filterValue);
-        }
-
-        // Apply sort if specified
-        if (params.sortField != null && params.sortOrder != null) {
-            tasks = applySorting(tasks, params.sortField, params.sortOrder);
-        }
-
-        return tasks;
-    }
-
-    private void handleModernExport(String args) throws Exception {
-        ModernParams params = parseModernParameters(args);
+        ExportParams params = parseParameters(trimmed);
 
         List<TaskWithProject> tasks;
         String baseDescriptor;
@@ -167,23 +95,25 @@ public class ExportCommandHandler {
         }
 
         if (params.filterType != null && params.filterValue != null) {
-            tasks = applyFiltering(tasks, params.filterType, params.filterValue);
+            FilterResult filterResult = applyFiltering(tasks, params.filterType, params.filterValue);
+            tasks = filterResult.tasks;
+            params.filterValue = filterResult.resolvedValue;
         }
 
         if (params.sortField != null && params.sortOrder != null) {
             tasks = applySorting(tasks, params.sortField, params.sortOrder);
         }
 
-        String header = buildModernHeader(baseDescriptor, params);
+        String header = buildExportHeader(baseDescriptor, params);
         TaskExporter.exportTasksToFile(tasks, params.filename, header);
         ui.showExportSuccess(params.filename, tasks.size());
     }
 
-    private ModernParams parseModernParameters(String args) throws InvalidArgumentException {
-        ModernParams params = new ModernParams();
+    private ExportParams parseParameters(String args) throws InvalidArgumentException {
+        ExportParams params = new ExportParams();
         List<String> tokens = new ArrayList<>(Arrays.asList(args.split("\\s+")));
         if (tokens.isEmpty()) {
-            throw invalidModernCommand();
+            throw invalidExportCommand();
         }
 
         params.filename = tokens.get(0);
@@ -211,24 +141,28 @@ public class ExportCommandHandler {
                 }
                 index++;
                 if (index >= tokens.size()) {
-                    throw invalidModernCommand();
+                    throw invalidExportCommand();
                 }
 
                 String option = tokens.get(index);
                 if (!option.startsWith("--")) {
-                    throw invalidModernCommand();
+                    throw invalidExportCommand();
                 }
                 params.filterType = option.substring(2).toLowerCase();
+                if (!ValidationConstants.FILTER_TYPE_PRIORITY.equals(params.filterType)) {
+                    throw new InvalidArgumentException(
+                            "Invalid filter type. Use: filter-tasks --priority <low/medium/high>.");
+                }
                 index++;
                 if (index >= tokens.size()) {
-                    throw invalidModernCommand();
+                    throw invalidExportCommand();
                 }
 
                 StringBuilder valueBuilder = new StringBuilder(tokens.get(index));
                 index++;
                 while (index < tokens.size()) {
                     String lookahead = tokens.get(index);
-                    if (isModernSegmentBoundary(lookahead)) {
+                    if (isSegmentBoundary(lookahead)) {
                         break;
                     }
                     valueBuilder.append(" ").append(lookahead);
@@ -244,17 +178,17 @@ public class ExportCommandHandler {
                 }
                 index++;
                 if (index >= tokens.size()) {
-                    throw invalidModernCommand();
+                    throw invalidExportCommand();
                 }
 
                 String option = tokens.get(index);
                 if (!option.startsWith("--")) {
-                    throw invalidModernCommand();
+                    throw invalidExportCommand();
                 }
                 params.sortField = option.substring(2).toLowerCase();
                 index++;
                 if (index >= tokens.size()) {
-                    throw invalidModernCommand();
+                    throw invalidExportCommand();
                 }
 
                 params.sortOrder = tokens.get(index).toLowerCase();
@@ -268,29 +202,21 @@ public class ExportCommandHandler {
                 continue;
             }
 
-            throw invalidModernCommand();
+            throw invalidExportCommand();
         }
 
         if ((params.filterType == null) != (params.filterValue == null)) {
-            throw invalidModernCommand();
+            throw invalidExportCommand();
         }
         if ((params.sortField == null) != (params.sortOrder == null)) {
-            throw invalidModernCommand();
+            throw invalidExportCommand();
         }
         if (params.forceAll && params.projectIndex != null) {
             throw new InvalidArgumentException("Specify either projectIndex or --all, not both.");
         }
 
         if (params.filterType != null) {
-            if (ValidationConstants.FILTER_TYPE_PRIORITY.equals(params.filterType)) {
-                params.filterValue = CommandValidator.validatePriority(params.filterValue);
-            } else if (ValidationConstants.FILTER_TYPE_PROJECT.equals(params.filterType)) {
-                if (params.filterValue == null || params.filterValue.isEmpty()) {
-                    throw new InvalidArgumentException("Project name for filter cannot be empty.");
-                }
-            } else {
-                throw new InvalidArgumentException("Invalid filter type. Use --priority or --project.");
-            }
+            params.filterValue = CommandValidator.validatePriority(params.filterValue);
         }
 
         if (params.sortField != null) {
@@ -303,7 +229,7 @@ public class ExportCommandHandler {
         return params;
     }
 
-    private boolean isModernSegmentBoundary(String token) {
+    private boolean isSegmentBoundary(String token) {
         return "filter-tasks".equals(token) || "sort-tasks".equals(token) || "--all".equalsIgnoreCase(token);
     }
 
@@ -315,7 +241,7 @@ public class ExportCommandHandler {
         }
     }
 
-    private String buildModernHeader(String baseDescriptor, ModernParams params) {
+    private String buildExportHeader(String baseDescriptor, ExportParams params) {
         List<String> parts = new ArrayList<>();
         if (baseDescriptor != null && !baseDescriptor.isEmpty()) {
             parts.add(baseDescriptor);
@@ -336,91 +262,22 @@ public class ExportCommandHandler {
         return "Exported tasks (" + String.join(", ", parts) + ")";
     }
 
-    private InvalidArgumentException invalidModernCommand() {
+    private InvalidArgumentException invalidExportCommand() {
         return new InvalidArgumentException("Invalid export command. Use: export-tasks <filename>.txt [projectIndex] "
                 + "[filter-tasks --priority <low/medium/high>] "
                 + "[sort-tasks <--deadline/priority> <ascending/descending>]");
     }
 
     /**
-     * Validates that filter and sort commands are complete.
-     */
-    private void validateFilterSortCommands(String[] parts) throws InvalidArgumentException {
-        for (int j = 0; j < parts.length; j++) {
-            if (ValidationConstants.KEYWORD_FILTER.equals(parts[j])) {
-                CommandValidator.validateFilterCommand(parts, j);
-            }
-            if (ValidationConstants.KEYWORD_SORT.equals(parts[j])) {
-                CommandValidator.validateSortCommand(parts, j);
-            }
-        }
-    }
-
-    /**
-     * Parses command tokens to extract parameters.
-     */
-    private ParsedParams parseCommandTokens(String[] parts) {
-        ParsedParams params = new ParsedParams();
-
-        int i = 0;
-        while (i < parts.length) {
-            String current = parts[i];
-
-            if (ValidationConstants.KEYWORD_FILTER.equals(current) && i + 3 < parts.length
-                    && ValidationConstants.KEYWORD_BY.equals(parts[i + 1])) {
-                params.filterType = parts[i + 2];
-                params.filterValue = parts[i + 3];
-                i += 4;
-            } else if (ValidationConstants.KEYWORD_SORT.equals(current) && i + 3 < parts.length
-                    && ValidationConstants.KEYWORD_BY.equals(parts[i + 1])) {
-                params.sortField = parts[i + 2];
-                params.sortOrder = parts[i + 3];
-                i += 4;
-            } else if (!ValidationConstants.KEYWORD_FILTER.equals(current)
-                    && !ValidationConstants.KEYWORD_SORT.equals(current)
-                    && !ValidationConstants.KEYWORD_BY.equals(current)) {
-                if (params.projectName == null) {
-                    params.projectName = stripQuotes(current);
-                }
-                i++;
-            } else {
-                i++;
-            }
-        }
-
-        return params;
-    }
-
-    /**
-     * Collects base tasks from specified project or all projects.
-     */
-    private List<TaskWithProject> collectBaseTasks(String projectName) throws InvalidArgumentException {
-        if (projectName != null) {
-            Project project = projects.getProject(projectName);
-            if (project == null) {
-                throw new InvalidArgumentException("Project not found: " + projectName);
-            }
-            return TaskCollector.getTasksFromProject(project);
-        } else {
-            return TaskCollector.getAllTasksWithProjects(projects);
-        }
-    }
-
-    /**
      * Applies filtering to tasks.
      */
-    private List<TaskWithProject> applyFiltering(List<TaskWithProject> tasks, String filterType, String filterValue)
+    private FilterResult applyFiltering(List<TaskWithProject> tasks, String filterType, String filterValue)
             throws Exception {
         CommandValidator.validateFilterType(filterType);
 
-        if (ValidationConstants.FILTER_TYPE_PRIORITY.equals(filterType)) {
-            CommandValidator.validatePriority(filterValue);
-        }
-
-        String priorityParam = ValidationConstants.FILTER_TYPE_PRIORITY.equals(filterType) ? filterValue : null;
-        String projectParam = ValidationConstants.FILTER_TYPE_PROJECT.equals(filterType) ? filterValue : null;
-        TaskFilter filter = new TaskFilter(tasks, priorityParam, projectParam);
-        return filter.getFilteredTasks();
+        String resolvedValue = CommandValidator.validatePriority(filterValue);
+        TaskFilter filter = new TaskFilter(tasks, resolvedValue, null);
+        return new FilterResult(filter.getFilteredTasks(), resolvedValue);
     }
 
     /**
@@ -436,18 +293,17 @@ public class ExportCommandHandler {
         return sorter.getSortedTasks();
     }
 
-    /**
-     * Helper class to hold parsed parameters.
-     */
-    private static class ParsedParams {
-        String projectName = null;
-        String filterType = null;
-        String filterValue = null;
-        String sortField = null;
-        String sortOrder = null;
+    private static class FilterResult {
+        final List<TaskWithProject> tasks;
+        final String resolvedValue;
+
+        FilterResult(List<TaskWithProject> tasks, String resolvedValue) {
+            this.tasks = tasks;
+            this.resolvedValue = resolvedValue;
+        }
     }
 
-    private static class ModernParams {
+    private static class ExportParams {
         String filename;
         Integer projectIndex;
         boolean forceAll;

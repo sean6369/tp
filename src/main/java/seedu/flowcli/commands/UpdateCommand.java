@@ -31,6 +31,10 @@ public class UpdateCommand extends Command {
             if (projectIndex != null) {
                 throw new IndexOutOfRangeException(context.getProjects().getProjectListSize());
             }
+            if (parsedArgument.hasNonNumericProjectToken()) {
+                throw new InvalidArgumentException(String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE,
+                        parsedArgument.getParsedProjectName()));
+            }
             throw new MissingArgumentException();
         }
 

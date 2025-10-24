@@ -3,6 +3,8 @@ package seedu.flowcli.parsers;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -49,7 +51,8 @@ class ArgumentParserTest {
         assertAll("Valid index parsing",
                 () -> assertEquals(project1, parser.getTargetProject()),
                 () -> assertEquals("build docs", parser.getRemainingArgument()),
-                () -> assertEquals(0, parser.getTargetProjectIndex()));
+                () -> assertEquals(0, parser.getTargetProjectIndex()),
+                () -> assertFalse(parser.hasNonNumericProjectToken()));
     }
 
     @Test
@@ -60,7 +63,8 @@ class ArgumentParserTest {
         assertAll("Index-only parsing",
                 () -> assertEquals(project2, parser.getTargetProject()),
                 () -> assertNull(parser.getRemainingArgument()),
-                () -> assertEquals(1, parser.getTargetProjectIndex()));
+                () -> assertEquals(1, parser.getTargetProjectIndex()),
+                () -> assertFalse(parser.hasNonNumericProjectToken()));
     }
 
     @Test
@@ -71,7 +75,8 @@ class ArgumentParserTest {
         assertAll("Out-of-range index handling",
                 () -> assertNull(parser.getTargetProject()),
                 () -> assertEquals("extra args", parser.getRemainingArgument()),
-                () -> assertEquals(4, parser.getTargetProjectIndex()));
+                () -> assertEquals(4, parser.getTargetProjectIndex()),
+                () -> assertFalse(parser.hasNonNumericProjectToken()));
     }
 
     @Test
@@ -83,7 +88,8 @@ class ArgumentParserTest {
                 () -> assertNull(parser.getTargetProject()),
                 () -> assertEquals("build", parser.getRemainingArgument()),
                 () -> assertNull(parser.getTargetProjectIndex()),
-                () -> assertEquals("ProjectAlpha", parser.getParsedProjectName()));
+                () -> assertEquals("ProjectAlpha", parser.getParsedProjectName()),
+                () -> assertTrue(parser.hasNonNumericProjectToken()));
     }
 
     @Test
@@ -96,6 +102,8 @@ class ArgumentParserTest {
                 () -> assertNull(empty.getTargetProject()),
                 () -> assertNull(empty.getRemainingArgument()),
                 () -> assertNull(whitespace.getTargetProject()),
-                () -> assertNull(whitespace.getRemainingArgument()));
+                () -> assertNull(whitespace.getRemainingArgument()),
+                () -> assertFalse(empty.hasNonNumericProjectToken()),
+                () -> assertFalse(whitespace.hasNonNumericProjectToken()));
     }
 }

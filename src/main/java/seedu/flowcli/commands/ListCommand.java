@@ -2,8 +2,8 @@ package seedu.flowcli.commands;
 
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.exceptions.IndexOutOfRangeException;
+import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.exceptions.MissingArgumentException;
-import seedu.flowcli.exceptions.ProjectNotFoundException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
@@ -53,12 +53,11 @@ public class ListCommand extends Command {
             return true;
         }
 
-        if ("--all".equalsIgnoreCase(parsedArgument.getParsedProjectName())) {
-            context.getUi().showProjectList();
-            context.getExportHandler().clearViewState();
-            return true;
+        if (parsedArgument.hasNonNumericProjectToken()) {
+            throw new InvalidArgumentException(String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE,
+                    parsedArgument.getParsedProjectName()));
         }
 
-        throw new ProjectNotFoundException(parsedArgument.getParsedProjectName());
+        throw new MissingArgumentException();
     }
 }

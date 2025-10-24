@@ -11,6 +11,9 @@ import seedu.flowcli.project.ProjectList;
  */
 public class ArgumentParser {
 
+    public static final String INVALID_PROJECT_INDEX_MESSAGE = "Invalid project index: %s. Use the numeric project "
+            + "index shown in 'list --all'.";
+
     private final String argument;
     private final ProjectList projects;
 
@@ -39,6 +42,10 @@ public class ArgumentParser {
 
     public Integer getTargetProjectIndex() {
         return targetProjectIndex;
+    }
+
+    public boolean hasNonNumericProjectToken() {
+        return parsedProjectToken != null && targetProjectIndex == null;
     }
 
     private void parseArgument() {

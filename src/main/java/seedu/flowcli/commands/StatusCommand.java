@@ -2,8 +2,8 @@ package seedu.flowcli.commands;
 
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.exceptions.IndexOutOfRangeException;
+import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.exceptions.MissingArgumentException;
-import seedu.flowcli.exceptions.ProjectNotFoundException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
 
@@ -39,10 +39,9 @@ public class StatusCommand extends Command {
             throw new IndexOutOfRangeException(context.getProjects().getProjectListSize());
         }
 
-        // If no project found but project name was provided
-        if (parsedArgument.getParsedProjectName() != null && !parsedArgument.getParsedProjectName().isEmpty()
-                && !parsedArgument.getParsedProjectName().equals("--all")) {
-            throw new ProjectNotFoundException(parsedArgument.getParsedProjectName());
+        if (parsedArgument.hasNonNumericProjectToken()) {
+            throw new InvalidArgumentException(String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE,
+                    parsedArgument.getParsedProjectName()));
         }
 
         // No arguments provided - should not happen as interactive mode handles
