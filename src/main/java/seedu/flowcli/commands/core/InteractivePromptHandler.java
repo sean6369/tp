@@ -4,7 +4,6 @@ import java.util.Scanner;
 import java.util.logging.Logger;
 
 import seedu.flowcli.project.ProjectList;
-import seedu.flowcli.ui.ConsoleUi;
 
 /**
  * Handles interactive prompting for commands that require user guidance.
@@ -14,7 +13,6 @@ import seedu.flowcli.ui.ConsoleUi;
 public class InteractivePromptHandler {
     private static final Logger logger = Logger.getLogger(InteractivePromptHandler.class.getName());
 
-    private final ConsoleUi ui;
     private final ProjectList projects;
     private final Scanner scanner;
 
@@ -22,16 +20,13 @@ public class InteractivePromptHandler {
      * Creates an InteractivePromptHandler with the given UI, projects, and
      * input scanner.
      *
-     * @param ui The console UI for displaying messages
      * @param projects The project list for accessing available projects
      * @param scanner The scanner for reading user input
      */
-    public InteractivePromptHandler(ConsoleUi ui, ProjectList projects, Scanner scanner) {
-        assert ui != null : "ConsoleUi cannot be null";
+    public InteractivePromptHandler(ProjectList projects, Scanner scanner) {
         assert projects != null : "ProjectList cannot be null";
         assert scanner != null : "Scanner cannot be null";
 
-        this.ui = ui;
         this.projects = projects;
         this.scanner = scanner;
 
@@ -50,9 +45,8 @@ public class InteractivePromptHandler {
         // Step 1: Project selection
         Integer projectSelection = promptForProjectIndex();
         if (projectSelection == null) {
-            return null; // Cancelled
+            return null;
         }
-        String projectName = projects.getProjectList().get(projectSelection - 1).getProjectName();
 
         // Step 2: Task name
         System.out.println("Enter task name:");
@@ -62,16 +56,16 @@ public class InteractivePromptHandler {
             return null;
         }
 
-        // Step 3: Priority selection
+        // Step 3: Priority selection (optional - default medium)
         String priority = promptForPriority();
         if (priority == null) {
-            return null; // Cancelled
+            return null;
         }
 
         // Step 4: Deadline (optional)
         String deadline = promptForDeadline();
         if (deadline == null) {
-            return null; // Cancelled
+            return null;
         }
 
         // Construct arguments
@@ -350,7 +344,6 @@ public class InteractivePromptHandler {
             try {
                 int index = Integer.parseInt(input);
                 if (index >= 1 && index <= project.size()) {
-                    String taskDesc = project.getProjectTasks().get(index - 1).getDescription();
                     System.out.print("Are you sure you want to delete this task? (y/n): ");
                     String confirm = scanner.nextLine().trim().toLowerCase();
                     if (confirm.equals("y") || confirm.equals("yes")) {
@@ -455,9 +448,6 @@ public class InteractivePromptHandler {
      * Handles the recursive field update loop for a specific task.
      */
     private String handleUpdateTaskFields(int projectSelection, int taskIndex) {
-        var project = projects.getProjectList().get(projectSelection - 1);
-        String projectName = project.getProjectName();
-
         StringBuilder args = new StringBuilder();
         args.append(projectSelection).append(" ").append(taskIndex);
 
