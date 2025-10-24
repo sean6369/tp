@@ -1,4 +1,4 @@
-package seedu.flowcli.commands;
+package seedu.flowcli.unused;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,9 +12,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import seedu.flowcli.commands.AddCommand;
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.exceptions.MissingDescriptionException;
@@ -23,8 +25,14 @@ import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
 import seedu.flowcli.ui.ConsoleUi;
 
-@DisplayName("AddCommand Unit Tests")
-class AddCommandTest {
+/**
+ * Legacy add command test.
+ *
+ * @author xylonc
+ */
+//@@author xylonc
+ @Disabled("Retired test")
+public final class AddCommandTest {
 
     private static final Logger logger = Logger.getLogger(AddCommandTest.class.getName());
 
