@@ -88,8 +88,9 @@ public class CommandHandler {
         case CREATE_PROJECT:
             return parsed.getArguments().trim().isEmpty();
         case LIST:
-            return false; // Don't trigger interactive mode for list - it has
-                          // valid behavior with no args
+            // Don't trigger interactive mode for list - it has valid behaviour
+            // with no args
+            return false;
         case MARK:
         case UNMARK:
             return parsed.getArguments().trim().isEmpty();
@@ -97,8 +98,8 @@ public class CommandHandler {
             return parsed.getArguments().trim().isEmpty();
         case DELETE_PROJECT:
         case DELETE_TASK:
-            return false; // Don't trigger interactive mode for delete
-                          // subcommands
+            // Don't trigger interactive mode for delete subcommands
+            return false;
         case UPDATE_TASK:
             return parsed.getArguments().trim().isEmpty();
         case SORT_TASKS:

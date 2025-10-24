@@ -504,10 +504,11 @@ public class InteractivePromptHandler {
                 System.out.println("Deadline updated!");
                 break;
             case "4":
-                return handleUpdateTaskInProject(projectSelection); // Reselect
-                                                                    // task
+                // reselect task
+                return handleUpdateTaskInProject(projectSelection);
             case "5":
-                return handleUpdateCommand(); // Reselect project
+                // reselect project
+                return handleUpdateCommand();
             case "6":
                 continueUpdating = false;
                 break;
