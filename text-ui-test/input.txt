@@ -1,7 +1,6 @@
 create
 Project Alpha
-create
-Project Beta
+create-project Project Beta
 create
 singleWord
 add
@@ -10,69 +9,40 @@ Task A
 1
 1
 2025-12-31
-add
-1
-Task B
-3
-1
-2025-10-15
-add
-1
-Task C
-2
-2
+add-task 1 Task B --priority low --deadline 2025-10-15
+add-task 1 Task C
 add
 2
 Task D
 2
 1
 2025-11-20
-add
-2
-Task E
-1
-1
-2025-10-10
-sort tasks by deadline ascending
-sort tasks by deadline descending
-sort tasks by priority ascending
-sort tasks by priority descending
-filter tasks by priority high
-filter tasks by priority medium
-filter tasks by priority low
-filter tasks by project "Project Alpha"
-filter tasks by project "project alpha"
-filter tasks by project "Project Beta"
-filter tasks by project NonExistent
-update
-1
-2
-1
-Updated Task B
-3
-2025-11-01
-2
-1
-6
+add-task 2 Task E --priority high --deadline 2025-10-10
+sort-tasks --deadline ascending
+sort-tasks --deadline descending
+sort-tasks --priority ascending
+sort-tasks --priority descending
+filter-tasks --priority high
+filter-tasks --priority medium
+filter-tasks --priority low
+filter-tasks --project 1
+update-task 1 2 --description Updated Task B --priority high --deadline 2025-11-01
 update
 1
 3
-3
-
 2
 3
 6
-list
-mark "Project Alpha" 1
-mark "Project Beta" 2
+list --all
+mark 1 1
+mark 2 2
 status
 1
 1
 status
 2
-status "Project Alpha"
+status 1
 status --all
 status NonExistentProject
-1
 help
 bye
