@@ -8,6 +8,9 @@ import seedu.flowcli.commands.utility.TaskFilter;
 import seedu.flowcli.commands.validation.CommandValidator;
 import seedu.flowcli.commands.validation.ValidationConstants;
 import seedu.flowcli.exceptions.InvalidArgumentException;
+import seedu.flowcli.parsers.ArgumentParser;
+import seedu.flowcli.parsers.CommandParser;
+import seedu.flowcli.project.Project;
 import seedu.flowcli.task.TaskWithProject;
 
 public class FilterCommand extends Command {
@@ -21,42 +24,29 @@ public class FilterCommand extends Command {
         String trimmed = arguments.trim();
         if (trimmed.isEmpty()) {
             throw new InvalidArgumentException(
-                    "Invalid filter command. Use: filter-tasks --priority <low/medium/high>");
+                    "Invalid filter command. Use: filter-tasks --priority <low/medium/high> or filter-tasks --project <projectName>");
         }
 
-        String type;
-        String value;
-
-        if (trimmed.startsWith("tasks by")) {
-            String[] parts = trimmed.split("\\s+", 4);
-            if (parts.length < 4) {
-                throw new InvalidArgumentException(
-                        "Invalid filter command. Use: filter tasks by priority <value> or project <name>");
-            }
-            type = parts[2].toLowerCase();
-            value = normalizeValue(parts[3]);
-        } else {
-            if (!trimmed.startsWith("--")) {
-                throw new InvalidArgumentException(
-                        "Invalid filter command. Use: filter-tasks --priority <low/medium/high>");
-            }
-
-            int spaceIndex = trimmed.indexOf(' ');
-            if (spaceIndex == -1) {
-                throw new InvalidArgumentException(
-                        "Invalid filter command. Use: filter-tasks --priority <low/medium/high>");
-            }
-
-            String option = trimmed.substring(0, spaceIndex);
-            String valuePart = trimmed.substring(spaceIndex + 1).trim();
-            if (valuePart.isEmpty()) {
-                throw new InvalidArgumentException(
-                        "Invalid filter command. Use: filter-tasks --priority <low/medium/high>");
-            }
-
-            type = option.substring(2).toLowerCase();
-            value = normalizeValue(valuePart);
+        if (!trimmed.startsWith("--")) {
+            throw new InvalidArgumentException(
+                    "Invalid filter command. Use: filter-tasks --priority <low/medium/high> or filter-tasks --project <projectName>");
         }
+
+        int spaceIndex = trimmed.indexOf(' ');
+        if (spaceIndex == -1) {
+            throw new InvalidArgumentException(
+                    "Invalid filter command. Use: filter-tasks --priority <low/medium/high> or filter-tasks --project <projectName>");
+        }
+
+        String option = trimmed.substring(0, spaceIndex);
+        String valuePart = trimmed.substring(spaceIndex + 1).trim();
+        if (valuePart.isEmpty()) {
+            throw new InvalidArgumentException(
+                    "Invalid filter command. Use: filter-tasks --priority <low/medium/high> or filter-tasks --project <projectName>");
+        }
+
+        String type = option.substring(2).toLowerCase();
+        String value = normalizeValue(valuePart);
 
         if (ValidationConstants.FILTER_TYPE_PRIORITY.equals(type)) {
             CommandValidator.validatePriority(value);
@@ -68,12 +58,22 @@ public class FilterCommand extends Command {
             context.getExportHandler().updateViewState(filteredTasks, ExportCommandHandler.ViewType.FILTERED,
                     "filtered by " + type + " " + value);
         } else if (ValidationConstants.FILTER_TYPE_PROJECT.equals(type)) {
-            TaskFilter filter = new TaskFilter(context.getProjects(), null, value);
+            Integer zeroBasedIndex;
+            try {
+                zeroBasedIndex = CommandParser.parseIndexOrNull(value, context.getProjects().getProjectListSize());
+            } catch (NumberFormatException e) {
+                throw new InvalidArgumentException(String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE, value));
+            }
+
+            Project project = context.getProjects().getProjectByIndex(zeroBasedIndex);
+            String projectName = project.getProjectName();
+
+            TaskFilter filter = new TaskFilter(context.getProjects(), null, projectName);
             List<TaskWithProject> filteredTasks = filter.getFilteredTasks();
-            context.getUi().showGlobalFilteredTasks(filteredTasks, type, value);
+            context.getUi().showGlobalFilteredTasks(filteredTasks, type, projectName);
 
             context.getExportHandler().updateViewState(filteredTasks, ExportCommandHandler.ViewType.FILTERED,
-                    "filtered by " + type + " " + value);
+                    "filtered by " + type + " " + projectName);
         } else {
             CommandValidator.validateFilterType(type);
             throw new InvalidArgumentException("Invalid filter type. Use: priority or project");
