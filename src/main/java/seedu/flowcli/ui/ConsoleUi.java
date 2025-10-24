@@ -153,13 +153,15 @@ public class ConsoleUi {
         printHelpEntry("7. delete-project <projectIndex> --confirm", "Deletes an entire project repository.");
         printHelpEntry("8. delete-task <projectIndex> <taskIndex>", "Deletes a task entry from the specified project.");
         printHelpEntry(
-                "9. update-task <projectIndex> <taskIndex> [--description <newTaskDesc>] [--deadline YYYY-MM-DD] [--priority <low/medium/high>]",
+                "9. update-task <projectIndex> <taskIndex> [--description <newTaskDesc>] [--deadline YYYY-MM-DD]"
+                        + "[--priority <low/medium/high>]",
                 "Updates details of an existing task, such as description, deadline, or priority.");
         printHelpEntry("10. sort-tasks <--deadline/priority> <ascending/descending>",
                 "Sorts existing tasks by deadline or priority.");
         printHelpEntry("11. filter-tasks --priority <low/medium/high>", "Filters existing tasks by priority.");
         printHelpEntry(
-                "12. export-tasks <filename>.txt [projectIndex] [filter-tasks --priority <low/medium/high>] [sort-tasks <--deadline/priority> <ascending/descending>]",
+                "12. export-tasks <filename>.txt [projectIndex] [filter-tasks --priority <low/medium/high>]"
+                        + "[sort-tasks <--deadline/priority> <ascending/descending>]",
                 "Exports tasks to a TXT file. Defaults to all tasks if no project is specified.");
         printHelpEntry("13. status <projectIndex> / --all", "Shows project completion status.");
         printHelpEntry("14. help", "Shows this help message.");
