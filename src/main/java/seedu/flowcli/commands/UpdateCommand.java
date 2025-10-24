@@ -2,6 +2,7 @@ package seedu.flowcli.commands;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.commands.validation.CommandValidator;
@@ -17,6 +18,7 @@ import seedu.flowcli.task.Task;
  * Updates attributes of an existing task within a project.
  */
 public class UpdateCommand extends Command {
+    private static final Logger logger = Logger.getLogger(UpdateCommand.class.getName());
 
     public UpdateCommand(String arguments) {
         super(arguments);
@@ -24,22 +26,29 @@ public class UpdateCommand extends Command {
 
     @Override
     public boolean execute(CommandContext context) throws Exception {
+        logger.fine(() -> "UpdateCommand.execute() called with args=\"" + arguments + "\"");
+
         ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
         Project targetProject = parsedArgument.getTargetProject();
         if (targetProject == null) {
             Integer projectIndex = parsedArgument.getTargetProjectIndex();
             if (projectIndex != null) {
+                logger.warning(() -> String.format("Project index %d out of range for arguments: \"%s\"", projectIndex,
+                        arguments));
                 throw new IndexOutOfRangeException(context.getProjects().getProjectListSize());
             }
             if (parsedArgument.hasNonNumericProjectToken()) {
+                logger.warning(() -> "Invalid project identifier: \"" + parsedArgument.getParsedProjectName() + "\"");
                 throw new InvalidArgumentException(String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE,
                         parsedArgument.getParsedProjectName()));
             }
+            logger.warning(() -> "Missing project argument for UpdateCommand input: \"" + arguments + "\"");
             throw new MissingArgumentException();
         }
 
         String remainingArgument = parsedArgument.getRemainingArgument();
         if (remainingArgument == null || remainingArgument.trim().isEmpty()) {
+            logger.warning(() -> "Missing task index or update options in input: \"" + arguments + "\"");
             throw new MissingArgumentException();
         }
 
@@ -51,11 +60,13 @@ public class UpdateCommand extends Command {
         try {
             taskIndex = CommandParser.parseIndexOrNull(indexText, targetProject.size());
         } catch (NumberFormatException e) {
+            logger.warning(() -> "Invalid task index provided: \"" + indexText + "\"");
             throw new InvalidArgumentException("Invalid task index: " + indexText);
         }
 
         String options = indexAndOptions.length > 1 ? indexAndOptions[1].trim() : "";
         if (options.isEmpty()) {
+            logger.warning(() -> "No update options provided for task index \"" + indexText + "\"");
             throw new InvalidArgumentException(
                     "No fields provided to update. Use --description, --deadline, or --priority.");
         }
@@ -72,6 +83,8 @@ public class UpdateCommand extends Command {
         while (i < tokens.length) {
             String token = tokens[i];
             if (!token.startsWith("--")) {
+                String invalidToken = token;
+                logger.warning(() -> "Unknown option token: \"" + invalidToken + "\"");
                 throw new InvalidArgumentException(
                         "Unknown option: " + token + ". Use --description, --deadline, or --priority.");
             }
@@ -80,6 +93,7 @@ public class UpdateCommand extends Command {
             case "--description":
                 i++;
                 if (i >= tokens.length || tokens[i].startsWith("--")) {
+                    logger.warning(() -> "Empty description provided for task update");
                     throw new InvalidArgumentException("Description cannot be empty.");
                 }
                 updateDescription = true;
@@ -91,12 +105,14 @@ public class UpdateCommand extends Command {
                 }
                 newDescription = descriptionBuilder.toString().trim();
                 if (newDescription.isEmpty()) {
+                    logger.warning(() -> "Empty description provided for task update after trimming");
                     throw new InvalidArgumentException("Description cannot be empty.");
                 }
                 continue;
             case "--deadline":
                 i++;
                 if (i >= tokens.length || tokens[i].startsWith("--")) {
+                    logger.warning(() -> "Empty deadline value provided for task update");
                     throw new InvalidArgumentException(
                             "Deadline cannot be empty. Use YYYY-MM-DD or 'none' to clear it.");
                 }
@@ -110,6 +126,7 @@ public class UpdateCommand extends Command {
                     try {
                         newDeadline = LocalDate.parse(deadlineValue);
                     } catch (Exception e) {
+                        logger.warning(() -> "Invalid deadline format provided: \"" + deadlineValue + "\"");
                         throw new InvalidArgumentException(
                                 "Invalid deadline format: " + deadlineValue + ". Use YYYY-MM-DD or 'none'.");
                     }
@@ -118,6 +135,7 @@ public class UpdateCommand extends Command {
             case "--priority":
                 i++;
                 if (i >= tokens.length || tokens[i].startsWith("--")) {
+                    logger.warning(() -> "Empty priority value provided for task update");
                     throw new InvalidArgumentException("Priority cannot be empty. Use low, medium, or high.");
                 }
                 updatePriority = true;
@@ -127,12 +145,15 @@ public class UpdateCommand extends Command {
                 newPriority = CommandValidator.priorityToInt(validatedPriority);
                 continue;
             default:
+                String unsupportedToken = token;
+                logger.warning(() -> "Unsupported flag encountered: \"" + unsupportedToken + "\"");
                 throw new InvalidArgumentException(
                         "Unknown option: " + token + ". Use --description, --deadline, or --priority.");
             }
         }
 
         if (!updateDescription && !updateDeadline && !updatePriority) {
+            logger.warning(() -> "No update fields specified for task index \"" + indexText + "\"");
             throw new InvalidArgumentException(
                     "No fields provided to update. Use --description, --deadline, or --priority.");
         }
@@ -145,11 +166,23 @@ public class UpdateCommand extends Command {
         Task updatedTask = targetProject.updateTask(taskIndex, newDescription, updateDescription, newDeadline,
                 updateDeadline, newPriority, updatePriority);
 
+        final int updatedTaskNumber = taskIndex + 1;
+        final String updatedProjectName = targetProject.getProjectName();
+        final boolean finalUpdateDescription = updateDescription;
+        final boolean finalUpdateDeadline = updateDeadline;
+        final boolean finalUpdatePriority = updatePriority;
+
+        logger.fine(() -> String.format("Task %d in \"%s\" updated: desc=%s deadline=%s priority=%s", updatedTaskNumber,
+                updatedProjectName, finalUpdateDescription, finalUpdateDeadline, finalUpdatePriority));
+
         assert !updateDescription || !Objects.equals(originalDescription,
                 updatedTask.getDescription()) : "Description unchanged after update";
         assert !updateDeadline
                 || !Objects.equals(originalDeadline, updatedTask.getDeadline()) : "Deadline unchanged after update";
         assert !updatePriority || originalPriority != updatedTask.getPriority() : "Priority unchanged after update";
+
+        logger.info(() -> String.format("Task %d in project \"%s\" updated successfully", updatedTaskNumber,
+                updatedProjectName));
         context.getUi().showUpdatedTask(targetProject, updatedTask);
         return true;
     }
