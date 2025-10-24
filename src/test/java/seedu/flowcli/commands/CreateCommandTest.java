@@ -1,4 +1,4 @@
-package seedu.flowcli.utility;
+package seedu.flowcli.commands;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import seedu.flowcli.commands.CreateCommand;
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.exceptions.ProjectAlreadyExistsException;
