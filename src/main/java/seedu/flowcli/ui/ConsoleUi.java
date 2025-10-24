@@ -143,31 +143,35 @@ public class ConsoleUi {
         printLine();
         System.out.println("Available Commands:\n");
         System.out.println("Tip: Projects are referenced by their index from `list --all`.\n");
-        System.out
-                .println(" 1. create-project <projectName>               - Creates a new project with the given name");
-        System.out.println(
-                " 2. add-task <projectIndex> <taskDesc> [--priority low/medium/high] [--deadline YYYY-MM-DD] - Adds a new task to the specified project with optional priority and deadline fields");
-        System.out.println(" 3. list --all                        - Lists all existing projects");
-        System.out.println(" 4. list <projectIndex>              - Lists all task entries in the specified project");
-        System.out.println(" 5. mark <projectIndex> <taskIndex>      - Mark a task in a project as done");
-        System.out.println(" 6. unmark <projectIndex> <taskIndex>    - Mark a task in a project as not done");
-        System.out.println(
-                " 7. delete-project <projectIndex> --confirm            - Deletes an entire project repository");
-        System.out.println(
-                " 8. delete-task <projectIndex> <taskIndex>    - Deletes a task entry from the specified project");
-        System.out.println(
-                " 9. update-task <projectIndex> <taskIndex> [--description <newTaskDesc>] [--deadline YYYY-MM-DD] [--priority <low/medium/high>] - Updates details of an existing task, such as description, deadline, or priority");
-        System.out.println(
-                "10. sort-tasks <--deadline/priority> <ascending/descending> - Sorts existing tasks by deadline or priority");
-        System.out.println("11. filter-tasks --priority <low/medium/high> - Filters existing tasks by priority");
-        System.out.println(
-                "12. export-tasks <filename>.txt [projectIndex] [filter-tasks --priority <low/medium/high>] [sort-tasks <--deadline/priority> <ascending/descending>] - Exports tasks to TXT file. Defaults to all tasks if no project is specified.");
-        System.out.println("13. status <projectIndex> / --all    - Shows project completion status");
-        System.out.println("14. help                        - Shows this help message");
-        System.out.println("15. bye                         - Exits the application\n");
+        printHelpEntry("1. create-project <projectName>", "Creates a new project with the given name.");
+        printHelpEntry("2. add-task <projectIndex> <taskDesc> [--priority low/medium/high] [--deadline YYYY-MM-DD]",
+                "Adds a new task to the specified project with optional priority and deadline fields.");
+        printHelpEntry("3. list --all", "Lists all existing projects.");
+        printHelpEntry("4. list <projectIndex>", "Lists all task entries in the specified project.");
+        printHelpEntry("5. mark <projectIndex> <taskIndex>", "Marks a task in a project as done.");
+        printHelpEntry("6. unmark <projectIndex> <taskIndex>", "Marks a task in a project as not done.");
+        printHelpEntry("7. delete-project <projectIndex> --confirm", "Deletes an entire project repository.");
+        printHelpEntry("8. delete-task <projectIndex> <taskIndex>", "Deletes a task entry from the specified project.");
+        printHelpEntry(
+                "9. update-task <projectIndex> <taskIndex> [--description <newTaskDesc>] [--deadline YYYY-MM-DD] [--priority <low/medium/high>]",
+                "Updates details of an existing task, such as description, deadline, or priority.");
+        printHelpEntry("10. sort-tasks <--deadline/priority> <ascending/descending>",
+                "Sorts existing tasks by deadline or priority.");
+        printHelpEntry("11. filter-tasks --priority <low/medium/high>", "Filters existing tasks by priority.");
+        printHelpEntry(
+                "12. export-tasks <filename>.txt [projectIndex] [filter-tasks --priority <low/medium/high>] [sort-tasks <--deadline/priority> <ascending/descending>]",
+                "Exports tasks to a TXT file. Defaults to all tasks if no project is specified.");
+        printHelpEntry("13. status <projectIndex> / --all", "Shows project completion status.");
+        printHelpEntry("14. help", "Shows this help message.");
+        printHelpEntry("15. bye", "Exits the application.");
         System.out.println("Alternatively, you may provide the CLI with prompts to assist you with the following:\n");
         System.out.println("'create', 'add', 'list', 'mark', 'unmark', 'delete', 'update', 'sort', 'filter', 'export'");
         printLine();
+    }
+
+    private void printHelpEntry(String command, String description) {
+        System.out.println(" " + command);
+        System.out.println("  - " + description + "\n");
     }
 
     public void showGlobalSortedTasks(List<TaskWithProject> tasks, String field, String order) {

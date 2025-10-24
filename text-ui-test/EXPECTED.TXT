@@ -246,21 +246,50 @@ Available Commands:
 
 Tip: Projects are referenced by their index from `list --all`.
 
- 1. create-project <projectName>               - Creates a new project with the given name
- 2. add-task <projectIndex> <taskDesc> [--priority low/medium/high] [--deadline YYYY-MM-DD] - Adds a new task to the specified project with optional priority and deadline fields
- 3. list --all                        - Lists all existing projects
- 4. list <projectIndex>              - Lists all task entries in the specified project
- 5. mark <projectIndex> <taskIndex>      - Mark a task in a project as done
- 6. unmark <projectIndex> <taskIndex>    - Mark a task in a project as not done
- 7. delete-project <projectIndex> --confirm            - Deletes an entire project repository
- 8. delete-task <projectIndex> <taskIndex>    - Deletes a task entry from the specified project
- 9. update-task <projectIndex> <taskIndex> [--description <newTaskDesc>] [--deadline YYYY-MM-DD] [--priority <low/medium/high>] - Updates details of an existing task, such as description, deadline, or priority
-10. sort-tasks <--deadline/priority> <ascending/descending> - Sorts existing tasks by deadline or priority
-11. filter-tasks --priority <low/medium/high> - Filters existing tasks by priority
-12. export-tasks <filename>.txt [projectIndex] [filter-tasks --priority <low/medium/high>] [sort-tasks <--deadline/priority> <ascending/descending>] - Exports tasks to TXT file. Defaults to all tasks if no project is specified.
-13. status <projectIndex> / --all    - Shows project completion status
-14. help                        - Shows this help message
-15. bye                         - Exits the application
+ 1. create-project <projectName>
+  - Creates a new project with the given name.
+
+ 2. add-task <projectIndex> <taskDesc> [--priority low/medium/high] [--deadline YYYY-MM-DD]
+  - Adds a new task to the specified project with optional priority and deadline fields.
+
+ 3. list --all
+  - Lists all existing projects.
+
+ 4. list <projectIndex>
+  - Lists all task entries in the specified project.
+
+ 5. mark <projectIndex> <taskIndex>
+  - Marks a task in a project as done.
+
+ 6. unmark <projectIndex> <taskIndex>
+  - Marks a task in a project as not done.
+
+ 7. delete-project <projectIndex> --confirm
+  - Deletes an entire project repository.
+
+ 8. delete-task <projectIndex> <taskIndex>
+  - Deletes a task entry from the specified project.
+
+ 9. update-task <projectIndex> <taskIndex> [--description <newTaskDesc>] [--deadline YYYY-MM-DD] [--priority <low/medium/high>]
+  - Updates details of an existing task, such as description, deadline, or priority.
+
+ 10. sort-tasks <--deadline/priority> <ascending/descending>
+  - Sorts existing tasks by deadline or priority.
+
+ 11. filter-tasks --priority <low/medium/high>
+  - Filters existing tasks by priority.
+
+ 12. export-tasks <filename>.txt [projectIndex] [filter-tasks --priority <low/medium/high>] [sort-tasks <--deadline/priority> <ascending/descending>]
+  - Exports tasks to a TXT file. Defaults to all tasks if no project is specified.
+
+ 13. status <projectIndex> / --all
+  - Shows project completion status.
+
+ 14. help
+  - Shows this help message.
+
+ 15. bye
+  - Exits the application.
 
 Alternatively, you may provide the CLI with prompts to assist you with the following:
 
