@@ -50,14 +50,11 @@ public class CommandHandler {
                     shouldContinue = command.execute(context);
                 } catch (FlowCLIException e) {
                     // Expected application errors - show user-friendly message
-                    System.out.println(e.getMessage());
-                    ui.printLine();
+                    ui.showError(e.getMessage());
                 } catch (Exception e) {
                     // Unexpected errors - log for debugging and show generic message
-                    logger.severe("Unexpected error: " + e.getMessage());
-                    e.printStackTrace(); // For debugging in console
-                    System.out.println("An unexpected error occurred. Please try again.");
-                    ui.printLine();
+                    logger.log(java.util.logging.Level.SEVERE, "Unexpected error: " + e.getMessage(), e);
+                    ui.showUnexpectedError();
                 }
             }
         } finally {

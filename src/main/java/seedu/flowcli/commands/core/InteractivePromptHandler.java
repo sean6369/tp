@@ -4,6 +4,8 @@ import java.util.Scanner;
 import java.util.logging.Logger;
 
 import seedu.flowcli.commands.validation.CommandValidator;
+import seedu.flowcli.exceptions.InvalidDateException;
+import seedu.flowcli.exceptions.ProjectNotFoundException;
 import seedu.flowcli.project.ProjectList;
 
 /**
@@ -577,10 +579,10 @@ public class InteractivePromptHandler {
             return ""; // Set to none
         }
 
-        // Basic validation
-        if (deadline.matches("\\d{4}-\\d{2}-\\d{2}")) {
+        try {
+            CommandValidator.validateAndParseDate(deadline);
             return deadline;
-        } else {
+        } catch (InvalidDateException e) {
             System.out.println("Invalid date format. Staying in update menu...");
             return null;
         }
@@ -872,16 +874,16 @@ public class InteractivePromptHandler {
                 return null;
             }
 
-            // Check if project already exists
-            boolean exists = projects.getProjectList().stream()
-                    .anyMatch(p -> p.getProjectName().equalsIgnoreCase(name));
-
-            if (exists) {
+            // Check if project already exists using the same validation as CreateCommand
+            try {
+                projects.getProject(name);
+                // If we get here, project exists
                 System.out.println("Project already exists. Choose from existing projects or try a different name.");
                 return null; // Go back to project selection
+            } catch (ProjectNotFoundException e) {
+                // Project doesn't exist, which is what we want - continue with creation
+                return name;
             }
-
-            return name;
         }
     }
 
@@ -964,7 +966,7 @@ public class InteractivePromptHandler {
             try {
                 CommandValidator.validateAndParseDate(date);
                 return date;
-            } catch (Exception e) {
+            } catch (InvalidDateException e) {
                 System.out.println("Invalid date format. Use YYYY-MM-DD.");
             }
         }

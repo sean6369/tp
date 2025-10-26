@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.commands.validation.CommandValidator;
 import seedu.flowcli.exceptions.InvalidArgumentException;
-import seedu.flowcli.exceptions.InvalidDateException;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.parsers.CommandParser;
@@ -103,14 +102,7 @@ public class UpdateCommand extends Command {
                 if ("none".equals(normalized) || "clear".equals(normalized)) {
                     newDeadline = null;
                 } else {
-                    try {
-                        newDeadline = CommandValidator.validateAndParseDate(deadlineValue);
-                    } catch (InvalidDateException e) {
-                        throw e;
-                    } catch (Exception e) {
-                        logger.warning(() -> "Invalid deadline format provided: \"" + deadlineValue + "\"");
-                        throw new InvalidDateException(deadlineValue);
-                    }
+                    newDeadline = CommandValidator.validateAndParseDate(deadlineValue);
                 }
                 continue;
             case "--priority":

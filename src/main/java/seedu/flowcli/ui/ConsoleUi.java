@@ -72,17 +72,13 @@ public class ConsoleUi {
         printLine();
     }
 
-    public void showAddedTask(Project targetProject) {
+    public void showAddedTask(Project targetProject) throws IndexOutOfRangeException {
         printLine();
         System.out.println("Got it. I've added this task in " + targetProject.getProjectName() + " : ");
         int taskSize = targetProject.getProjectTasks().size();
         if (taskSize > 0) {
-            try {
-                System.out.println(targetProject.getProjectTasks().get(taskSize - 1));
-                showCurrentTaskListSize(targetProject);
-            } catch (IndexOutOfRangeException e) {
-                System.out.println("[Error displaying task]");
-            }
+            System.out.println(targetProject.getProjectTasks().get(taskSize - 1));
+            showCurrentTaskListSize(targetProject);
         } else {
             System.out.println("[Error: No tasks found]");
         }
@@ -343,5 +339,38 @@ public class ConsoleUi {
         } else {
             return "We are finishing all tasks!! Upzzz!";
         }
+    }
+
+    /**
+     * Displays an error message to the user with consistent formatting.
+     *
+     * @param message The error message to display
+     */
+    public void showError(String message) {
+        printLine();
+        System.out.println("Error: " + message);
+        printLine();
+    }
+
+    /**
+     * Displays an unexpected error message to the user with consistent formatting.
+     *
+     * @param message The error message to display
+     */
+    public void showUnexpectedError(String message) {
+        printLine();
+        System.out.println("An unexpected error occurred: " + message);
+        System.out.println("Please try again or contact support if the problem persists.");
+        printLine();
+    }
+
+    /**
+     * Displays a generic unexpected error message to the user with consistent formatting.
+     */
+    public void showUnexpectedError() {
+        printLine();
+        System.out.println("An unexpected error occurred. Please try again or contact " +
+                "support if the problem persists.");
+        printLine();
     }
 }
