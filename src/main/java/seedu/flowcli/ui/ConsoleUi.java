@@ -348,7 +348,7 @@ public class ConsoleUi {
      */
     public void showError(String message) {
         printLine();
-        System.out.println("Error: " + message);
+        System.out.println(message);
         printLine();
     }
 
