@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import seedu.flowcli.exceptions.IndexOutOfRangeException;
+import seedu.flowcli.exceptions.ProjectNotFoundException;
 
 public class ProjectList {
     private final List<Project> projects = new ArrayList<>();
@@ -42,14 +43,14 @@ public class ProjectList {
         return projects.size();
     }
 
-    public Project getProject(String projectName) {
+    public Project getProject(String projectName) throws ProjectNotFoundException {
         for (Project project : projects) {
             if (project.getProjectName().equalsIgnoreCase(projectName)) {
                 return project;
             }
         }
 
-        return null;
+        throw new ProjectNotFoundException(projectName);
     }
 
     public boolean isEmpty() {

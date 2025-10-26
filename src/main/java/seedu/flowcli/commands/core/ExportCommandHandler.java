@@ -11,8 +11,11 @@ import seedu.flowcli.commands.utility.TaskFilter;
 import seedu.flowcli.commands.utility.TaskSorter;
 import seedu.flowcli.commands.validation.CommandValidator;
 import seedu.flowcli.commands.validation.ValidationConstants;
+import seedu.flowcli.exceptions.EmptyTaskListException;
 import seedu.flowcli.exceptions.IndexOutOfRangeException;
 import seedu.flowcli.exceptions.InvalidArgumentException;
+import seedu.flowcli.exceptions.InvalidCommandSyntaxException;
+import seedu.flowcli.exceptions.InvalidFilenameException;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.TaskWithProject;
@@ -59,14 +62,14 @@ public class ExportCommandHandler {
     public void handleExport(String args) throws Exception {
         String trimmed = args == null ? "" : args.trim();
         if (trimmed.isEmpty()) {
-            throw new InvalidArgumentException(
+            throw new InvalidCommandSyntaxException(
                     "Invalid export command. Use: export-tasks <filename>.txt [projectIndex] "
                             + "[filter-tasks --priority <low/medium/high>] "
                             + "[sort-tasks <--deadline/priority> <ascending/descending>]");
         }
 
         if (trimmed.startsWith("tasks to ")) {
-            throw new InvalidArgumentException(
+            throw new InvalidCommandSyntaxException(
                     "Legacy export syntax is no longer supported. Use: export-tasks <filename>.txt [projectIndex] "
                             + "[filter-tasks --priority <low/medium/high>] "
                             + "[sort-tasks <--deadline/priority> <ascending/descending>]");
@@ -106,11 +109,17 @@ public class ExportCommandHandler {
         }
 
         String header = buildExportHeader(baseDescriptor, params);
+        
+        if (tasks.isEmpty()) {
+            throw new EmptyTaskListException();
+        }
+        
         TaskExporter.exportTasksToFile(tasks, params.filename, header);
         ui.showExportSuccess(params.filename, tasks.size());
     }
 
-    private ExportParams parseParameters(String args) throws InvalidArgumentException {
+    private ExportParams parseParameters(String args) 
+            throws InvalidArgumentException, InvalidCommandSyntaxException, InvalidFilenameException {
         ExportParams params = new ExportParams();
         List<String> tokens = new ArrayList<>(Arrays.asList(args.split("\\s+")));
         if (tokens.isEmpty()) {
@@ -121,11 +130,11 @@ public class ExportCommandHandler {
         
         // Validate filename first (before .txt extension check)
         if (!isValidFilename(params.filename)) {
-            throw new InvalidArgumentException("Invalid filename: " + params.filename);
+            throw new InvalidFilenameException("Invalid filename: " + params.filename);
         }
         
         if (!params.filename.endsWith(".txt")) {
-            throw new InvalidArgumentException(
+            throw new InvalidFilenameException(
                     "Export filename must end with .txt extension. Use: " + params.filename + ".txt");
         }
 
@@ -144,7 +153,7 @@ public class ExportCommandHandler {
 
             if ("filter-tasks".equals(token)) {
                 if (params.filterType != null) {
-                    throw new InvalidArgumentException("Only one filter condition is supported.");
+                    throw new InvalidCommandSyntaxException("Only one filter condition is supported.");
                 }
                 index++;
                 if (index >= tokens.size()) {
@@ -157,7 +166,7 @@ public class ExportCommandHandler {
                 }
                 params.filterType = option.substring(2).toLowerCase();
                 if (!ValidationConstants.FILTER_TYPE_PRIORITY.equals(params.filterType)) {
-                    throw new InvalidArgumentException(
+                    throw new InvalidCommandSyntaxException(
                             "Invalid filter type. Use: filter-tasks --priority <low/medium/high>.");
                 }
                 index++;
@@ -181,7 +190,7 @@ public class ExportCommandHandler {
 
             if ("sort-tasks".equals(token)) {
                 if (params.sortField != null) {
-                    throw new InvalidArgumentException("Only one sort condition is supported.");
+                    throw new InvalidCommandSyntaxException("Only one sort condition is supported.");
                 }
                 index++;
                 if (index >= tokens.size()) {
@@ -269,9 +278,9 @@ public class ExportCommandHandler {
         return "Exported tasks (" + String.join(", ", parts) + ")";
     }
 
-    private InvalidArgumentException invalidExportCommand() {
-        return new InvalidArgumentException("Invalid export command. Use: export-tasks <filename>.txt [projectIndex] "
-                + "[filter-tasks --priority <low/medium/high>] "
+    private InvalidCommandSyntaxException invalidExportCommand() {
+        return new InvalidCommandSyntaxException("Invalid export command. Use: export-tasks <filename>.txt "
+                + "[projectIndex] [filter-tasks --priority <low/medium/high>] "
                 + "[sort-tasks <--deadline/priority> <ascending/descending>]");
     }
 

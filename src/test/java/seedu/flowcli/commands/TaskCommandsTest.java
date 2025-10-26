@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import seedu.flowcli.commands.core.CommandContext;
+import seedu.flowcli.exceptions.ProjectNotFoundException;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
@@ -24,7 +25,7 @@ class TaskCommandsTest {
     private CommandContext context;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws ProjectNotFoundException {
         projects = new ProjectList();
         projects.addProject("Alpha");
         project = projects.getProject("Alpha");

@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.flowcli.exceptions.IndexOutOfRangeException;
 import seedu.flowcli.exceptions.MissingIndexException;
-import seedu.flowcli.exceptions.InvalidArgumentException;
+import seedu.flowcli.exceptions.InvalidIndexFormatException;
 import seedu.flowcli.parsers.CommandParser.CommandType;
 import seedu.flowcli.parsers.CommandParser.ParsedCommand;
 
@@ -136,7 +136,7 @@ class CommandParserTest {
     void testParseIndexOrNullInvalidFormat() {
         logger.fine("Testing invalid index format");
 
-        assertThrows(InvalidArgumentException.class, () -> CommandParser.parseIndexOrNull("abc", 5));
+        assertThrows(InvalidIndexFormatException.class, () -> CommandParser.parseIndexOrNull("abc", 5));
 
         logger.info("Invalid index format test passed");
     }

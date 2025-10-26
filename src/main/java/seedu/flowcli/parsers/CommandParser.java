@@ -1,7 +1,7 @@
 package seedu.flowcli.parsers;
 
 import seedu.flowcli.exceptions.IndexOutOfRangeException;
-import seedu.flowcli.exceptions.InvalidArgumentException;
+import seedu.flowcli.exceptions.InvalidIndexFormatException;
 import seedu.flowcli.exceptions.MissingIndexException;
 
 public class CommandParser {
@@ -85,7 +85,7 @@ public class CommandParser {
     }
 
     public static Integer parseIndexOrNull(String indexText, int maxIndex)
-            throws IndexOutOfRangeException, MissingIndexException, InvalidArgumentException {
+            throws IndexOutOfRangeException, MissingIndexException, InvalidIndexFormatException {
         if (indexText == null) {
             throw new MissingIndexException();
         }
@@ -94,7 +94,7 @@ public class CommandParser {
         try {
             idx1 = Integer.parseInt(indexText);
         } catch (NumberFormatException e) {
-            throw new InvalidArgumentException(String.format(INVALID_TASK_INDEX_MESSAGE, indexText));
+            throw new InvalidIndexFormatException(indexText, "task");
         }
         
         if (idx1 < 1 || idx1 > maxIndex) {

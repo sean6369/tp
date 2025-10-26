@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.commands.validation.CommandValidator;
-import seedu.flowcli.exceptions.InvalidArgumentException;
+import seedu.flowcli.exceptions.InvalidCommandSyntaxException;
 import seedu.flowcli.exceptions.MissingDescriptionException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
@@ -47,7 +47,8 @@ public class AddCommand extends Command {
                 String dateStr = option.substring(9).trim();
                 deadline = CommandValidator.validateAndParseDate(dateStr);
             } else {
-                throw new InvalidArgumentException("Unknown option: " + option + ". Use --priority or --deadline.");
+                throw new InvalidCommandSyntaxException("Unknown option: " + option + 
+                        ". Use --priority or --deadline.");
             }
         }
 

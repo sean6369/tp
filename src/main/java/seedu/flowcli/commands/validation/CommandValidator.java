@@ -1,6 +1,7 @@
 package seedu.flowcli.commands.validation;
 
 import seedu.flowcli.exceptions.InvalidArgumentException;
+import seedu.flowcli.exceptions.InvalidCommandSyntaxException;
 import seedu.flowcli.exceptions.InvalidDateException;
 
 import java.time.LocalDate;
@@ -116,11 +117,11 @@ public class CommandValidator {
      *
      * @param parts The command parts array
      * @param index The index where "filter" keyword is found
-     * @throws InvalidArgumentException if filter command is incomplete
+     * @throws InvalidCommandSyntaxException if filter command is incomplete
      */
-    public static void validateFilterCommand(String[] parts, int index) throws InvalidArgumentException {
+    public static void validateFilterCommand(String[] parts, int index) throws InvalidCommandSyntaxException {
         if (index + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[index + 1])) {
-            throw new InvalidArgumentException("Incomplete filter command. Use: filter by <type> <value>");
+            throw new InvalidCommandSyntaxException("Incomplete filter command. Use: filter by <type> <value>");
         }
     }
 
@@ -129,11 +130,11 @@ public class CommandValidator {
      *
      * @param parts The command parts array
      * @param index The index where "sort" keyword is found
-     * @throws InvalidArgumentException if sort command is incomplete
+     * @throws InvalidCommandSyntaxException if sort command is incomplete
      */
-    public static void validateSortCommand(String[] parts, int index) throws InvalidArgumentException {
+    public static void validateSortCommand(String[] parts, int index) throws InvalidCommandSyntaxException {
         if (index + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[index + 1])) {
-            throw new InvalidArgumentException("Incomplete sort command. Use: sort by <field> <order>");
+            throw new InvalidCommandSyntaxException("Incomplete sort command. Use: sort by <field> <order>");
         }
     }
 
