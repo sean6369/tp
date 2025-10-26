@@ -29,22 +29,8 @@ public class UpdateCommand extends Command {
         logger.fine(() -> "UpdateCommand.execute() called with args=\"" + arguments + "\"");
 
         ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
+        parsedArgument.validateProjectIndex();
         Project targetProject = parsedArgument.getTargetProject();
-        if (targetProject == null) {
-            Integer projectIndex = parsedArgument.getTargetProjectIndex();
-            if (projectIndex != null) {
-                logger.warning(() -> String.format("Project index %d out of range for arguments: \"%s\"", projectIndex,
-                        arguments));
-                throw new IndexOutOfRangeException(context.getProjects().getProjectListSize());
-            }
-            if (parsedArgument.hasNonNumericProjectToken()) {
-                logger.warning(() -> "Invalid project identifier: \"" + parsedArgument.getParsedProjectName() + "\"");
-                throw new InvalidArgumentException(String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE,
-                        parsedArgument.getParsedProjectName()));
-            }
-            logger.warning(() -> "Missing project argument for UpdateCommand input: \"" + arguments + "\"");
-            throw new MissingArgumentException();
-        }
 
         String remainingArgument = parsedArgument.getRemainingArgument();
         if (remainingArgument == null || remainingArgument.trim().isEmpty()) {
@@ -56,13 +42,7 @@ public class UpdateCommand extends Command {
         String[] indexAndOptions = trimmed.split("\\s+", 2);
         String indexText = indexAndOptions[0];
 
-        Integer taskIndex;
-        try {
-            taskIndex = CommandParser.parseIndexOrNull(indexText, targetProject.size());
-        } catch (NumberFormatException e) {
-            logger.warning(() -> "Invalid task index provided: \"" + indexText + "\"");
-            throw new InvalidArgumentException("Invalid task index: " + indexText);
-        }
+        Integer taskIndex = CommandParser.parseIndexOrNull(indexText, targetProject.size());
 
         String options = indexAndOptions.length > 1 ? indexAndOptions[1].trim() : "";
         if (options.isEmpty()) {

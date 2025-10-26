@@ -27,23 +27,32 @@ public class TaskList {
         return tasks.isEmpty();
     }
 
+    private void validateIndex(int zeroBasedIndex) {
+        if (zeroBasedIndex < 0 || zeroBasedIndex >= tasks.size()) {
+            throw new IndexOutOfBoundsException("Task index " + (zeroBasedIndex + 1) + " out of range. Valid range: 1-" + tasks.size());
+        }
+    }
+
     public Task get(int zeroBasedIndex) {
+        validateIndex(zeroBasedIndex);
         return tasks.get(zeroBasedIndex);
     }
 
     public void mark(int zeroBasedIndex) {
+        validateIndex(zeroBasedIndex);
         tasks.get(zeroBasedIndex).mark();
     }
 
     public void unmark(int zeroBasedIndex) {
+        validateIndex(zeroBasedIndex);
         tasks.get(zeroBasedIndex).unmark();
     }
 
     public Task delete(int zeroBasedIndex) {
+        validateIndex(zeroBasedIndex);
         Task returnTask = tasks.get(zeroBasedIndex);
         tasks.remove(zeroBasedIndex);
         return returnTask;
-
     }
 
     public List<Task> getTasks() {
