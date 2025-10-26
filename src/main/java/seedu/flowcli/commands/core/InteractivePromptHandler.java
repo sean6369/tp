@@ -3,6 +3,7 @@ package seedu.flowcli.commands.core;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+import seedu.flowcli.commands.validation.CommandValidator;
 import seedu.flowcli.project.ProjectList;
 
 /**
@@ -21,7 +22,7 @@ public class InteractivePromptHandler {
      * input scanner.
      *
      * @param projects The project list for accessing available projects
-     * @param scanner The scanner for reading user input
+     * @param scanner  The scanner for reading user input
      */
     public InteractivePromptHandler(ProjectList projects, Scanner scanner) {
         assert projects != null : "ProjectList cannot be null";
@@ -953,10 +954,10 @@ public class InteractivePromptHandler {
                 return null;
             }
 
-            // Basic date format validation
-            if (date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            try {
+                CommandValidator.validateAndParseDate(date);
                 return date;
-            } else {
+            } catch (Exception e) {
                 System.out.println("Invalid date format. Use YYYY-MM-DD.");
             }
         }

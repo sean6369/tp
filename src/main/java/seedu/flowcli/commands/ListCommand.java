@@ -1,12 +1,9 @@
 package seedu.flowcli.commands;
 
 import seedu.flowcli.commands.core.CommandContext;
-import seedu.flowcli.exceptions.IndexOutOfRangeException;
-import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
-import seedu.flowcli.project.ProjectList;
 
 public class ListCommand extends Command {
 
@@ -16,7 +13,6 @@ public class ListCommand extends Command {
 
     @Override
     public boolean execute(CommandContext context) throws Exception {
-        ProjectList projectList = context.getProjects();
         String trimmedArguments = arguments.trim();
 
         if (trimmedArguments.isEmpty()) {
@@ -29,21 +25,12 @@ public class ListCommand extends Command {
             return true;
         }
 
-        String[] parts = trimmedArguments.split("\\s+", 2);
-        String firstToken = parts[0];
+        ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
+        parsedArgument.validateProjectIndex();
+        Project targetProject = parsedArgument.getTargetProject();
 
-        try {
-            int projectIndex = Integer.parseInt(firstToken);
-            if (projectIndex < 1 || projectIndex > projectList.getProjectListSize()) {
-                throw new IndexOutOfRangeException(projectList.getProjectListSize());
-            }
-
-            Project targetProject = projectList.getProjectByIndex(projectIndex - 1);
-            context.getUi().showTaskList(targetProject);
-            context.getExportHandler().clearViewState();
-            return true;
-        } catch (NumberFormatException e) {
-            throw new InvalidArgumentException(String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE, firstToken));
-        }
+        context.getUi().showTaskList(targetProject);
+        context.getExportHandler().clearViewState();
+        return true;
     }
 }

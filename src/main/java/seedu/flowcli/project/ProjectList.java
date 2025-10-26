@@ -11,6 +11,10 @@ public class ProjectList {
     }
 
     public Project delete(int zeroBasedIndex) {
+        if (zeroBasedIndex < 0 || zeroBasedIndex >= projects.size()) {
+            throw new IndexOutOfBoundsException("Project index " + (zeroBasedIndex + 1) +
+                    " out of range. Valid range: 1-" + projects.size());
+        }
         Project returnProject = projects.get(zeroBasedIndex);
         projects.remove(zeroBasedIndex);
         return returnProject;
@@ -23,6 +27,10 @@ public class ProjectList {
     }
 
     public Project getProjectByIndex(int zeroBasedIndex) {
+        if (zeroBasedIndex < 0 || zeroBasedIndex >= projects.size()) {
+            throw new IndexOutOfBoundsException("Project index " + (zeroBasedIndex + 1) +
+                    " out of range. Valid range: 1-" + projects.size());
+        }
         return projects.get(zeroBasedIndex);
     }
 

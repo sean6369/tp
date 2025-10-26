@@ -6,6 +6,9 @@ import seedu.flowcli.exceptions.MissingIndexException;
 
 public class CommandParser {
 
+    public static final String INVALID_TASK_INDEX_MESSAGE = "Invalid task index: %s. Use the numeric task "
+            + "index shown in 'list <projectIndex>'.";
+
     public enum CommandType {
         LIST, MARK, UNMARK, BYE, ADD_TASK, CREATE_PROJECT, DELETE, DELETE_PROJECT, DELETE_TASK, UPDATE_TASK, HELP,
         SORT_TASKS, FILTER_TASKS, EXPORT_TASKS, STATUS, UNKNOWN
@@ -91,7 +94,7 @@ public class CommandParser {
         try {
             idx1 = Integer.parseInt(indexText);
         } catch (NumberFormatException e) {
-            throw new InvalidArgumentException("Invalid task index: " + indexText + ". Use the numeric task index shown in 'list <projectIndex>'.");
+            throw new InvalidArgumentException(String.format(INVALID_TASK_INDEX_MESSAGE, indexText));
         }
         
         if (idx1 < 1 || idx1 > maxIndex) {

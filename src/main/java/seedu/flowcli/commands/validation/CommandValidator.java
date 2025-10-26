@@ -1,6 +1,9 @@
 package seedu.flowcli.commands.validation;
 
 import seedu.flowcli.exceptions.InvalidArgumentException;
+import seedu.flowcli.exceptions.InvalidDateException;
+
+import java.time.LocalDate;
 
 /**
  * Utility class for validating command parameters.
@@ -131,6 +134,21 @@ public class CommandValidator {
     public static void validateSortCommand(String[] parts, int index) throws InvalidArgumentException {
         if (index + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[index + 1])) {
             throw new InvalidArgumentException("Incomplete sort command. Use: sort by <field> <order>");
+        }
+    }
+
+    /**
+     * Validates date string format and throws custom exception.
+     *
+     * @param dateString The date string to validate
+     * @return LocalDate parsed from the string
+     * @throws InvalidDateException if date format is invalid
+     */
+    public static LocalDate validateAndParseDate(String dateString) throws InvalidDateException {
+        try {
+            return LocalDate.parse(dateString);
+        } catch (Exception e) {
+            throw new InvalidDateException(dateString);
         }
     }
 }

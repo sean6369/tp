@@ -96,7 +96,8 @@ public class ArgumentParser {
         return null;
     }
 
-    public void validateProjectIndex() throws InvalidArgumentException, MissingArgumentException, IndexOutOfRangeException {
+    public void validateProjectIndex() throws InvalidArgumentException,
+            MissingArgumentException, IndexOutOfRangeException {
         if (targetProject == null) {
             if (targetProjectIndex != null) {
                 throw new IndexOutOfRangeException(projects.getProjectListSize());

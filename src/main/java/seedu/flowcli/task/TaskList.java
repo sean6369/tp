@@ -29,7 +29,8 @@ public class TaskList {
 
     private void validateIndex(int zeroBasedIndex) {
         if (zeroBasedIndex < 0 || zeroBasedIndex >= tasks.size()) {
-            throw new IndexOutOfBoundsException("Task index " + (zeroBasedIndex + 1) + " out of range. Valid range: 1-" + tasks.size());
+            throw new IndexOutOfBoundsException("Task index " + (zeroBasedIndex + 1) +
+                    " out of range. Valid range: 1-" + tasks.size());
         }
     }
 
