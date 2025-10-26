@@ -8,6 +8,7 @@ import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
 import seedu.flowcli.task.TaskWithProject;
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
 
 /**
  * Handles all user interface interactions for the FlowCLI application. This
@@ -61,7 +62,11 @@ public class ConsoleUi {
     public void showAddedProject() {
         printLine();
         System.out.println("Got it. I've added this project: ");
-        System.out.println(projects.getProjectList().get(projects.getProjectListSize() - 1));
+        try {
+            System.out.println(projects.getProjectList().get(projects.getProjectListSize() - 1));
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("[Error displaying project]");
+        }
         showCurrentProjectListSize();
         printLine();
     }
@@ -69,7 +74,11 @@ public class ConsoleUi {
     public void showAddedTask(Project targetProject) {
         printLine();
         System.out.println("Got it. I've added this task in " + targetProject.getProjectName() + " : ");
-        System.out.println(targetProject.getProjectTasks().get(targetProject.getProjectTasks().size() - 1));
+        try {
+            System.out.println(targetProject.getProjectTasks().get(targetProject.getProjectTasks().size() - 1));
+        } catch (IndexOutOfRangeException e) {
+            System.out.println("[Error displaying task]");
+        }
         showCurrentTaskListSize(targetProject);
         printLine();
     }
@@ -107,8 +116,8 @@ public class ConsoleUi {
             return;
         }
 
-        for (int taskIdx = 0; taskIdx < projects.getProjectListSize(); taskIdx++) {
-            Project project = projects.getProjectByIndex(taskIdx);
+        int taskIdx = 0;
+        for (Project project : projects.getProjectList()) {
             System.out.println((taskIdx + 1) + ". " + project.getProjectName());
 
             String tasks = project.showAllTasks();
@@ -120,6 +129,7 @@ public class ConsoleUi {
                     }
                 }
             }
+            taskIdx++;
         }
 
         printLine();

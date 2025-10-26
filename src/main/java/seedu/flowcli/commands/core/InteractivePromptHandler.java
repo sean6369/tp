@@ -135,14 +135,16 @@ public class InteractivePromptHandler {
         var project = projects.getProjectList().get(projectSelection - 1);
         String projectName = project.getProjectName();
 
-        if (project.size() == 0) {
+        if (project.isEmpty()) {
             System.out.println("No tasks in this project. Going back...");
             return null;
         }
 
         System.out.println("Hmph, which tasks do you want to mark as done in " + projectName + ":");
-        for (int i = 0; i < project.size(); i++) {
-            System.out.println((i + 1) + ". [ ] " + project.getProjectTasks().get(i).getDescription());
+        int i = 0;
+        for (var task : project.getProjectTasks().getTasks()) {
+            System.out.println((i + 1) + ". [ ] " + task.getDescription());
+            i++;
         }
 
         System.out.println("Enter task number to mark as done [for multiple tasks, separate by commas e.g. 1,2,3,4]:");
@@ -194,14 +196,16 @@ public class InteractivePromptHandler {
         var project = projects.getProjectList().get(projectSelection - 1);
         String projectName = project.getProjectName();
 
-        if (project.size() == 0) {
+        if (project.isEmpty()) {
             System.out.println("No tasks in this project. Going back...");
             return null;
         }
 
         System.out.println("Hmph, which tasks do you want to mark as not done in " + projectName + ":");
-        for (int i = 0; i < project.size(); i++) {
-            System.out.println((i + 1) + ". [x] " + project.getProjectTasks().get(i).getDescription());
+        int i = 0;
+        for (var task : project.getProjectTasks().getTasks()) {
+            System.out.println((i + 1) + ". [x] " + task.getDescription());
+            i++;
         }
 
         System.out.println(
@@ -324,14 +328,16 @@ public class InteractivePromptHandler {
         var project = projects.getProjectList().get(projectSelection - 1);
         String projectName = project.getProjectName();
 
-        if (project.size() == 0) {
+        if (project.isEmpty()) {
             System.out.println("No tasks in this project. Going back...");
             return null;
         }
 
         System.out.println("Tasks in " + projectName + ":");
-        for (int i = 0; i < project.size(); i++) {
-            System.out.println((i + 1) + ". " + project.getProjectTasks().get(i).getDescription());
+        int i = 0;
+        for (var task : project.getProjectTasks().getTasks()) {
+            System.out.println((i + 1) + ". " + task.getDescription());
+            i++;
         }
 
         while (true) {
@@ -412,16 +418,17 @@ public class InteractivePromptHandler {
         var project = projects.getProjectList().get(projectSelection - 1);
         String projectName = project.getProjectName();
 
-        if (project.size() == 0) {
+        if (project.isEmpty()) {
             System.out.println("No tasks in this project. Going back...");
             return null;
         }
 
         System.out.println("Tasks in " + projectName + ":");
-        for (int i = 0; i < project.size(); i++) {
-            var task = project.getProjectTasks().get(i);
+        int i = 0;
+        for (var task : project.getProjectTasks().getTasks()) {
             System.out.println((i + 1) + ". " + task.getDescription() + " - Priority: " + task.getPriority()
                     + " - Deadline: " + (task.getDeadline() != null ? task.getDeadline() : "None"));
+            i++;
         }
 
         while (true) {

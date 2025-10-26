@@ -25,7 +25,7 @@ public class ArgumentParser {
     private String parsedProjectToken;
     private Integer targetProjectIndex;
 
-    public ArgumentParser(String argument, ProjectList projects) throws InvalidArgumentException {
+    public ArgumentParser(String argument, ProjectList projects) throws InvalidArgumentException, IndexOutOfRangeException {
         this.argument = argument == null ? "" : argument;
         this.projects = projects;
         parseArgument();
@@ -51,7 +51,7 @@ public class ArgumentParser {
         return parsedProjectToken != null && targetProjectIndex == null;
     }
 
-    private void parseArgument() throws InvalidArgumentException {
+    private void parseArgument() throws InvalidArgumentException, IndexOutOfRangeException {
         targetProject = null;
         remainingArgument = null;
         parsedProjectToken = null;

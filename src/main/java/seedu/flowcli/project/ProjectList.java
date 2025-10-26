@@ -3,6 +3,8 @@ package seedu.flowcli.project;
 import java.util.ArrayList;
 import java.util.List;
 
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
+
 public class ProjectList {
     private final List<Project> projects = new ArrayList<>();
 
@@ -10,10 +12,9 @@ public class ProjectList {
         projects.add(new Project(projectName));
     }
 
-    public Project delete(int zeroBasedIndex) {
+    public Project delete(int zeroBasedIndex) throws IndexOutOfRangeException {
         if (zeroBasedIndex < 0 || zeroBasedIndex >= projects.size()) {
-            throw new IndexOutOfBoundsException("Project index " + (zeroBasedIndex + 1) +
-                    " out of range. Valid range: 1-" + projects.size());
+            throw new IndexOutOfRangeException(projects.size());
         }
         Project returnProject = projects.get(zeroBasedIndex);
         projects.remove(zeroBasedIndex);
@@ -26,10 +27,9 @@ public class ProjectList {
         return removedProject;
     }
 
-    public Project getProjectByIndex(int zeroBasedIndex) {
+    public Project getProjectByIndex(int zeroBasedIndex) throws IndexOutOfRangeException {
         if (zeroBasedIndex < 0 || zeroBasedIndex >= projects.size()) {
-            throw new IndexOutOfBoundsException("Project index " + (zeroBasedIndex + 1) +
-                    " out of range. Valid range: 1-" + projects.size());
+            throw new IndexOutOfRangeException(projects.size());
         }
         return projects.get(zeroBasedIndex);
     }
