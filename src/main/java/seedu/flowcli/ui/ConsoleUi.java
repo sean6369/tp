@@ -347,7 +347,6 @@ public class ConsoleUi {
      * @param message The error message to display
      */
     public void showError(String message) {
-        printLine();
         System.out.println(message);
         printLine();
     }
