@@ -7,6 +7,7 @@ import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
 
+//@@author Zhenzha0
 public class StatusCommand extends Command {
 
     public StatusCommand(String arguments) {
@@ -40,8 +41,8 @@ public class StatusCommand extends Command {
         }
 
         if (parsedArgument.hasNonNumericProjectToken()) {
-            throw new InvalidArgumentException(String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE,
-                    parsedArgument.getParsedProjectName()));
+            throw new InvalidArgumentException(
+                    String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE, parsedArgument.getParsedProjectName()));
         }
 
         // No arguments provided - should not happen as interactive mode handles

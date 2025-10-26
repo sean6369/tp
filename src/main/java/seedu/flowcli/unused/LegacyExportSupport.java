@@ -15,12 +15,6 @@ import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.TaskWithProject;
 import seedu.flowcli.ui.ConsoleUi;
 
-/**
- * Legacy export command logic retained for reference after the modern
- * {@code export-tasks} format replaced it.
- *
- * @author sean6369
- */
 //@@author sean6369
 @SuppressWarnings("unused")
 public final class LegacyExportSupport {
