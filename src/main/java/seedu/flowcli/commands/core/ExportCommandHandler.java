@@ -1,5 +1,6 @@
 package seedu.flowcli.commands.core;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -117,6 +118,12 @@ public class ExportCommandHandler {
         }
 
         params.filename = tokens.get(0);
+        
+        // Validate filename first (before .txt extension check)
+        if (!isValidFilename(params.filename)) {
+            throw new InvalidArgumentException("Invalid filename: " + params.filename);
+        }
+        
         if (!params.filename.endsWith(".txt")) {
             throw new InvalidArgumentException(
                     "Export filename must end with .txt extension. Use: " + params.filename + ".txt");
@@ -340,5 +347,42 @@ public class ExportCommandHandler {
             return trimmed.substring(1, trimmed.length() - 1);
         }
         return trimmed;
+    }
+
+    /**
+     * Validates if a filename is valid for the current operating system.
+     * Checks for invalid characters and reserved names.
+     */
+    private boolean isValidFilename(String filename) {
+        if (filename == null || filename.isEmpty()) {
+            return false;
+        }
+
+        // Extract just the filename (not the path)
+        File file = new File(filename);
+        String name = file.getName();
+
+        // Check for invalid characters (Windows + Unix)
+        // Windows: < > : " / \ | ? *
+        // Unix: / (null byte already checked above)
+        String invalidChars = "<>:\"|?*";
+        for (char c : invalidChars.toCharArray()) {
+            if (name.indexOf(c) >= 0) {
+                return false;
+            }
+        }
+
+        // Check for reserved names on Windows
+        String upperName = name.toUpperCase();
+        String[] reservedNames = {"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4",
+            "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2",
+            "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"};
+        for (String reserved : reservedNames) {
+            if (upperName.equals(reserved) || upperName.startsWith(reserved + ".")) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

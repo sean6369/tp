@@ -46,7 +46,8 @@ public class Project {
     }
 
     public Task updateTask(int index, String newDescription, boolean updateDescription,
-            LocalDate newDeadline, boolean updateDeadline, Integer newPriority, boolean updatePriority) throws IndexOutOfRangeException {
+            LocalDate newDeadline, boolean updateDeadline, Integer newPriority, boolean updatePriority)
+            throws IndexOutOfRangeException {
         Task task = projectTasks.get(index);
         if (updateDescription) {
             task.setDescription(newDescription);

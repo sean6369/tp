@@ -40,7 +40,7 @@ class TaskCommandsTest {
 
         assertTrue(shouldContinue);
         assertEquals(1, project.size());
-        Task addedTask = project.getProjectTasks().get(0);
+        Task addedTask = project.getProjectTasks().getTasks().get(0);
         assertEquals("Finish docs", addedTask.getDescription());
         assertEquals(LocalDate.of(2024, 12, 25), addedTask.getDeadline());
         assertEquals(3, addedTask.getPriority());
@@ -58,7 +58,7 @@ class TaskCommandsTest {
         boolean shouldContinue = command.execute(context);
 
         assertTrue(shouldContinue);
-        Task task = project.getProjectTasks().get(0);
+        Task task = project.getProjectTasks().getTasks().get(0);
         assertTrue(task.isDone());
         assertEquals("marked", ui.getLastAction());
         assertSame(task, ui.getLastTask());
@@ -74,7 +74,7 @@ class TaskCommandsTest {
         boolean shouldContinue = command.execute(context);
 
         assertTrue(shouldContinue);
-        Task task = project.getProjectTasks().get(0);
+        Task task = project.getProjectTasks().getTasks().get(0);
         assertFalse(task.isDone());
         assertEquals("marked", ui.getLastAction());
         assertSame(task, ui.getLastTask());
@@ -84,7 +84,7 @@ class TaskCommandsTest {
     @Test
     void deleteCommandRemovesTask() throws Exception {
         project.addTask("Task to delete");
-        Task taskToDelete = project.getProjectTasks().get(0);
+        Task taskToDelete = project.getProjectTasks().getTasks().get(0);
         DeleteTaskCommand command = new DeleteTaskCommand("1 1");
 
         boolean shouldContinue = command.execute(context);
@@ -105,7 +105,7 @@ class TaskCommandsTest {
         boolean shouldContinue = command.execute(context);
 
         assertTrue(shouldContinue);
-        Task updatedTask = project.getProjectTasks().get(0);
+        Task updatedTask = project.getProjectTasks().getTasks().get(0);
         assertEquals("Updated task", updatedTask.getDescription());
         assertEquals(LocalDate.of(2024, 12, 31), updatedTask.getDeadline());
         assertEquals(3, updatedTask.getPriority());
@@ -128,8 +128,8 @@ class TaskCommandsTest {
         public void showAddedTask(Project targetProject) {
             lastAction = "added";
             lastProject = targetProject;
-            if (targetProject.getProjectTasks().size() > 0) {
-                lastTask = targetProject.getProjectTasks().get(targetProject.getProjectTasks().size() - 1);
+            if (!targetProject.getProjectTasks().isEmpty()) {
+                lastTask = targetProject.getProjectTasks().getTasks().get(targetProject.getProjectTasks().size() - 1);
             }
         }
 
