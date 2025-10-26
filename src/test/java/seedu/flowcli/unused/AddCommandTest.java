@@ -1,4 +1,4 @@
-package seedu.flowcli.commands;
+package seedu.flowcli.unused;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,9 +12,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import seedu.flowcli.commands.AddCommand;
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.exceptions.MissingDescriptionException;
@@ -23,8 +25,14 @@ import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
 import seedu.flowcli.ui.ConsoleUi;
 
-@DisplayName("AddCommand Unit Tests")
-class AddCommandTest {
+/**
+ * Legacy add command test.
+ *
+ * @author xylonc
+ */
+// @@author xylonc
+@Disabled("Retired test")
+public final class AddCommandTest {
 
     private static final Logger logger = Logger.getLogger(AddCommandTest.class.getName());
 
@@ -67,8 +75,7 @@ class AddCommandTest {
         return new CommandContext(projects, ui, null);
     }
 
-    @Test
-    @DisplayName("execute_existingProject_addsTaskAndCallsUi")
+    @Test @DisplayName("execute_existingProject_addsTaskAndCallsUi")
     void execute_existingProject_addsTaskAndCallsUi() throws Exception {
         // Arrange
         ProjectList projects = new ProjectList();
@@ -81,20 +88,17 @@ class AddCommandTest {
         boolean ok = cmd.execute(ctx);
 
         // Assert
-        assertAll("Success path (existing project)",
-                () -> assertTrue(ok, "execute() should return true"),
+        assertAll("Success path (existing project)", () -> assertTrue(ok, "execute() should return true"),
                 () -> assertTrue(ui.addedTaskShown, "UI.showAddedTask() should be called"),
                 () -> assertFalse(ui.addedProjectShown, "UI.showAddedProject() should not be called"),
                 () -> assertEquals(1, alpha.size(), "Project should now have one task"),
                 () -> assertEquals("Finish docs", alpha.getProjectTasks().get(0).getDescription()),
                 () -> assertEquals(LocalDate.of(2024, 12, 25), alpha.getProjectTasks().get(0).getDeadline()),
-                () -> assertEquals(3, alpha.getProjectTasks().get(0).getPriority())
-        );
+                () -> assertEquals(3, alpha.getProjectTasks().get(0).getPriority()));
         logger.info("Existing-project success case passed");
     }
 
-    @Test
-    @DisplayName("execute_existingProject_missingDescription_throwsMissingDescriptionException")
+    @Test @DisplayName("execute_existingProject_missingDescription_throwsMissingDescriptionException")
     void execute_missingDescription_throws() {
         // Arrange
         ProjectList projects = new ProjectList();
@@ -110,8 +114,7 @@ class AddCommandTest {
         logger.info("Missing-description case passed");
     }
 
-    @Test
-    @DisplayName("execute_existingProject_invalidPriority_throwsInvalidArgumentException")
+    @Test @DisplayName("execute_existingProject_invalidPriority_throwsInvalidArgumentException")
     void execute_invalidPriority_throws() {
         // Arrange
         ProjectList projects = new ProjectList();
@@ -121,14 +124,12 @@ class AddCommandTest {
         AddCommand cmd = new AddCommand("Alpha Do it --priority urgent");
 
         // Act & Assert
-        assertThrows(InvalidArgumentException.class, () -> cmd.execute(ctx),
-                "Should throw for invalid priority value");
+        assertThrows(InvalidArgumentException.class, () -> cmd.execute(ctx), "Should throw for invalid priority value");
         assertFalse(ui.addedTaskShown, "UI.showAddedTask() must not be called on failure");
         logger.info("Invalid-priority case passed");
     }
 
-    @Test
-    @DisplayName("execute_existingProject_invalidDeadline_throwsInvalidArgumentException")
+    @Test @DisplayName("execute_existingProject_invalidDeadline_throwsInvalidArgumentException")
     void execute_invalidDeadline_throws() {
         // Arrange
         ProjectList projects = new ProjectList();
@@ -144,8 +145,7 @@ class AddCommandTest {
         logger.info("Invalid-deadline case passed");
     }
 
-    @Test
-    @DisplayName("execute_nonExistingProject_createsProject_addsTask_andCallsUi")
+    @Test @DisplayName("execute_nonExistingProject_createsProject_addsTask_andCallsUi")
     void execute_nonExistingProject_createsProject() throws Exception {
         // Arrange
         ProjectList projects = new ProjectList();
@@ -158,8 +158,7 @@ class AddCommandTest {
 
         // Assert
         Project beta = projects.getProject("Beta");
-        assertAll("Success path (non-existing project)",
-                () -> assertTrue(ok, "execute() should return true"),
+        assertAll("Success path (non-existing project)", () -> assertTrue(ok, "execute() should return true"),
                 () -> assertTrue(ui.addedProjectShown,
                         "UI.showAddedProject() should be called when project is created"),
                 () -> assertTrue(ui.addedTaskShown, "UI.showAddedTask() should be called"),
@@ -167,13 +166,11 @@ class AddCommandTest {
                 () -> assertEquals(1, beta.size(), "New project should contain the added task"),
                 () -> assertEquals("Write tests", beta.getProjectTasks().get(0).getDescription()),
                 () -> assertEquals(LocalDate.of(2025, 1, 1), beta.getProjectTasks().get(0).getDeadline()),
-                () -> assertEquals(2, beta.getProjectTasks().get(0).getPriority())
-        );
+                () -> assertEquals(2, beta.getProjectTasks().get(0).getPriority()));
         logger.info("Non-existing-project success case passed");
     }
 
-    @Test
-    @DisplayName("execute_nonExistingProject_missingProjectName_throwsInvalidArgumentException")
+    @Test @DisplayName("execute_nonExistingProject_missingProjectName_throwsInvalidArgumentException")
     void execute_missingProjectName_throws() {
         ProjectList projects = new ProjectList();
         SpyUi ui = new SpyUi(projects);

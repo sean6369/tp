@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.commands.validation.CommandValidator;
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
 import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.parsers.ArgumentParser;
@@ -26,6 +27,14 @@ public class UpdateCommand extends Command {
         ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
         Project targetProject = parsedArgument.getTargetProject();
         if (targetProject == null) {
+            Integer projectIndex = parsedArgument.getTargetProjectIndex();
+            if (projectIndex != null) {
+                throw new IndexOutOfRangeException(context.getProjects().getProjectListSize());
+            }
+            if (parsedArgument.hasNonNumericProjectToken()) {
+                throw new InvalidArgumentException(String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE,
+                        parsedArgument.getParsedProjectName()));
+            }
             throw new MissingArgumentException();
         }
 

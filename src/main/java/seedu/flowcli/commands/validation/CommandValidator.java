@@ -56,7 +56,7 @@ public class CommandValidator {
      */
     public static void validateFilterType(String filterType) throws InvalidArgumentException {
         if (filterType == null) {
-            throw new InvalidArgumentException("Filter type cannot be null. Use priority or project.");
+            throw new InvalidArgumentException("Filter type cannot be null. Use priority.");
         }
 
         for (String validType : ValidationConstants.VALID_FILTER_TYPES) {
@@ -65,7 +65,7 @@ public class CommandValidator {
             }
         }
 
-        throw new InvalidArgumentException("Invalid filter type: " + filterType + ". Use priority or project");
+        throw new InvalidArgumentException("Invalid filter type: " + filterType + ". Use priority");
     }
 
     /**

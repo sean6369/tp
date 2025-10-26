@@ -1,6 +1,7 @@
 package seedu.flowcli.commands.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import seedu.flowcli.commands.utility.TaskCollector;
@@ -9,6 +10,7 @@ import seedu.flowcli.commands.utility.TaskFilter;
 import seedu.flowcli.commands.utility.TaskSorter;
 import seedu.flowcli.commands.validation.CommandValidator;
 import seedu.flowcli.commands.validation.ValidationConstants;
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
 import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
@@ -54,171 +56,228 @@ public class ExportCommandHandler {
      * Handles the export command with various parameter combinations.
      */
     public void handleExport(String args) throws Exception {
-        if (args == null || args.trim().isEmpty()) {
+        String trimmed = args == null ? "" : args.trim();
+        if (trimmed.isEmpty()) {
             throw new InvalidArgumentException(
-                    "Invalid export command. Use: export tasks to <filename>.txt [<project>] "
-                            + "[filter by <type> <value>] [sort by <field> <order>]");
+                    "Invalid export command. Use: export-tasks <filename>.txt [projectIndex] "
+                            + "[filter-tasks --priority <low/medium/high>] "
+                            + "[sort-tasks <--deadline/priority> <ascending/descending>]");
         }
 
-        // Parse the command: "tasks to <filename> [<project>] [filter by <type>
-        // <value>] [sort by <field> <order>]"
-        String[] parts = args.trim().split("\\s+");
-
-        if (parts.length < 3 || !"tasks".equals(parts[0]) || !"to".equals(parts[1])) {
+        if (trimmed.startsWith("tasks to ")) {
             throw new InvalidArgumentException(
-                    "Invalid export command. Use: export tasks to <filename>.txt [<project>] "
-                            + "[filter by <type> <value>] [sort by <field> <order>]");
+                    "Legacy export syntax is no longer supported. Use: export-tasks <filename>.txt [projectIndex] "
+                            + "[filter-tasks --priority <low/medium/high>] "
+                            + "[sort-tasks <--deadline/priority> <ascending/descending>]");
         }
 
-        String filename = parts[2];
-        if (!filename.endsWith(".txt")) {
-            throw new InvalidArgumentException(
-                    "Export filename must end with .txt extension. Use: " + filename + ".txt");
-        }
+        ExportParams params = parseParameters(trimmed);
 
-        // Check if we have additional parameters
-        String remainingArgs = args.substring(args.indexOf(filename) + filename.length()).trim();
+        List<TaskWithProject> tasks;
+        String baseDescriptor;
 
-        List<TaskWithProject> tasksToExport;
-        String header;
-
-        if (remainingArgs.isEmpty()) {
-            // No additional parameters - check if we have a last view
-            if (lastViewType != ViewType.NONE && !lastDisplayedTasks.isEmpty()) {
-                // Export last displayed view
-                tasksToExport = new ArrayList<>(lastDisplayedTasks);
-                header = "Exported tasks (" + lastViewMetadata + ")";
-            } else {
-                // No last view - export all tasks from all projects
-                tasksToExport = TaskCollector.getAllTasksWithProjects(projects);
-                header = "Exported all tasks";
+        if (params.forceAll) {
+            tasks = TaskCollector.getAllTasksWithProjects(projects);
+            baseDescriptor = "all tasks";
+        } else if (params.projectIndex != null) {
+            if (params.projectIndex < 0 || params.projectIndex >= projects.getProjectListSize()) {
+                throw new IndexOutOfRangeException(projects.getProjectListSize());
             }
+            Project project = projects.getProjectByIndex(params.projectIndex);
+            tasks = TaskCollector.getTasksFromProject(project);
+            baseDescriptor = "project " + project.getProjectName();
+        } else if (!params.hasFilterOrSort() && lastViewType != ViewType.NONE && !lastDisplayedTasks.isEmpty()) {
+            tasks = new ArrayList<>(lastDisplayedTasks);
+            baseDescriptor = "last view: " + lastViewMetadata;
         } else {
-            // Parse additional parameters
-            // Check if parameter is "--all"
-            if (remainingArgs.trim().equals("--all")) {
-                // Force export all tasks, ignore last view
-                tasksToExport = TaskCollector.getAllTasksWithProjects(projects);
-                header = "Exported all tasks";
-            } else {
-                // Normal parameter parsing (project, filter, sort)
-                tasksToExport = parseExportParameters(remainingArgs);
-                header = "Exported tasks (" + remainingArgs + ")";
-            }
+            tasks = TaskCollector.getAllTasksWithProjects(projects);
+            baseDescriptor = "all tasks";
         }
 
-        // Export to file
-        TaskExporter.exportTasksToFile(tasksToExport, filename, header);
-        ui.showExportSuccess(filename, tasksToExport.size());
-    }
-
-    /**
-     * Parses export parameters and returns the appropriate tasks.
-     */
-    private List<TaskWithProject> parseExportParameters(String args) throws Exception {
-        String[] parts = args.split("\\s+");
-
-        // Validate incomplete filter/sort commands
-        validateFilterSortCommands(parts);
-
-        // Parse command tokens
-        ParsedParams params = parseCommandTokens(parts);
-
-        // Get base tasks
-        List<TaskWithProject> tasks = collectBaseTasks(params.projectName);
-
-        // Apply filter if specified
         if (params.filterType != null && params.filterValue != null) {
-            tasks = applyFiltering(tasks, params.filterType, params.filterValue);
+            FilterResult filterResult = applyFiltering(tasks, params.filterType, params.filterValue);
+            tasks = filterResult.tasks;
+            params.filterValue = filterResult.resolvedValue;
         }
 
-        // Apply sort if specified
         if (params.sortField != null && params.sortOrder != null) {
             tasks = applySorting(tasks, params.sortField, params.sortOrder);
         }
 
-        return tasks;
+        String header = buildExportHeader(baseDescriptor, params);
+        TaskExporter.exportTasksToFile(tasks, params.filename, header);
+        ui.showExportSuccess(params.filename, tasks.size());
     }
 
-    /**
-     * Validates that filter and sort commands are complete.
-     */
-    private void validateFilterSortCommands(String[] parts) throws InvalidArgumentException {
-        for (int j = 0; j < parts.length; j++) {
-            if (ValidationConstants.KEYWORD_FILTER.equals(parts[j])) {
-                CommandValidator.validateFilterCommand(parts, j);
-            }
-            if (ValidationConstants.KEYWORD_SORT.equals(parts[j])) {
-                CommandValidator.validateSortCommand(parts, j);
-            }
+    private ExportParams parseParameters(String args) throws InvalidArgumentException {
+        ExportParams params = new ExportParams();
+        List<String> tokens = new ArrayList<>(Arrays.asList(args.split("\\s+")));
+        if (tokens.isEmpty()) {
+            throw invalidExportCommand();
         }
-    }
 
-    /**
-     * Parses command tokens to extract parameters.
-     */
-    private ParsedParams parseCommandTokens(String[] parts) {
-        ParsedParams params = new ParsedParams();
+        params.filename = tokens.get(0);
+        if (!params.filename.endsWith(".txt")) {
+            throw new InvalidArgumentException(
+                    "Export filename must end with .txt extension. Use: " + params.filename + ".txt");
+        }
 
-        int i = 0;
-        while (i < parts.length) {
-            String current = parts[i];
+        int index = 1;
+        while (index < tokens.size()) {
+            String token = tokens.get(index);
 
-            if (ValidationConstants.KEYWORD_FILTER.equals(current) && i + 3 < parts.length
-                    && ValidationConstants.KEYWORD_BY.equals(parts[i + 1])) {
-                params.filterType = parts[i + 2];
-                params.filterValue = parts[i + 3];
-                i += 4;
-            } else if (ValidationConstants.KEYWORD_SORT.equals(current) && i + 3 < parts.length
-                    && ValidationConstants.KEYWORD_BY.equals(parts[i + 1])) {
-                params.sortField = parts[i + 2];
-                params.sortOrder = parts[i + 3];
-                i += 4;
-            } else if (!ValidationConstants.KEYWORD_FILTER.equals(current)
-                    && !ValidationConstants.KEYWORD_SORT.equals(current)
-                    && !ValidationConstants.KEYWORD_BY.equals(current)) {
-                if (params.projectName == null) {
-                    params.projectName = stripQuotes(current);
+            if ("--all".equalsIgnoreCase(token)) {
+                if (params.forceAll) {
+                    throw new InvalidArgumentException("Duplicate --all flag detected.");
                 }
-                i++;
-            } else {
-                i++;
+                params.forceAll = true;
+                index++;
+                continue;
             }
+
+            if ("filter-tasks".equals(token)) {
+                if (params.filterType != null) {
+                    throw new InvalidArgumentException("Only one filter condition is supported.");
+                }
+                index++;
+                if (index >= tokens.size()) {
+                    throw invalidExportCommand();
+                }
+
+                String option = tokens.get(index);
+                if (!option.startsWith("--")) {
+                    throw invalidExportCommand();
+                }
+                params.filterType = option.substring(2).toLowerCase();
+                if (!ValidationConstants.FILTER_TYPE_PRIORITY.equals(params.filterType)) {
+                    throw new InvalidArgumentException(
+                            "Invalid filter type. Use: filter-tasks --priority <low/medium/high>.");
+                }
+                index++;
+                if (index >= tokens.size()) {
+                    throw invalidExportCommand();
+                }
+
+                StringBuilder valueBuilder = new StringBuilder(tokens.get(index));
+                index++;
+                while (index < tokens.size()) {
+                    String lookahead = tokens.get(index);
+                    if (isSegmentBoundary(lookahead)) {
+                        break;
+                    }
+                    valueBuilder.append(" ").append(lookahead);
+                    index++;
+                }
+                params.filterValue = stripQuotes(valueBuilder.toString().trim());
+                continue;
+            }
+
+            if ("sort-tasks".equals(token)) {
+                if (params.sortField != null) {
+                    throw new InvalidArgumentException("Only one sort condition is supported.");
+                }
+                index++;
+                if (index >= tokens.size()) {
+                    throw invalidExportCommand();
+                }
+
+                String option = tokens.get(index);
+                if (!option.startsWith("--")) {
+                    throw invalidExportCommand();
+                }
+                params.sortField = option.substring(2).toLowerCase();
+                index++;
+                if (index >= tokens.size()) {
+                    throw invalidExportCommand();
+                }
+
+                params.sortOrder = tokens.get(index).toLowerCase();
+                index++;
+                continue;
+            }
+
+            if (params.projectIndex == null && isPositiveInteger(token)) {
+                params.projectIndex = Integer.parseInt(token) - 1;
+                index++;
+                continue;
+            }
+
+            throw invalidExportCommand();
+        }
+
+        if ((params.filterType == null) != (params.filterValue == null)) {
+            throw invalidExportCommand();
+        }
+        if ((params.sortField == null) != (params.sortOrder == null)) {
+            throw invalidExportCommand();
+        }
+        if (params.forceAll && params.projectIndex != null) {
+            throw new InvalidArgumentException("Specify either projectIndex or --all, not both.");
+        }
+
+        if (params.filterType != null) {
+            params.filterValue = CommandValidator.validatePriority(params.filterValue);
+        }
+
+        if (params.sortField != null) {
+            CommandValidator.validateSortField(params.sortField);
+        }
+        if (params.sortOrder != null) {
+            CommandValidator.validateSortOrder(params.sortOrder);
         }
 
         return params;
     }
 
-    /**
-     * Collects base tasks from specified project or all projects.
-     */
-    private List<TaskWithProject> collectBaseTasks(String projectName) throws InvalidArgumentException {
-        if (projectName != null) {
-            Project project = projects.getProject(projectName);
-            if (project == null) {
-                throw new InvalidArgumentException("Project not found: " + projectName);
-            }
-            return TaskCollector.getTasksFromProject(project);
-        } else {
-            return TaskCollector.getAllTasksWithProjects(projects);
+    private boolean isSegmentBoundary(String token) {
+        return "filter-tasks".equals(token) || "sort-tasks".equals(token) || "--all".equalsIgnoreCase(token);
+    }
+
+    private boolean isPositiveInteger(String token) {
+        try {
+            return Integer.parseInt(token) > 0;
+        } catch (NumberFormatException e) {
+            return false;
         }
+    }
+
+    private String buildExportHeader(String baseDescriptor, ExportParams params) {
+        List<String> parts = new ArrayList<>();
+        if (baseDescriptor != null && !baseDescriptor.isEmpty()) {
+            parts.add(baseDescriptor);
+        }
+        if (params.filterType != null && params.filterValue != null) {
+            parts.add("filter " + params.filterType + " " + params.filterValue);
+        }
+        if (params.sortField != null && params.sortOrder != null) {
+            parts.add("sort " + params.sortField + " " + params.sortOrder);
+        }
+
+        if (parts.isEmpty()) {
+            return "Exported tasks";
+        }
+        if (parts.size() == 1 && "all tasks".equals(parts.get(0))) {
+            return "Exported all tasks";
+        }
+        return "Exported tasks (" + String.join(", ", parts) + ")";
+    }
+
+    private InvalidArgumentException invalidExportCommand() {
+        return new InvalidArgumentException("Invalid export command. Use: export-tasks <filename>.txt [projectIndex] "
+                + "[filter-tasks --priority <low/medium/high>] "
+                + "[sort-tasks <--deadline/priority> <ascending/descending>]");
     }
 
     /**
      * Applies filtering to tasks.
      */
-    private List<TaskWithProject> applyFiltering(List<TaskWithProject> tasks, String filterType, String filterValue)
+    private FilterResult applyFiltering(List<TaskWithProject> tasks, String filterType, String filterValue)
             throws Exception {
         CommandValidator.validateFilterType(filterType);
 
-        if (ValidationConstants.FILTER_TYPE_PRIORITY.equals(filterType)) {
-            CommandValidator.validatePriority(filterValue);
-        }
-
-        String priorityParam = ValidationConstants.FILTER_TYPE_PRIORITY.equals(filterType) ? filterValue : null;
-        String projectParam = ValidationConstants.FILTER_TYPE_PROJECT.equals(filterType) ? filterValue : null;
-        TaskFilter filter = new TaskFilter(tasks, priorityParam, projectParam);
-        return filter.getFilteredTasks();
+        String resolvedValue = CommandValidator.validatePriority(filterValue);
+        TaskFilter filter = new TaskFilter(tasks, resolvedValue, null);
+        return new FilterResult(filter.getFilteredTasks(), resolvedValue);
     }
 
     /**
@@ -234,15 +293,30 @@ public class ExportCommandHandler {
         return sorter.getSortedTasks();
     }
 
-    /**
-     * Helper class to hold parsed parameters.
-     */
-    private static class ParsedParams {
-        String projectName = null;
-        String filterType = null;
-        String filterValue = null;
-        String sortField = null;
-        String sortOrder = null;
+    private static class FilterResult {
+        final List<TaskWithProject> tasks;
+        final String resolvedValue;
+
+        FilterResult(List<TaskWithProject> tasks, String resolvedValue) {
+            this.tasks = tasks;
+            this.resolvedValue = resolvedValue;
+        }
+    }
+
+    private static class ExportParams {
+        String filename;
+        Integer projectIndex;
+        boolean forceAll;
+        String filterType;
+        String filterValue;
+        String sortField;
+        String sortOrder;
+
+        boolean hasFilterOrSort() {
+            boolean hasFilter = filterType != null && filterValue != null;
+            boolean hasSort = sortField != null && sortOrder != null;
+            return hasFilter || hasSort;
+        }
     }
 
     /**

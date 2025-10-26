@@ -6,8 +6,8 @@ import seedu.flowcli.exceptions.MissingIndexException;
 public class CommandParser {
 
     public enum CommandType {
-        LIST, MARK, UNMARK, BYE, ADD, DELETE, DELETEPROJECT, DELETETASK, UPDATE, HELP, SORT, FILTER, EXPORT, STATUS,
-        UNKNOWN, CREATE
+        LIST, MARK, UNMARK, BYE, ADD_TASK, CREATE_PROJECT, DELETE, DELETE_PROJECT, DELETE_TASK, UPDATE_TASK, HELP,
+        SORT_TASKS, FILTER_TASKS, EXPORT_TASKS, STATUS, UNKNOWN
     }
 
     public static class ParsedCommand {
@@ -39,7 +39,6 @@ public class CommandParser {
         String arguments = parts.length > 1 ? parts[1] : "";
 
         switch (commandWord) {
-        case "list-all":
         case "list":
             return new ParsedCommand(CommandType.LIST, arguments);
         case "mark":
@@ -50,26 +49,30 @@ public class CommandParser {
             return new ParsedCommand(CommandType.BYE, arguments);
         case "add-task":
         case "add":
-            return new ParsedCommand(CommandType.ADD, arguments);
+            return new ParsedCommand(CommandType.ADD_TASK, arguments);
         case "create-project":
         case "create":
-            return new ParsedCommand(CommandType.CREATE, arguments);
+            return new ParsedCommand(CommandType.CREATE_PROJECT, arguments);
         case "delete":
             return new ParsedCommand(CommandType.DELETE, arguments);
-        case "delete-project":
-            return new ParsedCommand(CommandType.DELETEPROJECT, arguments);
         case "delete-task":
-            return new ParsedCommand(CommandType.DELETETASK , arguments);
+            return new ParsedCommand(CommandType.DELETE_TASK, arguments);
+        case "delete-project":
+            return new ParsedCommand(CommandType.DELETE_PROJECT, arguments);
         case "update":
-            return new ParsedCommand(CommandType.UPDATE, arguments);
+        case "update-task":
+            return new ParsedCommand(CommandType.UPDATE_TASK, arguments);
         case "help":
             return new ParsedCommand(CommandType.HELP, arguments);
         case "sort":
-            return new ParsedCommand(CommandType.SORT, arguments);
+        case "sort-tasks":
+            return new ParsedCommand(CommandType.SORT_TASKS, arguments);
         case "filter":
-            return new ParsedCommand(CommandType.FILTER, arguments);
+        case "filter-tasks":
+            return new ParsedCommand(CommandType.FILTER_TASKS, arguments);
         case "export":
-            return new ParsedCommand(CommandType.EXPORT, arguments);
+        case "export-tasks":
+            return new ParsedCommand(CommandType.EXPORT_TASKS, arguments);
         case "status":
             return new ParsedCommand(CommandType.STATUS, arguments);
         default:

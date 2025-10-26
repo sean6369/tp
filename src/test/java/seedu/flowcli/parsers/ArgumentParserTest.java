@@ -2,7 +2,9 @@ package seedu.flowcli.parsers;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -22,148 +24,74 @@ class ArgumentParserTest {
 
     private ProjectList projects;
     private Project project1;
-    private Project multiWordProject;
+    private Project project2;
 
     @BeforeEach
-    void setUp() {
-        // Configure logging to show FINE level for this test class
+    void setUp() throws Exception {
         Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.FINE);
         for (Handler handler : rootLogger.getHandlers()) {
             handler.setLevel(Level.FINE);
         }
 
-        logger.info("Setting up test fixtures for ArgumentParser tests");
-
         projects = new ProjectList();
-
-        project1 = new Project("Project1");
-        multiWordProject = new Project("My Project");
-
+        project1 = new Project("Project Alpha");
+        project2 = new Project("Project Beta");
         projects.getProjectList().add(project1);
-        projects.getProjectList().add(multiWordProject);
+        projects.getProjectList().add(project2);
 
-        logger.info("Test setup completed with " + projects.getProjectList().size() + " projects");
+        logger.info("Initialised test projects: " + projects.getProjectListSize());
     }
 
-    @Test
-    @DisplayName("parseArgument_simpleProjectName_findsProjectAndRemainingArgs")
-    void testParseSimpleProjectName() {
-        logger.fine("Testing simple project name parsing");
+    @Test @DisplayName("parseArgument_validIndex_setsProjectAndRemaining")
+    void testParseValidIndex() throws Exception {
+        ArgumentParser parser = new ArgumentParser("1 build docs", projects);
 
-        ArgumentParser parser = new ArgumentParser("Project1 task description", projects);
-
-        assertAll("Simple project name parsing",
-                () -> assertEquals(project1, parser.getTargetProject()),
-                () -> assertEquals("task description", parser.getRemainingArgument()));
-
-        logger.info("Simple project name parsing test passed");
+        assertAll("Valid index parsing", () -> assertEquals(project1, parser.getTargetProject()),
+                () -> assertEquals("build docs", parser.getRemainingArgument()),
+                () -> assertEquals(0, parser.getTargetProjectIndex()),
+                () -> assertFalse(parser.hasNonNumericProjectToken()));
     }
 
-    @Test
-    @DisplayName("parseArgument_projectNameOnly_findsProjectWithNullRemaining")
-    void testParseProjectNameOnly() {
-        logger.fine("Testing project name without arguments");
+    @Test @DisplayName("parseArgument_onlyIndex_setsProjectWithNullRemainder")
+    void testParseIndexOnly() throws Exception {
+        ArgumentParser parser = new ArgumentParser("2", projects);
 
-        ArgumentParser parser = new ArgumentParser("Project1", projects);
-
-        assertAll("Project name without arguments",
-                () -> assertEquals(project1, parser.getTargetProject()),
-                () -> assertNull(parser.getRemainingArgument()));
-
-        logger.info("Project name without arguments test passed");
+        assertAll("Index-only parsing", () -> assertEquals(project2, parser.getTargetProject()),
+                () -> assertNull(parser.getRemainingArgument()), () -> assertEquals(1, parser.getTargetProjectIndex()),
+                () -> assertFalse(parser.hasNonNumericProjectToken()));
     }
 
-    @Test
-    @DisplayName("parseArgument_quotedProjectName_handlesMultiWordProject")
-    void testParseQuotedProjectName() {
-        logger.fine("Testing quoted project name parsing");
+    @Test @DisplayName("parseArgument_outOfRangeIndex_recordsIndexWithoutProject")
+    void testParseOutOfRangeIndex() throws Exception {
+        ArgumentParser parser = new ArgumentParser("5 extra args", projects);
 
-        ArgumentParser parser = new ArgumentParser("\"My Project\" task1", projects);
-
-        assertAll("Quoted project name",
-                () -> assertEquals(multiWordProject, parser.getTargetProject()),
-                () -> assertEquals("task1", parser.getRemainingArgument()));
-
-        logger.info("Quoted project name parsing test passed");
+        assertAll("Out-of-range index handling", () -> assertNull(parser.getTargetProject()),
+                () -> assertEquals("extra args", parser.getRemainingArgument()),
+                () -> assertEquals(4, parser.getTargetProjectIndex()),
+                () -> assertFalse(parser.hasNonNumericProjectToken()));
     }
 
-    @Test
-    @DisplayName("parseArgument_escapedCharacters_handlesCorrectly")
-    void testParseEscapedCharacters() {
-        logger.fine("Testing escaped character handling");
+    @Test @DisplayName("parseArgument_nonNumeric_preservesTokensForManualHandling")
+    void testParseNonNumeric() throws Exception {
+        ArgumentParser parser = new ArgumentParser("ProjectAlpha build", projects);
 
-        Project escapedProject = new Project("Project \"Special\"");
-        projects.getProjectList().add(escapedProject);
-
-        ArgumentParser parser = new ArgumentParser("\"Project \\\"Special\\\"\" task", projects);
-
-        assertAll("Escaped quotes",
-                () -> assertEquals(escapedProject, parser.getTargetProject()),
-                () -> assertEquals("task", parser.getRemainingArgument()));
-
-        logger.info("Escaped character handling test passed");
+        assertAll("Non-numeric handling", () -> assertNull(parser.getTargetProject()),
+                () -> assertEquals("build", parser.getRemainingArgument()),
+                () -> assertNull(parser.getTargetProjectIndex()),
+                () -> assertEquals("ProjectAlpha", parser.getParsedProjectName()),
+                () -> assertTrue(parser.hasNonNumericProjectToken()));
     }
 
-    @Test
-    @DisplayName("parseArgument_nonExistentProject_returnsNullProjectWithFullString")
-    void testParseNonExistentProject() {
-        logger.fine("Testing non-existent project handling");
+    @Test @DisplayName("parseArgument_emptyInput_returnsNulls")
+    void testParseEmpty() throws Exception {
+        ArgumentParser empty = new ArgumentParser("", projects);
+        ArgumentParser whitespace = new ArgumentParser("   ", projects);
 
-        ArgumentParser parser = new ArgumentParser("NonExistent task description", projects);
-
-        assertAll("Non-existent project",
-                () -> assertNull(parser.getTargetProject()),
-                () -> assertEquals("NonExistent task description", parser.getRemainingArgument()));
-
-        logger.info("Non-existent project handling test passed");
-    }
-
-    @Test
-    @DisplayName("parseArgument_caseInsensitive_findsProjectRegardlessOfCase")
-    void testParseCaseInsensitive() {
-        logger.fine("Testing case-insensitive project matching");
-
-        assertAll("Case insensitive matching",
-                () -> assertEquals(project1,
-                        new ArgumentParser("PROJECT1 task", projects).getTargetProject()),
-                () -> assertEquals(project1,
-                        new ArgumentParser("project1 task", projects).getTargetProject()),
-                () -> assertEquals(multiWordProject,
-                        new ArgumentParser("\"my project\" task", projects).getTargetProject()));
-
-        logger.info("Case-insensitive project matching test passed");
-    }
-
-    @Test
-    @DisplayName("parseArgument_emptyOrWhitespace_returnsNulls")
-    void testParseEmptyInput() {
-        logger.fine("Testing empty and whitespace input handling");
-
-        ArgumentParser emptyParser = new ArgumentParser("", projects);
-        ArgumentParser whitespaceParser = new ArgumentParser("   ", projects);
-
-        assertAll("Empty input handling",
-                () -> assertNull(emptyParser.getTargetProject()),
-                () -> assertNull(emptyParser.getRemainingArgument()),
-                () -> assertNull(whitespaceParser.getTargetProject()),
-                () -> assertNull(whitespaceParser.getRemainingArgument()));
-
-        logger.info("Empty input handling test passed");
-    }
-
-    @Test
-    @DisplayName("parseArgument_specialCharactersInArgs_preservesCorrectly")
-    void testParseSpecialCharacters() {
-        logger.fine("Testing special character preservation in arguments");
-
-        ArgumentParser parser = new ArgumentParser("Project1 task --priority high --deadline 2025-12-31", projects);
-
-        assertAll("Special characters preservation",
-                () -> assertEquals(project1, parser.getTargetProject()),
-                () -> assertEquals("task --priority high --deadline 2025-12-31",
-                        parser.getRemainingArgument()));
-
-        logger.info("Special character preservation test passed");
+        assertAll("Empty input handling", () -> assertNull(empty.getTargetProject()),
+                () -> assertNull(empty.getRemainingArgument()), () -> assertNull(whitespace.getTargetProject()),
+                () -> assertNull(whitespace.getRemainingArgument()),
+                () -> assertFalse(empty.hasNonNumericProjectToken()),
+                () -> assertFalse(whitespace.hasNonNumericProjectToken()));
     }
 }

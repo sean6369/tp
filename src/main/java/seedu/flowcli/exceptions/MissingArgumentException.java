@@ -1,7 +1,13 @@
 package seedu.flowcli.exceptions;
 
 public class MissingArgumentException extends FlowCLIException {
+    private static final String DEFAULT_MESSAGE = "Missing argument for the command.";
+
     public MissingArgumentException() {
-        super("Couldn't find any project with such name");
+        this(DEFAULT_MESSAGE);
+    }
+
+    public MissingArgumentException(String message) {
+        super(message);
     }
 }

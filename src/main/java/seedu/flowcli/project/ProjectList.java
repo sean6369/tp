@@ -22,6 +22,10 @@ public class ProjectList {
         return removedProject;
     }
 
+    public Project getProjectByIndex(int zeroBasedIndex) {
+        return projects.get(zeroBasedIndex);
+    }
+
     public List<Project> getProjectList() {
         return projects;
     }

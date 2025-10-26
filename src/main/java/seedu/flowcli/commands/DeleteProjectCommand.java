@@ -1,8 +1,10 @@
 package seedu.flowcli.commands;
 
 import seedu.flowcli.commands.core.CommandContext;
+import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.exceptions.MissingArgumentException;
-import seedu.flowcli.parsers.ArgumentParser;
+import seedu.flowcli.exceptions.MissingIndexException;
+import seedu.flowcli.parsers.CommandParser;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 
@@ -14,14 +16,37 @@ public class DeleteProjectCommand extends Command {
 
     @Override
     public boolean execute(CommandContext context) throws Exception {
-        ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
-        Project targetProject = parsedArgument.getTargetProject();
-        if (targetProject == null) {
+        String trimmedArgs = arguments.trim();
+        if (trimmedArgs.isEmpty()) {
             throw new MissingArgumentException();
         }
 
         ProjectList projects = context.getProjects();
-        Project deletedProject = projects.deleteProject(targetProject);
+        String[] parts = trimmedArgs.split("\\s+");
+        String indexToken = parts[0];
+
+        int zeroBasedIndex;
+        try {
+            zeroBasedIndex = CommandParser.parseIndexOrNull(indexToken, projects.getProjectListSize());
+        } catch (MissingIndexException e) {
+            throw new MissingArgumentException();
+        } catch (NumberFormatException e) {
+            throw new InvalidArgumentException("Invalid project index: " + indexToken);
+        }
+
+        boolean confirmed = false;
+        for (int i = 1; i < parts.length; i++) {
+            if ("--confirm".equalsIgnoreCase(parts[i])) {
+                confirmed = true;
+                break;
+            }
+        }
+
+        if (!confirmed) {
+            throw new InvalidArgumentException("Confirm project deletion with --confirm.");
+        }
+
+        Project deletedProject = projects.delete(zeroBasedIndex);
         context.getUi().showDeletedProject(deletedProject);
         return true;
     }

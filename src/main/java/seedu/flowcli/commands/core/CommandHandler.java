@@ -26,7 +26,7 @@ public class CommandHandler {
     public void handleCommands() {
         Scanner scanner = new Scanner(System.in);
         // Initialize interactive handler with scanner after it's created
-        this.interactiveHandler = new InteractivePromptHandler(ui, context.getProjects(), scanner);
+        this.interactiveHandler = new InteractivePromptHandler(context.getProjects(), scanner);
 
         try {
             boolean shouldContinue = true;
@@ -74,7 +74,8 @@ public class CommandHandler {
     }
 
     /**
-     * Determines if interactive mode should be used for the given parsed command.
+     * Determines if interactive mode should be used for the given parsed
+     * command.
      *
      * @param parsed The parsed command
      * @return true if interactive mode should be triggered
@@ -82,24 +83,30 @@ public class CommandHandler {
     private boolean shouldUseInteractiveMode(CommandParser.ParsedCommand parsed) {
         // Trigger interactive mode for main commands with minimal/no arguments
         switch (parsed.getType()) {
-        case ADD:
+        case ADD_TASK:
             return parsed.getArguments().trim().isEmpty();
-        case CREATE:
+        case CREATE_PROJECT:
             return parsed.getArguments().trim().isEmpty();
         case LIST:
-            return false; // Don't trigger interactive mode for list - it has valid behavior with no args
+            // Don't trigger interactive mode for list - it has valid behaviour
+            // with no args
+            return false;
         case MARK:
         case UNMARK:
             return parsed.getArguments().trim().isEmpty();
         case DELETE:
             return parsed.getArguments().trim().isEmpty();
-        case UPDATE:
+        case DELETE_PROJECT:
+        case DELETE_TASK:
+            // Don't trigger interactive mode for delete subcommands
+            return false;
+        case UPDATE_TASK:
             return parsed.getArguments().trim().isEmpty();
-        case SORT:
+        case SORT_TASKS:
             return parsed.getArguments().trim().isEmpty();
-        case FILTER:
+        case FILTER_TASKS:
             return parsed.getArguments().trim().isEmpty();
-        case EXPORT:
+        case EXPORT_TASKS:
             return parsed.getArguments().trim().isEmpty();
         case STATUS:
             return parsed.getArguments().trim().isEmpty();
@@ -117,9 +124,9 @@ public class CommandHandler {
      */
     private String handleInteractiveMode(CommandParser.CommandType type, Scanner scanner) {
         switch (type) {
-        case ADD:
+        case ADD_TASK:
             return interactiveHandler.handleAddCommand();
-        case CREATE:
+        case CREATE_PROJECT:
             return interactiveHandler.handleCreateCommand();
         case LIST:
             return interactiveHandler.handleListCommand();
@@ -129,13 +136,13 @@ public class CommandHandler {
             return interactiveHandler.handleUnmarkCommand();
         case DELETE:
             return interactiveHandler.handleDeleteCommand();
-        case UPDATE:
+        case UPDATE_TASK:
             return interactiveHandler.handleUpdateCommand();
-        case SORT:
+        case SORT_TASKS:
             return interactiveHandler.handleSortCommand();
-        case FILTER:
+        case FILTER_TASKS:
             return interactiveHandler.handleFilterCommand();
-        case EXPORT:
+        case EXPORT_TASKS:
             return interactiveHandler.handleExportCommand();
         case STATUS:
             return interactiveHandler.handleStatusCommand();
