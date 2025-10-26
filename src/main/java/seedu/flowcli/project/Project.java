@@ -12,6 +12,9 @@ public class Project {
     private TaskList projectTasks;
 
     public Project(String projectName) {
+        if (projectName == null || projectName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Project name cannot be null or empty");
+        }
         this.projectName = projectName;
         projectTasks = new TaskList();
     }
@@ -62,11 +65,7 @@ public class Project {
     }
 
     public String toString() {
-        if(projectTasks==null){
-            return projectName;
-        } else{ 
-            return projectName  + "\n" + projectTasks.render();
-        }
+        return projectName + "\n" + projectTasks.render();
     }
 
     public String showAllTasks() {

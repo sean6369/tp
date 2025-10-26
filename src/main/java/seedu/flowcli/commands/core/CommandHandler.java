@@ -1,13 +1,16 @@
 package seedu.flowcli.commands.core;
 
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import seedu.flowcli.commands.Command;
+import seedu.flowcli.exceptions.FlowCLIException;
 import seedu.flowcli.parsers.CommandParser;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
 
 public class CommandHandler {
+    private static final Logger logger = Logger.getLogger(CommandHandler.class.getName());
     private final ConsoleUi ui;
     private final CommandParser parser;
     private final CommandFactory factory;
@@ -45,8 +48,15 @@ public class CommandHandler {
                 }
                 try {
                     shouldContinue = command.execute(context);
-                } catch (Exception e) {
+                } catch (FlowCLIException e) {
+                    // Expected application errors - show user-friendly message
                     System.out.println(e.getMessage());
+                    ui.printLine();
+                } catch (Exception e) {
+                    // Unexpected errors - log for debugging and show generic message
+                    logger.severe("Unexpected error: " + e.getMessage());
+                    e.printStackTrace(); // For debugging in console
+                    System.out.println("An unexpected error occurred. Please try again.");
                     ui.printLine();
                 }
             }

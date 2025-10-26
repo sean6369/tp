@@ -62,24 +62,30 @@ public class ConsoleUi {
     public void showAddedProject() {
         printLine();
         System.out.println("Got it. I've added this project: ");
-        try {
-            System.out.println(projects.getProjectList().get(projects.getProjectListSize() - 1));
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("[Error displaying project]");
+        int size = projects.getProjectListSize();
+        if (size > 0) {
+            System.out.println(projects.getProjectList().get(size - 1));
+            showCurrentProjectListSize();
+        } else {
+            System.out.println("[Error: No projects found]");
         }
-        showCurrentProjectListSize();
         printLine();
     }
 
     public void showAddedTask(Project targetProject) {
         printLine();
         System.out.println("Got it. I've added this task in " + targetProject.getProjectName() + " : ");
-        try {
-            System.out.println(targetProject.getProjectTasks().get(targetProject.getProjectTasks().size() - 1));
-        } catch (IndexOutOfRangeException e) {
-            System.out.println("[Error displaying task]");
+        int taskSize = targetProject.getProjectTasks().size();
+        if (taskSize > 0) {
+            try {
+                System.out.println(targetProject.getProjectTasks().get(taskSize - 1));
+                showCurrentTaskListSize(targetProject);
+            } catch (IndexOutOfRangeException e) {
+                System.out.println("[Error displaying task]");
+            }
+        } else {
+            System.out.println("[Error: No tasks found]");
         }
-        showCurrentTaskListSize(targetProject);
         printLine();
     }
 
