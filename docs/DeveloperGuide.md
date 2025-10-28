@@ -48,8 +48,8 @@ Here is a sequence diagram illustrating the process:
 ### Project and ProjectList classes
 ![ProjectRelationshipDiagram](images/ProjectClassDiagram.png)
 
-### Project class 
-# Overview 
+# Project class 
+## Overview 
 Represents a single project and encapsulates its name and task collection `TaskList`. Allows for adding/updatig/deleting tasks within a project without directly coordinating multiple lower-level classes.
 
 # Requirements 
@@ -80,8 +80,8 @@ Represents a single project and encapsulates its name and task collection `TaskL
 
 - `String toString()` — printable representation of the project header + rendered tasks. 
 
-### ProjectList class 
-# Overview 
+# ProjectList class 
+## Overview 
 An ArrayList container of Project instances offering indexed access, name-lookup, and simple rendering. This is the central point for commands to manipuate the collection of projects (e.g., create-project, delete-project, list-projects).
 
 # Requirements  
