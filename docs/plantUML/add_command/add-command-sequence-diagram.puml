@@ -1,31 +1,38 @@
 @startuml Add Command Sequence Diagram
 !theme plain
+skinparam classAttributeIconSize 0
+hide stereotype
 
-actor User as U
-participant InteractivePromptHandler as IPH
-participant ProjectList as PL
+actor User
+participant InteractivePromptHandler
+participant ProjectList
 
-U -> IPH: handleAddCommand()
-IPH -> PL: getProjectListSize()
-IPH -> U: "Hmph, here are your projects:"
-IPH -> U: Display numbered project list
-IPH -> U: "Enter project number or press 'enter' to exit:"
+User -> InteractivePromptHandler: handleAddCommand()
+activate InteractivePromptHandler
+InteractivePromptHandler -> ProjectList: getProjectListSize()
+activate ProjectList
+ProjectList --> InteractivePromptHandler: return size
+deactivate ProjectList
+InteractivePromptHandler -> User: "Hmph, here are your projects:"
+InteractivePromptHandler -> User: Display numbered project list
+InteractivePromptHandler -> User: "Enter project number or press 'enter' to exit:"
 
-U -> IPH: Project number
-IPH -> IPH: Validate range
+User -> InteractivePromptHandler: Project number
+InteractivePromptHandler -> InteractivePromptHandler: Validate range
 alt Invalid input
-    IPH -> U: "Hmph, choose a project number within the range!"
-    IPH -> U: Retry prompt
+    InteractivePromptHandler -> User: "Hmph, choose a project number within the range!"
+    InteractivePromptHandler -> User: Retry prompt
 end
 
-IPH -> U: "Enter task name:"
-U -> IPH: Task description
-IPH -> IPH: Validate non-empty
-IPH -> U: Priority prompt (default: medium)
-U -> IPH: Priority choice
-IPH -> U: Deadline prompt (optional)
-U -> IPH: Deadline or skip
-IPH -> IPH: Construct command args
-IPH -> U: Return to main flow
+InteractivePromptHandler -> User: "Enter task name:"
+User -> InteractivePromptHandler: Task description
+InteractivePromptHandler -> InteractivePromptHandler: Validate non-empty
+InteractivePromptHandler -> User: Priority prompt (default: medium)
+User -> InteractivePromptHandler: Priority choice
+InteractivePromptHandler -> User: Deadline prompt (optional)
+User -> InteractivePromptHandler: Deadline or skip
+InteractivePromptHandler -> InteractivePromptHandler: Construct command args
+InteractivePromptHandler --> User: Return to main flow
+deactivate InteractivePromptHandler
 
 @enduml

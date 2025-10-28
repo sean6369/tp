@@ -10,16 +10,23 @@ participant Project
 participant Task
 
 User -> InteractivePromptHandler: types "mark" or "unmark" command
+activate InteractivePromptHandler
 InteractivePromptHandler -> ProjectList: getAvailableProjects()
-ProjectList -> InteractivePromptHandler: return project list
+activate ProjectList
+ProjectList --> InteractivePromptHandler: return project list
+deactivate ProjectList
 InteractivePromptHandler -> User: "Select project [1-3]:"
 
 User -> InteractivePromptHandler: selects project number
 InteractivePromptHandler -> ProjectList: getProjectByIndex(selection)
-ProjectList -> InteractivePromptHandler: return selected Project
+activate ProjectList
+ProjectList --> InteractivePromptHandler: return selected Project
+deactivate ProjectList
 
 InteractivePromptHandler -> Project: getAllTasks()
-Project -> InteractivePromptHandler: return task list
+activate Project
+Project --> InteractivePromptHandler: return task list
+deactivate Project
 InteractivePromptHandler -> User: display tasks with [X]/[ ] status
 
 InteractivePromptHandler -> User: "Enter task numbers to mark/unmark:"
@@ -31,11 +38,16 @@ alt Invalid indices
 else Valid indices
     loop for each task index
         InteractivePromptHandler -> Project: getTaskByIndex(index)
-        Project -> InteractivePromptHandler: return Task
+        activate Project
+        Project --> InteractivePromptHandler: return Task
+        deactivate Project
         InteractivePromptHandler -> Task: mark() or unmark()
+        activate Task
+        deactivate Task
     end
 end
 
 InteractivePromptHandler -> User: "Tasks updated successfully!"
+deactivate InteractivePromptHandler
 
 @enduml

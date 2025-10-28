@@ -10,13 +10,18 @@ participant Project
 participant Task
 
 User -> InteractivePromptHandler: types "add" command
+activate InteractivePromptHandler
 InteractivePromptHandler -> ProjectList: getAvailableProjects()
-ProjectList -> InteractivePromptHandler: return project list
+activate ProjectList
+ProjectList --> InteractivePromptHandler: return project list
+deactivate ProjectList
 InteractivePromptHandler -> User: "Select project [1-3]:"
 
 User -> InteractivePromptHandler: selects project number
 InteractivePromptHandler -> ProjectList: getProjectByIndex(selection)
-ProjectList -> InteractivePromptHandler: return selected Project
+activate ProjectList
+ProjectList --> InteractivePromptHandler: return selected Project
+deactivate ProjectList
 
 InteractivePromptHandler -> User: "Enter task description:"
 User -> InteractivePromptHandler: enters description
@@ -28,9 +33,14 @@ InteractivePromptHandler -> User: "Deadline (optional, press enter to skip):"
 User -> InteractivePromptHandler: enters deadline or presses enter
 
 InteractivePromptHandler -> Project: addTask(description, priority, deadline)
+activate Project
 Project -> Task: new Task(description, priority, deadline)
-Project -> InteractivePromptHandler: task added successfully
+activate Task
+Project --> InteractivePromptHandler: task added successfully
+deactivate Project
+deactivate Task
 
 InteractivePromptHandler -> User: "Task added successfully!"
+deactivate InteractivePromptHandler
 
 @enduml
