@@ -232,11 +232,24 @@ Update command implements recursive field updates allowing multiple changes in o
 
 #### Export Command Flow (Yao Xiang)
 
-Export command offers multiple export options with filtering and sorting:
+The export command provides comprehensive data export capabilities with multiple filtering and sorting options. Users can export their project and task data in various formats and configurations.
 
-![Export Command State Diagram](plantUML/export-command-state/export-command-state.png)
+**Key Features:**
+- **Multiple Export Types**: All tasks, specific projects, filtered tasks, sorted tasks, or combined filtered and sorted exports
+- **Flexible Output**: Supports various file formats (typically CSV or JSON)
+- **Data Filtering**: Can filter by project name, priority levels, or completion status
+- **Data Sorting**: Can sort by deadline, priority, or other task attributes
+- **File Naming**: Custom filename specification for organized data management
 
-**Complex Options**: Supports all combinations of project selection, filtering, and sorting with final confirmation.
+**Export Options:**
+1. **All Tasks**: Exports every task across all projects
+2. **Specific Project**: Exports only tasks from a selected project
+3. **Filtered Tasks**: Exports tasks matching specific criteria (priority, project, status)
+4. **Sorted Tasks**: Exports tasks in sorted order (by deadline, priority, etc.)
+5. **Filtered and Sorted**: Combines filtering and sorting for precise data extraction
+
+![Export Command State Diagram](plantUML/export-command/export-command-state-diagram.png)
+
 
 #### Create Command Flow (Yao Xiang)
 
