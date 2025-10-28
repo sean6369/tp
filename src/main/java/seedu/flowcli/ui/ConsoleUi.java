@@ -359,7 +359,7 @@ public class ConsoleUi {
     public void showUnexpectedError(String message) {
         printLine();
         System.out.println("An unexpected error occurred: " + message);
-        System.out.println("Please try again or contact support if the problem persists.");
+        System.out.println("Please try again.");
         printLine();
     }
 
@@ -368,8 +368,7 @@ public class ConsoleUi {
      */
     public void showUnexpectedError() {
         printLine();
-        System.out.println("An unexpected error occurred. Please try again or contact " +
-                "support if the problem persists.");
+        System.out.println("An unexpected error occurred. Please try again.");
         printLine();
     }
 }

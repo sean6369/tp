@@ -24,7 +24,7 @@ public class InteractivePromptHandler {
      * input scanner.
      *
      * @param projects The project list for accessing available projects
-     * @param scanner  The scanner for reading user input
+     * @param scanner The scanner for reading user input
      */
     public InteractivePromptHandler(ProjectList projects, Scanner scanner) {
         assert projects != null : "ProjectList cannot be null";

@@ -90,16 +90,16 @@ public class CommandParser {
             throw new MissingIndexException();
         }
 
-        int idx1;
+        int inputIndex;
         try {
-            idx1 = Integer.parseInt(indexText);
+            inputIndex = Integer.parseInt(indexText);
         } catch (NumberFormatException e) {
             throw new InvalidIndexFormatException(indexText, "task");
         }
         
-        if (idx1 < 1 || idx1 > maxIndex) {
+        if (inputIndex < 1 || inputIndex > maxIndex) {
             throw new IndexOutOfRangeException(maxIndex);
         }
-        return idx1 - 1;
+        return inputIndex - 1;
     }
 }

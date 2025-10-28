@@ -9,8 +9,7 @@ import seedu.flowcli.commands.utility.TaskFilter;
 import seedu.flowcli.commands.utility.TaskSorter;
 import seedu.flowcli.commands.validation.CommandValidator;
 import seedu.flowcli.commands.validation.ValidationConstants;
-import seedu.flowcli.exceptions.InvalidCommandSyntaxException;
-import seedu.flowcli.exceptions.ProjectNotFoundException;
+import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.TaskWithProject;
@@ -28,14 +27,14 @@ public final class LegacyExportSupport {
         String[] parts = args.trim().split("\\s+");
 
         if (parts.length < 3 || !"tasks".equals(parts[0]) || !"to".equals(parts[1])) {
-            throw new InvalidCommandSyntaxException(
+            throw new InvalidArgumentException(
                     "Invalid export command. Use: export tasks to <filename>.txt [<project>] "
                             + "[filter by <type> <value>] [sort by <field> <order>]");
         }
 
         String filename = parts[2];
         if (!filename.endsWith(".txt")) {
-            throw new InvalidCommandSyntaxException(
+            throw new InvalidArgumentException(
                     "Export filename must end with .txt extension. Use: " + filename + ".txt");
         }
 
@@ -86,7 +85,7 @@ public final class LegacyExportSupport {
         return tasks;
     }
 
-    private static void validateFilterSortCommands(String[] parts) throws InvalidCommandSyntaxException {
+    private static void validateFilterSortCommands(String[] parts) throws InvalidArgumentException {
         for (int j = 0; j < parts.length; j++) {
             if (ValidationConstants.KEYWORD_FILTER.equals(parts[j])) {
                 CommandValidator.validateFilterCommand(parts, j);
@@ -130,14 +129,13 @@ public final class LegacyExportSupport {
     }
 
     private static List<TaskWithProject> collectBaseTasks(ProjectList projects, String projectName)
-            throws InvalidCommandSyntaxException {
+            throws InvalidArgumentException {
         if (projectName != null) {
-            try {
-                Project project = projects.getProject(projectName);
-                return TaskCollector.getTasksFromProject(project);
-            } catch (ProjectNotFoundException e) {
-                throw new InvalidCommandSyntaxException("Project not found: " + projectName);
+            Project project = projects.getProject(projectName);
+            if (project == null) {
+                throw new InvalidArgumentException("Project not found: " + projectName);
             }
+            return TaskCollector.getTasksFromProject(project);
         }
         return TaskCollector.getAllTasksWithProjects(projects);
     }
