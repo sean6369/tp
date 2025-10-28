@@ -44,24 +44,24 @@ Here is a sequence diagram illustrating the process:
 ![CreateCommandSequenceDiagram](images/CreateCommandDiagram.png)
 
 
-## Common Classes
-### Project and ProjectList classes
+#### Common Classes
+##### Project and ProjectList classes
 ![ProjectRelationshipDiagram](images/ProjectClassDiagram.png)
 
-# Project class 
-## Overview 
+#### Project class 
+##### Overview 
 Represents a single project and encapsulates its name and task collection `TaskList`. Allows for adding/updatig/deleting tasks within a project without directly coordinating multiple lower-level classes.
 
-# Requirements 
+##### Requirements 
 `projectName` is non null and should be non-blank when constructed 
 `projectTasks` is non null after construction 
 
-# Helping classes
+##### Helping classes
 - `TaskList` and `Task` (for managing per-project tasks).
 
 -`ProjectList (container)` creates and returns Project instances.
 
-# API
+##### API
 - `Project(String projectName)` — Constructor that constructs an empty project with the given name.
 
 - `String getProjectName()` — returns the name of the project.
@@ -80,17 +80,17 @@ Represents a single project and encapsulates its name and task collection `TaskL
 
 - `String toString()` — printable representation of the project header + rendered tasks. 
 
-# ProjectList class 
-## Overview 
+#### ProjectList class 
+##### Overview 
 An ArrayList container of Project instances offering indexed access, name-lookup, and simple rendering. This is the central point for commands to manipuate the collection of projects (e.g., create-project, delete-project, list-projects).
 
-# Requirements  
+##### Requirements  
 `projects` is non null after construction 
 
-# Helping classes
+##### Helping classes
 - `Project` - element sotred in the list.
 
-# API
+##### API
 - `void addProject(String projectName)` — appends a new Project.
 
 - `Project delete(int zeroBasedIndex)` — delete by index, return the removed Project for confirmation.
