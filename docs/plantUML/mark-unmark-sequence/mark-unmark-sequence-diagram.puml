@@ -1,0 +1,41 @@
+@startuml Mark/Unmark Command Sequence Diagram
+!theme plain
+skinparam classAttributeIconSize 0
+hide stereotype
+
+actor User
+participant InteractivePromptHandler
+participant ProjectList
+participant Project
+participant Task
+
+User -> InteractivePromptHandler: types "mark" or "unmark" command
+InteractivePromptHandler -> ProjectList: getAvailableProjects()
+ProjectList -> InteractivePromptHandler: return project list
+InteractivePromptHandler -> User: "Select project [1-3]:"
+
+User -> InteractivePromptHandler: selects project number
+InteractivePromptHandler -> ProjectList: getProjectByIndex(selection)
+ProjectList -> InteractivePromptHandler: return selected Project
+
+InteractivePromptHandler -> Project: getAllTasks()
+Project -> InteractivePromptHandler: return task list
+InteractivePromptHandler -> User: display tasks with [X]/[ ] status
+
+InteractivePromptHandler -> User: "Enter task numbers to mark/unmark:"
+User -> InteractivePromptHandler: enters task indices
+
+InteractivePromptHandler -> InteractivePromptHandler: validate indices
+alt Invalid indices
+    InteractivePromptHandler -> User: "Invalid task numbers. Try again."
+else Valid indices
+    loop for each task index
+        InteractivePromptHandler -> Project: getTaskByIndex(index)
+        Project -> InteractivePromptHandler: return Task
+        InteractivePromptHandler -> Task: mark() or unmark()
+    end
+end
+
+InteractivePromptHandler -> User: "Tasks updated successfully!"
+
+@enduml

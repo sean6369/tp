@@ -92,6 +92,14 @@ Export: Export current project and task data to a file.
 
 The interactive mode transforms single-word commands into guided conversations. When a user types "add" without arguments, the system prompts for project selection, task details, and optional fields.
 
+#### Command Processing Sequence (Yao Xiang)
+
+The overall command processing workflow shows how user input flows through the system components:
+
+![Command Processing Sequence Diagram](plantUML/command-processing-sequence/Command%20Processing%20Sequence%20Diagram.png)
+
+**Architecture Flow**: User input → CommandHandler → InteractivePromptHandler (if needed) → CommandFactory → Command execution → Result display.
+
 #### Class Diagram: InteractivePromptHandler Structure (Yao Xiang)
 
 ![InteractivePromptHandler Class Diagram](plantUML/interactive-prompt-handler/interactiveprompthandler.png)
@@ -167,7 +175,7 @@ public String toString() {
 
 The add command guides users through project selection, task description, priority, and optional deadline:
 
-![Add Command Sequence Diagram](plantUML/add_command/add-command.png)
+![Add Command Sequence Diagram](plantUML/add-command-sequence/Add%20Command%20Sequence%20Diagram.png)
 
 **Key Features**:
 
@@ -265,7 +273,7 @@ Create command prompts for a new project name with validation:
 
 Mark and unmark commands follow identical selection flow with different validation:
 
-![Mark/Unmark Command State Diagram](plantUML/mark-unmark-command-state/mark-unmark-command-state.png)
+![Mark/Unmark Command Sequence Diagram](plantUML/mark-unmark-sequence/Unmark%20Command%20Sequence%20Diagram.png)
 
 **Shared Logic**: Both commands use identical project/task selection but different validation rules.
 
