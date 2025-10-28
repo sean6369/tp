@@ -172,9 +172,40 @@ The filtering algorithm supports filtering tasks by priority level and/or projec
 - **Case Insensitive**: Project name and priority filtering ignore case
 - **Multiple Filters**: Can combine priority and project name filters
 
-### Data Persistence
+### Data Persistence (Sean)
 
-Export: Export current project and task data to a file.
+#### Export Algorithm (Sean)
+
+The export algorithm supports saving project and task data to text files with filtering and sorting capabilities:
+
+![Export Command State Diagram](plantUML/export-command/export-command-state-diagram.png)
+
+**Key Classes:**
+- `TaskExporter` - Handles file I/O operations and formatting
+- `ExportCommandHandler` - Orchestrates export process and parameter parsing
+- `TaskCollector` - Aggregates tasks from projects with project context
+- `TaskWithProject` - Wrapper class enabling cross-project operations
+
+**Export Process:**
+1. Parse and validate export parameters (filename, project selection, filters, sorting)
+2. Collect tasks based on specific project
+3. Apply filtering and sorting if specified
+4. Write tasks to file with proper formatting and error handling
+5. Display success confirmation to user
+
+**File Structure:**
+```
+Export Header
+=============
+
+ProjectName: [X] Task Description (Due: YYYY-MM-DD) [priority]
+ProjectName: [ ] Another Task [priority]
+```
+
+**Error Handling:**
+- Permission denied, directory not found, disk space issues
+- File locked/in use, invalid filenames, read-only filesystem
+- User-friendly error messages with actionable suggestions
 
 ### **User Interface**
 
