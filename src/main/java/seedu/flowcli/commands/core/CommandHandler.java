@@ -88,9 +88,7 @@ public class CommandHandler {
         case CREATE_PROJECT:
             return parsed.getArguments().trim().isEmpty();
         case LIST:
-            // Don't trigger interactive mode for list - it has valid behaviour
-            // with no args
-            return false;
+            return parsed.getArguments().trim().isEmpty();
         case MARK:
         case UNMARK:
             return parsed.getArguments().trim().isEmpty();
