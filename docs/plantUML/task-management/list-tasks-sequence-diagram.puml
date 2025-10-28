@@ -1,0 +1,49 @@
+@startuml ListTasksSequenceDiagram
+title FlowCLI: list-tasks Sequence
+autonumber
+
+actor User
+participant "FlowCLI Main" as CLI
+participant "CommandParser" as Parser
+participant "ListCommand" as ListCmd
+participant "CommandContext" as Ctx
+participant "Projects Model" as Projects
+participant "UI" as UI
+participant "Logger" as Log
+
+User -> CLI: Enter "list /p MyProject"
+CLI -> Parser: parse("list /p MyProject")
+Parser --> CLI: new ListCommand(rawArgs)
+
+CLI -> ListCmd: execute(Ctx)
+
+group Argument parsing
+  ListCmd -> ListCmd: extract arguments (project name)
+end
+
+ListCmd -> Ctx: getProjects(), getUi()
+Ctx --> ListCmd: Projects, UI
+
+alt project name provided
+  group Show specific project
+    ListCmd -> Projects: getProject(projectName)
+    Projects --> ListCmd: project|null
+    alt project not found
+      ListCmd -> Log: warning("Project not found: {name}")
+      ListCmd --> CLI: throw ProjectNotFoundException
+      CLI -> UI: showError("Project not found: {name}")
+      return
+    end
+    ListCmd -> UI: showTasks(project)
+  end
+else no project name
+  group Show all projects
+    ListCmd -> UI: showAllProjects(Projects)
+  end
+end
+
+ListCmd --> CLI: return true
+== Logging ==
+CLI -> Log: fine("list-tasks completed")
+
+@enduml
