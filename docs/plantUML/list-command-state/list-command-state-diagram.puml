@@ -1,0 +1,11 @@
+@startuml List Command State Diagram
+!theme plain
+
+[*] --> ProjectListDisplay
+ProjectListDisplay --> [*] : Cancelled
+ProjectListDisplay --> SpecificProject : Project number entered
+ProjectListDisplay --> AllProjects : Press enter (empty input)
+
+SpecificProject --> [*] : Display project tasks (return args)
+AllProjects --> [*] : Display all projects & tasks (return args)
+@enduml

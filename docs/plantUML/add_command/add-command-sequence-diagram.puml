@@ -1,0 +1,31 @@
+@startuml Add Command Sequence Diagram
+!theme plain
+
+actor User as U
+participant InteractivePromptHandler as IPH
+participant ProjectList as PL
+
+U -> IPH: handleAddCommand()
+IPH -> PL: getProjectListSize()
+IPH -> U: "Hmph, here are your projects:"
+IPH -> U: Display numbered project list
+IPH -> U: "Enter project number or press 'enter' to exit:"
+
+U -> IPH: Project number
+IPH -> IPH: Validate range
+alt Invalid input
+    IPH -> U: "Hmph, choose a project number within the range!"
+    IPH -> U: Retry prompt
+end
+
+IPH -> U: "Enter task name:"
+U -> IPH: Task description
+IPH -> IPH: Validate non-empty
+IPH -> U: Priority prompt (default: medium)
+U -> IPH: Priority choice
+IPH -> U: Deadline prompt (optional)
+U -> IPH: Deadline or skip
+IPH -> IPH: Construct command args
+IPH -> U: Return to main flow
+
+@enduml

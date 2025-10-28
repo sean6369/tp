@@ -1,0 +1,7 @@
+@startuml Filter Command State Diagram
+!theme plain
+
+[*] --> PrioritySelection
+PrioritySelection --> [*] : Cancelled
+PrioritySelection --> [*] : Priority chosen (return args)
+@enduml
