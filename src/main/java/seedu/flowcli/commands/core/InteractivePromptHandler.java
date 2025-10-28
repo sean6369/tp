@@ -105,16 +105,48 @@ public class InteractivePromptHandler {
     }
 
     /**
-     * Handles interactive prompting for the list command. Prompts for project
-     * selection or all projects.
+     * Handles interactive prompting for the list command. Lists all projects
+     * and prompts for project selection or all tasks.
      *
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleListCommand() {
         logger.info("Starting interactive list command flow");
 
-        // Simply display all tasks without prompts
-        return "--all";
+        if (projects.getProjectListSize() == 0) {
+            System.out.println("No projects available. Create one with 'create-project <projectName>' first.");
+            return "--all"; // Still list all, which would be empty
+        }
+
+        System.out.println("Hmph, here are your projects:");
+        for (int i = 0; i < projects.getProjectListSize(); i++) {
+            System.out.println((i + 1) + ". " + projects.getProjectList().get(i).getProjectName());
+        }
+
+        while (true) {
+            System.out.println("\nEnter project number to view tasks of that project:");
+            String input = scanner.nextLine().trim();
+
+            if (input.isEmpty()) {
+                String result = "--all";
+                logger.info("List command arguments constructed: " + result);
+                return result;
+            }
+
+            try {
+                int choice = Integer.parseInt(input);
+                if (choice >= 1 && choice <= projects.getProjectListSize()) {
+                    String result = String.valueOf(choice);
+                    logger.info("List command arguments constructed: " + result);
+                    return result;
+                } else {
+                    System.out.print("\nLook at the list properly,");
+                    System.out.println(" and enter numbers within the range!!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number, not weird symbols!");
+            }
+        }
     }
 
     /**
