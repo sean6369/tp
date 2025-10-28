@@ -55,8 +55,8 @@ public class ProjectStatusAnalyzer {
         int totalTasks = project.size();
         int completedTasks = 0;
 
-        for (int i = 0; i < totalTasks; i++) {
-            if (project.getProjectTasks().get(i).isDone()) {
+        for (var task : project.getProjectTasks().getTasks()) {
+            if (task.isDone()) {
                 completedTasks++;
             }
         }

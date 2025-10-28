@@ -2,6 +2,7 @@ package seedu.flowcli.project;
 
 import seedu.flowcli.task.Task;
 import seedu.flowcli.task.TaskList;
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
 
 import java.time.LocalDate;
 
@@ -11,6 +12,9 @@ public class Project {
     private TaskList projectTasks;
 
     public Project(String projectName) {
+        if (projectName == null || projectName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Project name cannot be null or empty");
+        }
         this.projectName = projectName;
         projectTasks = new TaskList();
     }
@@ -39,13 +43,14 @@ public class Project {
         projectTasks.addTask(description, deadline, priority);
     }
 
-    public Task deleteTask(int index) {
+    public Task deleteTask(int index) throws IndexOutOfRangeException {
         return projectTasks.delete(index);
 
     }
 
     public Task updateTask(int index, String newDescription, boolean updateDescription,
-            LocalDate newDeadline, boolean updateDeadline, Integer newPriority, boolean updatePriority) {
+            LocalDate newDeadline, boolean updateDeadline, Integer newPriority, boolean updatePriority)
+            throws IndexOutOfRangeException {
         Task task = projectTasks.get(index);
         if (updateDescription) {
             task.setDescription(newDescription);
@@ -60,11 +65,7 @@ public class Project {
     }
 
     public String toString() {
-        if(projectTasks==null){
-            return projectName;
-        } else{ 
-            return projectName  + "\n" + projectTasks.render();
-        }
+        return projectName + "\n" + projectTasks.render();
     }
 
     public String showAllTasks() {

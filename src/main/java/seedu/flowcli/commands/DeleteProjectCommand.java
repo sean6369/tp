@@ -1,7 +1,7 @@
 package seedu.flowcli.commands;
 
 import seedu.flowcli.commands.core.CommandContext;
-import seedu.flowcli.exceptions.InvalidArgumentException;
+import seedu.flowcli.exceptions.InvalidCommandSyntaxException;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.exceptions.MissingIndexException;
 import seedu.flowcli.parsers.CommandParser;
@@ -30,8 +30,6 @@ public class DeleteProjectCommand extends Command {
             zeroBasedIndex = CommandParser.parseIndexOrNull(indexToken, projects.getProjectListSize());
         } catch (MissingIndexException e) {
             throw new MissingArgumentException();
-        } catch (NumberFormatException e) {
-            throw new InvalidArgumentException("Invalid project index: " + indexToken);
         }
 
         boolean confirmed = false;
@@ -43,7 +41,7 @@ public class DeleteProjectCommand extends Command {
         }
 
         if (!confirmed) {
-            throw new InvalidArgumentException("Confirm project deletion with --confirm.");
+            throw new InvalidCommandSyntaxException("Confirm project deletion with --confirm.");
         }
 
         Project deletedProject = projects.delete(zeroBasedIndex);

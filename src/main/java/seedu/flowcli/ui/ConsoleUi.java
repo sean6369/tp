@@ -8,6 +8,7 @@ import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
 import seedu.flowcli.task.TaskWithProject;
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
 
 /**
  * Handles all user interface interactions for the FlowCLI application. This
@@ -61,16 +62,26 @@ public class ConsoleUi {
     public void showAddedProject() {
         printLine();
         System.out.println("Got it. I've added this project: ");
-        System.out.println(projects.getProjectList().get(projects.getProjectListSize() - 1));
-        showCurrentProjectListSize();
+        int size = projects.getProjectListSize();
+        if (size > 0) {
+            System.out.println(projects.getProjectList().get(size - 1));
+            showCurrentProjectListSize();
+        } else {
+            System.out.println("[Error: No projects found]");
+        }
         printLine();
     }
 
-    public void showAddedTask(Project targetProject) {
+    public void showAddedTask(Project targetProject) throws IndexOutOfRangeException {
         printLine();
         System.out.println("Got it. I've added this task in " + targetProject.getProjectName() + " : ");
-        System.out.println(targetProject.getProjectTasks().get(targetProject.getProjectTasks().size() - 1));
-        showCurrentTaskListSize(targetProject);
+        int taskSize = targetProject.getProjectTasks().size();
+        if (taskSize > 0) {
+            System.out.println(targetProject.getProjectTasks().get(taskSize - 1));
+            showCurrentTaskListSize(targetProject);
+        } else {
+            System.out.println("[Error: No tasks found]");
+        }
         printLine();
     }
 
@@ -107,8 +118,8 @@ public class ConsoleUi {
             return;
         }
 
-        for (int taskIdx = 0; taskIdx < projects.getProjectListSize(); taskIdx++) {
-            Project project = projects.getProjectByIndex(taskIdx);
+        int taskIdx = 0;
+        for (Project project : projects.getProjectList()) {
             System.out.println((taskIdx + 1) + ". " + project.getProjectName());
 
             String tasks = project.showAllTasks();
@@ -120,6 +131,7 @@ public class ConsoleUi {
                     }
                 }
             }
+            taskIdx++;
         }
 
         printLine();
@@ -327,5 +339,36 @@ public class ConsoleUi {
         } else {
             return "We are finishing all tasks!! Upzzz!";
         }
+    }
+
+    /**
+     * Displays an error message to the user with consistent formatting.
+     *
+     * @param message The error message to display
+     */
+    public void showError(String message) {
+        System.out.println(message);
+        printLine();
+    }
+
+    /**
+     * Displays an unexpected error message to the user with consistent formatting.
+     *
+     * @param message The error message to display
+     */
+    public void showUnexpectedError(String message) {
+        printLine();
+        System.out.println("An unexpected error occurred: " + message);
+        System.out.println("Please try again.");
+        printLine();
+    }
+
+    /**
+     * Displays a generic unexpected error message to the user with consistent formatting.
+     */
+    public void showUnexpectedError() {
+        printLine();
+        System.out.println("An unexpected error occurred. Please try again.");
+        printLine();
     }
 }
