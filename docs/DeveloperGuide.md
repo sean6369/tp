@@ -38,9 +38,71 @@ Given below is an example usage scenario and how the `create-project` feature be
 
 Here is a sequence diagram illustrating the process:
 
-```
-diagram
-```
+![CreateCommandSequenceDiagram](images/CreateCommandDiagram.png)
+
+
+## Common Classes
+### Project and ProjectList classes
+![ProjectRelationshipDiagram](images/ProjectClassDiagram.png)
+
+### Project class 
+# Overview 
+Represents a single project and encapsulates its name and task collection `TaskList`. Allows for adding/updatig/deleting tasks within a project without directly coordinating multiple lower-level classes.
+
+# Requirements 
+`projectName` is non null and should be non-blank when constructed 
+`projectTasks` is non null after construction 
+
+# Helping classes
+- `TaskList` and `Task` (for managing per-project tasks).
+
+-`ProjectList (container)` creates and returns Project instances.
+
+# API
+- `Project(String projectName)` — Constructor that constructs an empty project with the given name.
+
+- `String getProjectName()` — returns the name of the project.
+
+- `TaskList getProjectTasks()` — returns the tasks in that project 
+
+- `void addTask(String description)` — adds a task.
+
+- `void addTask(String description, LocalDate deadline, int priority)` — add a task with deadline and priority
+
+- `Task deleteTask(int index) — remove and return the task at index.`
+
+- `Task updateTask(int index, String newDescription, boolean updateDescription, LocalDate newDeadline, boolean updateDeadline, Integer newPriority, boolean updatePriority)` — Updates the task description , deadline and priority 
+
+- `String showAllTasks()` — render the project’s tasks to a printable string (delegates to `TaskList.render()`).
+
+- `String toString()` — printable representation of the project header + rendered tasks. 
+
+### ProjectList class 
+# Overview 
+An ArrayList container of Project instances offering indexed access, name-lookup, and simple rendering. This is the central point for commands to manipuate the collection of projects (e.g., create-project, delete-project, list-projects).
+
+# Requirements  
+`projects` is non null after construction 
+
+# Helping classes
+- `Project` - element sotred in the list.
+
+# API
+- `void addProject(String projectName)` — appends a new Project.
+
+- `Project delete(int zeroBasedIndex)` — delete by index, return the removed Project for confirmation.
+
+- `Project deleteProject(Project project)` — remove by identity and returns the removed project
+
+- `Project getProjectByIndex(int zeroBasedIndex)` — indexed accessor.
+
+- `List<Project> getProjectList()` — list the projects by name currently in the list
+
+- `int getProjectListSize()` — returns the number of projects.
+
+- `Project getProject(String projectName)` — returns the project via name-based lookup
+
+- `String render()` — concatenate each project’s toString() into a printable block.
 
 
 ## Product scope
