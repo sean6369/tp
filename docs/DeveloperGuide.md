@@ -348,4 +348,124 @@ Filter command offers priority level selection:
 
 ## Instructions for manual testing
 
-{Give instructions on how to do a manual product testing e.g., how to load sample data to be used for testing}
+These instructions will guide you through comprehensive manual testing of FlowCLI, including both inline command usage and interactive mode functionality.
+
+### Prerequisites
+- Ensure you have Java 17 or higher installed
+- Ensure you have Gradle installed
+
+### Setup Steps
+
+1. **Build the application:**
+   ```
+   ./gradlew build
+   ```
+
+2. **Locate the JAR file:**
+   - Navigate to `build\libs\`
+   - Copy the full path of `flowcli.jar`
+
+3. **Run the application:**
+   ```
+   java -jar <full-path-to-flowcli.jar>
+   ```
+
+### Sample Data Setup
+
+4. **Load sample data:**
+   Copy and paste the following commands to populate the application with sample data:
+
+   ```
+   create-project "CS2113T Project"
+   create-project "Internship Hunt"
+   create-project "Household Chores"
+   create-project "Fitness Plan"
+   create-project "Side Project - Website"
+
+   add-task 1 "Finalize DG" --priority high --deadline 2025-11-10
+   add-task 1 "Implement UI" --priority high --deadline 2025-11-20
+   add-task 1 "Write UG" --priority medium --deadline 2025-11-25
+   add-task 1 "Prepare for Demo" --priority medium
+   add-task 1 "Review teammate PR" --priority low
+
+   add-task 2 "Update Resume" --priority high
+   add-task 2 "Apply to 5 companies" --priority medium --deadline 2025-11-15
+   add-task 2 "Research company A" --priority low
+   add-task 2 "Practice LeetCode" --priority medium
+
+   add-task 3 "Buy groceries" --priority medium --deadline 2025-10-29
+   add-task 3 "Clean room" --priority low
+   add-task 3 "Pay utility bill" --priority high --deadline 2025-11-01
+
+   add-task 4 "Go for run" --priority medium
+   add-task 4 "Meal prep for week" --priority low
+   add-task 4 "Go to gym" --priority medium
+
+   add-task 5 "Design homepage" --priority medium
+   add-task 5 "Set up database" --priority high --deadline 2025-12-01
+   add-task 5 "Draft 'About Me' page" --priority low
+
+   mark 1 1
+   mark 2 1
+   mark 3 3
+   mark 4 1
+   ```
+
+   Alternatively, you may create your own test data using the commands above as a reference.
+
+### Testing Commands
+
+5. **View help:**
+   ```
+   help
+   ```
+
+6. **Test inline command variations:**
+   Follow the help output and test all inline command variations, such as:
+   - `list`
+   - `list 1`
+   - `add-task 1 "Test task"`
+   - `add-task 1 "Test task" --priority high`
+   - `add-task 1 "Test task" --priority high --deadline 2025-12-01`
+   - `mark 1 1`
+   - `unmark 1 1`
+   - `update 1 1`
+   - `delete 1 1`
+   - `sort deadline`
+   - `sort priority`
+   - `filter high`
+   - `filter "CS2113T Project"`
+   - `status`
+   - `export`
+
+7. **Test interactive mode:**
+   Follow the help output and try all one-word command triggers for interactive mode:
+   - `add` (triggers interactive task addition)
+   - `create` (triggers interactive project creation)
+   - `list` (triggers interactive project/task listing)
+   - `mark` (triggers interactive task marking)
+   - `unmark` (triggers interactive task unmarking)
+   - `update` (triggers interactive task updating)
+   - `delete` (triggers interactive item deletion)
+   - `sort` (triggers interactive sorting)
+   - `filter` (triggers interactive filtering)
+   - `export` (triggers interactive data export)
+
+8. **Exit the application:**
+   ```
+   bye
+   ```
+
+### Expected Behavior
+
+- **Inline commands**: Should execute immediately with provided arguments
+- **Interactive mode**: Should prompt for additional information when commands are given without arguments
+- **Error handling**: Should provide helpful error messages for invalid inputs
+- **Data persistence**: Changes should persist between application runs
+- **Help system**: Should provide comprehensive command reference
+
+### Troubleshooting
+
+- If the JAR file is not found, ensure the build completed successfully
+- If commands fail, check that project/task indices exist
+- If interactive mode doesn't trigger, ensure commands are entered without arguments
