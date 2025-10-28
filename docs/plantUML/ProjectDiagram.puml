@@ -1,0 +1,75 @@
+@startuml ProjectClassDiagram
+title Project package — class diagram (simplified)
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam monochrome true
+
+class Project {
+  - String projectName
+  - String projectStatus
+  - TaskList projectTasks
+  --
+  + Project(String projectName)
+  + int size()
+  + boolean isEmpty()
+  + String getProjectName()
+  + TaskList getProjectTasks()
+  + void addTask(String description)
+  + void addTask(String description, LocalDate deadline, int priority)
+  + Task deleteTask(int index)
+  + Task updateTask(int index,
+      String newDescription, boolean updateDescription,
+      LocalDate newDeadline, boolean updateDeadline,
+      Integer newPriority, boolean updatePriority)
+  + String showAllTasks()
+  + String toString()
+}
+
+class ProjectList {
+  - List<Project> projects
+  --
+  + void addProject(String projectName)
+  + Project delete(int zeroBasedIndex)
+  + Project deleteProject(Project project)
+  + Project getProjectByIndex(int zeroBasedIndex)
+  + List<Project> getProjectList()
+  + int getProjectListSize()
+  + Project getProject(String projectName)
+  + boolean isEmpty()
+  + String render()
+}
+
+class TaskList {
+  + int size()
+  + boolean isEmpty()
+  + void add(Task)
+  + Task remove(int index)
+  + Task get(int index)
+  + String render()
+}
+
+class Task {
+  - String description
+  - LocalDate deadline
+  - int priority
+  + String toString()
+}
+
+' Relationships
+ProjectList *-- Project : contains >
+Project *-- TaskList : owns >
+TaskList *-- Task : contains >
+
+note left of Project
+  Identity: projectName (string)
+  Status currently free-text
+  Delegates rendering to TaskList.render()
+end note
+
+note right of ProjectList
+  Maintains insertion order
+  Provides name lookup via getProject(name)
+end note
+
+@enduml

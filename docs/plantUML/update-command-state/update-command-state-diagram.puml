@@ -1,0 +1,21 @@
+@startuml Update Command State Diagram
+!theme plain
+
+[*] --> ProjectSelection
+ProjectSelection --> [*] : Cancelled
+ProjectSelection --> TaskSelection : Project chosen
+
+TaskSelection --> [*] : Cancelled
+TaskSelection --> FieldSelection : Task chosen
+
+FieldSelection --> DescriptionUpdate : Choose "1. Description"
+FieldSelection --> PriorityUpdate : Choose "2. Priority"
+FieldSelection --> DeadlineUpdate : Choose "3. Deadline"
+FieldSelection --> TaskSelection : Choose "4. Reselect task"
+FieldSelection --> ProjectSelection : Choose "5. Reselect project"
+FieldSelection --> [*] : Choose "6. Done"
+
+DescriptionUpdate --> FieldSelection : Updated/Cancelled
+PriorityUpdate --> FieldSelection : Updated/Cancelled
+DeadlineUpdate --> FieldSelection : Updated/Cancelled
+@enduml

@@ -1,0 +1,42 @@
+@startuml Interactive Mode Overview
+!theme plain
+
+start
+:User Input;
+:CommandHandler.resolveCommand();
+
+if (Should Use Interactive?) then (Yes)
+    :InteractivePromptHandler;
+    switch (Command Type)
+    case (handleAddCommand)
+        :handleAddCommand;
+    case (handleCreateCommand)
+        :handleCreateCommand;
+    case (handleListCommand)
+        :handleListCommand;
+    case (handleMarkCommand)
+        :handleMarkCommand;
+    case (handleUnmarkCommand)
+        :handleUnmarkCommand;
+    case (handleDeleteCommand)
+        :handleDeleteCommand;
+    case (handleUpdateCommand)
+        :handleUpdateCommand;
+    case (handleSortCommand)
+        :handleSortCommand;
+    case (handleFilterCommand)
+        :handleFilterCommand;
+    case (handleExportCommand)
+        :handleExportCommand;
+    case (handleStatusCommand)
+        :handleStatusCommand;
+    endswitch
+    :Return Constructed Args;
+else (No)
+    :Normal Command Parsing;
+endif
+
+:CommandFactory.create;
+:Command.execute;
+stop
+@enduml

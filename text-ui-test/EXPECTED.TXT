@@ -28,7 +28,8 @@ Available projects:
 1. Project Alpha
 2. Project Beta
 3. singleWord
-Enter project number (1-3): Enter task name:
+Enter project number (1-3), or press 'enter' to exit:
+Enter task name:
 What priority level? Default is Medium [skip by pressing Enter]
 1. High
 2. Medium
@@ -57,7 +58,8 @@ Available projects:
 1. Project Alpha
 2. Project Beta
 3. singleWord
-Enter project number (1-3): Enter task name:
+Enter project number (1-3), or press 'enter' to exit:
+Enter task name:
 What priority level? Default is Medium [skip by pressing Enter]
 1. High
 2. Medium
@@ -192,7 +194,8 @@ Available projects:
 1. Project Alpha
 2. Project Beta
 3. singleWord
-Enter project number (1-3): ____________________________________________________________
+Enter project number (1-3), or press 'enter' to exit:
+____________________________________________________________
 Project Alpha - Project Status
 1/3 tasks completed, 33%
 [=============>                          ] 33%

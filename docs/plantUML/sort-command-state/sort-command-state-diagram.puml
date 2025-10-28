@@ -1,0 +1,10 @@
+@startuml Sort Command State Diagram
+!theme plain
+
+[*] --> FieldSelection
+FieldSelection --> [*] : Cancelled
+FieldSelection --> OrderSelection : Field chosen
+
+OrderSelection --> [*] : Cancelled
+OrderSelection --> [*] : Order chosen (return args)
+@enduml
