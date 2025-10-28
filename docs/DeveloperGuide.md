@@ -13,13 +13,19 @@
 - [Architecture](#architecture-yao-xiang)
 - [Implementation &amp; Design](#implementation--design)
   - [Core Functionality](#core-functionality)
+    - [CreateCommand Feature](#createcommand-feature-by-xylon-chanteamxylonchanmd)
+    - [Common Classes](#common-classes)
   - [Data Processing](#data-processing)
+    - [Task Sorting Algorithm](#task-sorting-algorithm-yao-xiang)
+    - [Task Filtering Algorithm](#task-filtering-algorithm-yao-xiang)
   - [Data Persistence](#data-persistence)
   - [User Interface](#user-interface)
     - [Interactive Mode](#interactive-mode-yao-xiang)
+    - [Task Status Display System](#task-status-display-system-zhen-zhao)
+    - [Interactive Command Flows](#interactive-command-flows-yao-xiang)
 - [Product scope](#product-scope)
 - [User Stories](#user-stories)
-- [Non-Functional Requirements](#non-functional-requirements)
+- [Non-Functional Requirements](#non-functional-requirements-zhen-zhao)
 - [Glossary](#glossary)
 - [Instructions for manual testing](#instructions-for-manual-testing)
 
@@ -416,7 +422,7 @@ Filter command offers priority level selection:
 
 ---
 
-## Non-Functional Requirements
+## Non-Functional Requirements (Zhen Zhao)
 
 1. **Performance**
    - The application should respond to user commands within 500ms under normal operating conditions.
