@@ -4,6 +4,7 @@ import java.util.Scanner;
 import java.util.logging.Logger;
 
 import seedu.flowcli.commands.validation.CommandValidator;
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
 import seedu.flowcli.exceptions.InvalidDateException;
 import seedu.flowcli.exceptions.ProjectNotFoundException;
 import seedu.flowcli.project.ProjectList;
@@ -275,9 +276,14 @@ public class InteractivePromptHandler {
         // Check if any selected task is already not done
         for (String indexStr : indices) {
             int index = Integer.parseInt(indexStr.trim());
-            var task = project.getProjectTasks().get(index - 1);
-            if (!task.isDone()) {
-                System.out.println("Your task is not even marked, what do you want me to unmark!");
+            try {
+                var task = project.getProjectTasks().get(index - 1);
+                if (!task.isDone()) {
+                    System.out.println("Your task is not even marked, what do you want me to unmark!");
+                    return null;
+                }
+            } catch (IndexOutOfRangeException e) {
+                System.out.println("Hmph, choose a task number within the range!");
                 return null;
             }
         }
