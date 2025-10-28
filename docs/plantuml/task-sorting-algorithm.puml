@@ -1,0 +1,35 @@
+@startuml Task Sorting Algorithm
+!theme plain
+
+start
+:TaskSorter constructor called
+with (projects/tasks, sortBy, ascending);
+
+if (inputTasks provided?) then (yes)
+    :sortedTasks = copy of inputTasks;
+else (no)
+    :sortedTasks = collect all tasks from all projects;
+endif
+
+:Apply sorting algorithm;
+
+if (sortBy == "deadline") then (yes)
+    :Compare task deadlines;
+    note right
+        null deadlines sorted last
+        in ascending order
+    end note
+else (sortBy == "priority")
+    :Compare task priority levels;
+    note right
+        1=High, 2=Medium, 3=Low
+    end note
+endif
+
+if (ascending?) then (no)
+    :Reverse comparison result;
+endif
+
+:Return sorted task list;
+stop
+@enduml

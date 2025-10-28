@@ -8,55 +8,309 @@
 
 ---
 
-## Design & implementation
+## Table of Contents
 
-### Interactive Mode Architecture
+- [Architecture](#architecture-yao-xiang)
+- [Implementation &amp; Design](#implementation--design)
+  - [Core Functionality](#core-functionality)
+  - [Data Processing](#data-processing)
+  - [Data Persistence](#data-persistence)
+  - [User Interface](#user-interface)
+    - [Interactive Mode](#interactive-mode-yao-xiang)
+- [Product scope](#product-scope)
+- [User Stories](#user-stories)
+- [Non-Functional Requirements](#non-functional-requirements)
+- [Glossary](#glossary)
+- [Instructions for manual testing](#instructions-for-manual-testing)
 
-The interactive mode is a conversational interface that guides users through command execution when they provide incomplete or no arguments. It transforms single-word commands like "add" or "mark" into step-by-step guided experiences with validation, error handling, and clear navigation options.
+---
 
-#### Core Components
+## Architecture (Yao Xiang)
 
-The interactive mode consists of three main components:
+FlowCLI follows a layered architecture with clear separation of concerns:
 
-1. **CommandHandler** - Detects when interactive mode should be triggered
-2. **InteractivePromptHandler** - Manages all interactive prompting logic
-3. **Task Status Display** - Visual indicators for task completion state
+```plantuml
+@startuml Architecture Diagram
+!theme plain
 
-#### Architecture Diagram
+package "UI Layer" {
+    [ConsoleUi]
+}
 
-```mermaid
-graph TB
-    A[User Input] --> B[CommandHandler.resolveCommand]
-    B --> C{Should Use Interactive?}
-    C -->|Yes| D[InteractivePromptHandler]
-    C -->|No| E[Normal Command Parsing]
+package "Logic Layer" {
+    [CommandHandler]
+    [InteractivePromptHandler]
+    [CommandFactory]
+    [Individual Command Classes]
+}
 
-    D --> F{Command Type}
-    F --> G[handleAddCommand]
-    F --> H[handleMarkCommand]
-    F --> I[handleDeleteCommand]
-    F --> J[handleUpdateCommand]
-    F --> K[handleSortCommand]
-    F --> L[handleFilterCommand]
-    F --> M[handleExportCommand]
+package "Model Layer" {
+    [ProjectList]
+    [Project]
+    [Task]
+}
 
-    G --> N[Return Constructed Args]
-    H --> N
-    I --> N
-    J --> N
-    K --> N
-    L --> N
-    M --> N
+package "Utility Layer" {
+    [Validation Classes]
+    [Utility Classes]
+    [TaskFilter/TaskSorter/etc.]
+}
 
-    N --> O[CommandFactory.create]
-    O --> P[Command.execute]
-
-    E --> O
+ConsoleUi --> CommandHandler
+CommandHandler --> InteractivePromptHandler
+CommandHandler --> CommandFactory
+CommandFactory --> "Individual Command Classes"
+"Individual Command Classes" --> ProjectList
+"Individual Command Classes" --> "Task Operations"
+ProjectList --> Project
+Project --> Task
+InteractivePromptHandler --> ProjectList
+InteractivePromptHandler --> "Validation Classes"
+"Individual Command Classes" --> "Utility Classes"
+"Utility Classes" --> "TaskFilter/TaskSorter/etc."
+@enduml
 ```
 
-### Interactive Mode Detection
+**Key Design Principles:**
 
-The `CommandHandler.shouldUseInteractiveMode()` method determines when to trigger interactive mode based on command type and argument completeness:
+- **Single Responsibility**: Each class has one primary responsibility
+- **Dependency Injection**: Components receive dependencies rather than creating them
+- **Command Pattern**: All operations implemented as command objects
+- **Layered Architecture**: UI → Logic → Model separation
+
+---
+
+## Implementation & Design
+
+### Core Functionality
+
+Task Management: Add, update, and delete tasks.
+
+Project Management: Create new projects.
+
+### Data Processing
+
+#### Task Sorting Algorithm (Yao Xiang)
+
+The sorting algorithm supports sorting tasks by deadline or priority in ascending/descending order:
+
+```plantuml
+@startuml Task Sorting Algorithm
+!theme plain
+
+start
+:TaskSorter constructor called
+with (projects/tasks, sortBy, ascending);
+
+if (inputTasks provided?) then (yes)
+    :sortedTasks = copy of inputTasks;
+else (no)
+    :sortedTasks = collect all tasks from all projects;
+endif
+
+:Apply sorting algorithm;
+
+if (sortBy == "deadline") then (yes)
+    :Compare task deadlines;
+    note right
+        null deadlines sorted last
+        in ascending order
+    end note
+else (sortBy == "priority")
+    :Compare task priority levels;
+    note right
+        1=High, 2=Medium, 3=Low
+    end note
+endif
+
+if (ascending?) then (no)
+    :Reverse comparison result;
+endif
+
+:Return sorted task list;
+stop
+@enduml
+```
+
+**Algorithm Details:**
+
+- **Time Complexity**: O(n log n) using Java's built-in sort
+- **Space Complexity**: O(n) for task list copy
+- **Deadline Handling**: Tasks without deadlines are sorted last in ascending order
+- **Priority Mapping**: High(1) > Medium(2) > Low(3)
+
+#### Task Filtering Algorithm (Yao Xiang)
+
+The filtering algorithm supports filtering tasks by priority level and/or project name:
+
+```plantuml
+@startuml Task Filtering Algorithm
+!theme plain
+
+start
+:TaskFilter constructor called
+with (projects/tasks, priority, projectName);
+
+:Initialize empty filteredTasks list;
+
+if (inputTasks provided?) then (yes)
+    :Process provided task list;
+else (no)
+    :Process all projects and their tasks;
+endif
+
+repeat
+    :Get next task and project info;
+
+    if (projectName filter set?) then (yes)
+        if (task project != filter project) then (continue)
+        endif
+    endif
+
+    if (priority filter set?) then (yes)
+        :Convert task priority to string;
+        if (task priority != filter priority) then (continue)
+        endif
+    endif
+
+    :Add task to filtered results;
+repeat while (more tasks?)
+
+:Return filtered task list;
+stop
+@enduml
+```
+
+**Algorithm Details:**
+
+- **Time Complexity**: O(n) linear scan through all tasks
+- **Space Complexity**: O(m) where m is number of matching tasks
+- **Case Insensitive**: Project name and priority filtering ignore case
+- **Multiple Filters**: Can combine priority and project name filters
+
+### Data Persistence
+
+Export: Export current project and task data to a file.
+
+### **User Interface**
+
+### Interactive Mode (Yao Xiang)
+
+```plantuml
+@startuml Interactive Mode Overview
+!theme plain
+
+start
+:User Input;
+:CommandHandler.resolveCommand();
+
+if (Should Use Interactive?) then (Yes)
+    :InteractivePromptHandler;
+    switch (Command Type)
+    case (handleAddCommand)
+        :handleAddCommand;
+    case (handleCreateCommand)
+        :handleCreateCommand;
+    case (handleListCommand)
+        :handleListCommand;
+    case (handleMarkCommand)
+        :handleMarkCommand;
+    case (handleUnmarkCommand)
+        :handleUnmarkCommand;
+    case (handleDeleteCommand)
+        :handleDeleteCommand;
+    case (handleUpdateCommand)
+        :handleUpdateCommand;
+    case (handleSortCommand)
+        :handleSortCommand;
+    case (handleFilterCommand)
+        :handleFilterCommand;
+    case (handleExportCommand)
+        :handleExportCommand;
+    case (handleStatusCommand)
+        :handleStatusCommand;
+    endswitch
+    :Return Constructed Args;
+else (No)
+    :Normal Command Parsing;
+endif
+
+:CommandFactory.create;
+:Command.execute;
+stop
+@enduml
+```
+
+#### Implementation Overview
+
+The interactive mode transforms single-word commands into guided conversations. When a user types "add" without arguments, the system prompts for project selection, task details, and optional fields.
+
+#### Class Diagram: InteractivePromptHandler Structure (Yao Xiang)
+
+```plantuml
+@startuml InteractivePromptHandler Class Diagram
+!theme plain
+
+class InteractivePromptHandler {
+    -ProjectList projects
+    -Scanner scanner
+    +InteractivePromptHandler(ProjectList, Scanner)
+    +handleAddCommand(): String
+    +handleCreateCommand(): String
+    +handleListCommand(): String
+    +handleMarkCommand(): String
+    +handleUnmarkCommand(): String
+    +handleDeleteCommand(): String
+    +handleUpdateCommand(): String
+    +handleSortCommand(): String
+    +handleFilterCommand(): String
+    +handleExportCommand(): String
+    +handleStatusCommand(): String
+    -promptForProjectIndex(): Integer
+    -promptForPriority(): String
+    -promptForDeadline(): String
+    -promptForNewProjectName(): String
+    -handleDeleteProject(): String
+    -handleDeleteTask(): String
+    -handleUpdateTaskInProject(int): String
+    -handleUpdateTaskFields(int, int): String
+    -promptForNewDescription(): String
+    -promptForNewPriority(): String
+    -promptForNewDeadline(): String
+    -handleFilterByPriority(): String
+}
+
+class ProjectList {
+    +getProjectListSize(): int
+    +getProjectByIndex(int): Project
+}
+
+class Project {
+    +getProjectName(): String
+    +showAllTasks(): String
+    +size(): int
+}
+
+class Task {
+    -boolean isDone
+    -String description
+    -LocalDate deadline
+    -int priority
+    +marker(): String
+    +toString(): String
+    +mark(): void
+    +unmark(): void
+}
+
+InteractivePromptHandler --> ProjectList : uses
+InteractivePromptHandler --> Project : accesses
+Project --> Task : contains
+@enduml
+```
+
+#### Interactive Mode Detection (Yao Xiang)
+
+The `CommandHandler.shouldUseInteractiveMode()` method determines when to trigger interactive mode:
 
 ```java
 private boolean shouldUseInteractiveMode(CommandParser.ParsedCommand parsed) {
@@ -65,88 +319,35 @@ private boolean shouldUseInteractiveMode(CommandParser.ParsedCommand parsed) {
         return parsed.getArguments().trim().isEmpty();
     case CREATE_PROJECT:
         return parsed.getArguments().trim().isEmpty();
-    // ... other cases
+    case LIST:
+        return parsed.getArguments().trim().isEmpty();
+    case MARK:
+        return parsed.getArguments().trim().isEmpty();
+    case UNMARK:
+        return parsed.getArguments().trim().isEmpty();
+    case DELETE:
+        return parsed.getArguments().trim().isEmpty();
+    case UPDATE:
+        return parsed.getArguments().trim().isEmpty();
+    case SORT:
+        return parsed.getArguments().trim().isEmpty();
+    case FILTER:
+        return parsed.getArguments().trim().isEmpty();
+    case EXPORT:
+        return parsed.getArguments().trim().isEmpty();
+    case STATUS:
+        return parsed.getArguments().trim().isEmpty();
     default:
         return false;
     }
 }
 ```
 
-**Decision Rationale**: Interactive mode is triggered only for main commands with empty arguments, preserving backward compatibility with existing CLI syntax.
+**Decision Rationale**: Interactive mode is triggered for main commands with empty arguments, preserving backward compatibility.
 
-### InteractivePromptHandler Class Design
+#### Task Status Display System (Zhen Zhao)
 
-The `InteractivePromptHandler` class encapsulates all interactive prompting logic with the following design principles:
-
-- **Single Responsibility**: Each `handleXCommand()` method manages one specific interactive flow
-- **Dependency Injection**: Constructor receives `ProjectList` and `Scanner` for testability
-- **Tsundere Personality**: All prompts use indirect, teasing language ("Hmph", "Don't keep me waiting!")
-- **Consistent Error Handling**: Specific validation with clear error messages and re-prompting
-- **Exit Navigation**: All prompts include "press 'enter' to exit" options
-
-#### Class Diagram: InteractivePromptHandler Structure
-
-```mermaid
-classDiagram
-    class InteractivePromptHandler {
-        -ProjectList projects
-        -Scanner scanner
-        +InteractivePromptHandler(ProjectList, Scanner)
-        +handleAddCommand(): String
-        +handleCreateCommand(): String
-        +handleListCommand(): String
-        +handleMarkCommand(): String
-        +handleUnmarkCommand(): String
-        +handleDeleteCommand(): String
-        +handleUpdateCommand(): String
-        +handleSortCommand(): String
-        +handleFilterCommand(): String
-        +handleExportCommand(): String
-        +handleStatusCommand(): String
-        -promptForProjectIndex(): Integer
-        -promptForPriority(): String
-        -promptForDeadline(): String
-        -promptForNewProjectName(): String
-        -handleDeleteProject(): String
-        -handleDeleteTask(): String
-        -handleUpdateTaskInProject(int): String
-        -handleUpdateTaskFields(int, int): String
-        -promptForNewDescription(): String
-        -promptForNewPriority(): String
-        -promptForNewDeadline(): String
-        -handleFilterByPriority(): String
-    }
-
-    class ProjectList {
-        +getProjectListSize(): int
-        +getProjectByIndex(int): Project
-    }
-
-    class Project {
-        +getProjectName(): String
-        +showAllTasks(): String
-        +size(): int
-    }
-
-    class Task {
-        -boolean isDone
-        -String description
-        -LocalDate deadline
-        -int priority
-        +marker(): String
-        +toString(): String
-        +mark(): void
-        +unmark(): void
-    }
-
-    InteractivePromptHandler --> ProjectList : uses
-    InteractivePromptHandler --> Project : accesses
-    Project --> Task : contains
-```
-
-### Task Status Display System
-
-Tasks display completion status using visual markers integrated into the `Task.toString()` method:
+Tasks display completion status using visual markers:
 
 ```java
 public String marker() {
@@ -156,81 +357,93 @@ public String marker() {
 public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append(marker()).append(" ").append(description);
-    // ... add deadline and priority info
+    if (deadline != null) {
+        sb.append(" (Due: ").append(deadline).append(")");
+    }
+    sb.append(" [").append(getPriorityString()).append("]");
     return sb.toString();
 }
 ```
 
 **Display Example**:
+
 ```
 1. [X] Implement login feature (Due: Dec 31, 2024) [high]
 2. [ ] Write unit tests [medium]
 3. [ ] Fix bug in parser [low]
 ```
 
-### Interactive Command Flows
+#### Interactive Command Flows (Yao Xiang)
 
-#### Add Command Flow
+#### Add Command Flow (Yao Xiang)
 
 The add command guides users through project selection, task description, priority, and optional deadline:
 
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant IPH as InteractivePromptHandler
-    participant PL as ProjectList
+```plantuml
+@startuml Add Command Sequence Diagram
+!theme plain
 
-    U->>IPH: handleAddCommand()
-    IPH->>PL: getProjectListSize()
-    IPH->>U: "Hmph, here are your projects:"
-    IPH->>U: Display numbered project list
-    IPH->>U: "Enter project number or press 'enter' to exit:"
+actor User as U
+participant InteractivePromptHandler as IPH
+participant ProjectList as PL
 
-    U->>IPH: Project number
-    IPH->>IPH: Validate range
-    alt Invalid
-        IPH->>U: "Hmph, choose a project number within the range!"
-        IPH->>U: Retry prompt
-    end
+U -> IPH: handleAddCommand()
+IPH -> PL: getProjectListSize()
+IPH -> U: "Hmph, here are your projects:"
+IPH -> U: Display numbered project list
+IPH -> U: "Enter project number or press 'enter' to exit:"
 
-    IPH->>U: "Enter task name:"
-    U->>IPH: Task description
-    IPH->>IPH: Validate non-empty
-    IPH->>U: Priority prompt (default: medium)
-    U->>IPH: Priority choice
-    IPH->>U: Deadline prompt (optional)
-    U->>IPH: Deadline or skip
-    IPH->>IPH: Construct command args
-    IPH->>U: Return to main flow
+U -> IPH: Project number
+IPH -> IPH: Validate range
+alt Invalid input
+    IPH -> U: "Hmph, choose a project number within the range!"
+    IPH -> U: Retry prompt
+end
+
+IPH -> U: "Enter task name:"
+U -> IPH: Task description
+IPH -> IPH: Validate non-empty
+IPH -> U: Priority prompt (default: medium)
+U -> IPH: Priority choice
+IPH -> U: Deadline prompt (optional)
+U -> IPH: Deadline or skip
+IPH -> IPH: Construct command args
+IPH -> U: Return to main flow
+
+@enduml
 ```
 
 **Key Features**:
+
 - Project validation with range checking
 - Required task description with empty string rejection
 - Optional priority (defaults to "medium")
 - Optional deadline with YYYY-MM-DD format validation
 
-#### Add Command State Flow
+#### Add Command State Flow (Yao Xiang)
 
-```mermaid
-stateDiagram-v2
-    [*] --> ProjectSelection
-    ProjectSelection --> [*] : Cancelled
-    ProjectSelection --> DescriptionInput : Project chosen
+```plantuml
+@startuml Add Command State Diagram
+!theme plain
 
-    DescriptionInput --> [*] : Cancelled/Empty
-    DescriptionInput --> PriorityPrompt : Description provided
+[*] --> ProjectSelection
+ProjectSelection --> [*] : Cancelled
+ProjectSelection --> DescriptionInput : Project chosen
 
-    PriorityPrompt --> DeadlinePrompt : Priority chosen/default
-    PriorityPrompt --> DeadlinePrompt : Skipped (default medium)
+DescriptionInput --> [*] : Cancelled/Empty
+DescriptionInput --> PriorityPrompt : Description provided
 
-    DeadlinePrompt --> [*] : Deadline provided (return args)
-    DeadlinePrompt --> [*] : Skipped (return args)
+PriorityPrompt --> DeadlinePrompt : Priority chosen/default
+PriorityPrompt --> DeadlinePrompt : Skipped (default medium)
+
+DeadlinePrompt --> [*] : Deadline provided (return args)
+DeadlinePrompt --> [*] : Skipped (return args)
+@enduml
 ```
 
 **Optional Fields**: Priority and deadline can be skipped, defaulting to "medium" and no deadline respectively.
 
-#### Mark/Unmark Command Flows
+#### Mark/Unmark Command Flows (Yao Xiang)
 
 Mark and unmark commands share similar logic but with different validation:
 
@@ -255,260 +468,223 @@ public String handleMarkCommand() {
 ```
 
 **Mark vs Unmark Validation**:
+
 - **Mark**: Prevents marking already completed tasks
 - **Unmark**: Prevents unmarking already incomplete tasks
 - **Error Message**: "Your task is not even marked, what do you want me to unmark!"
 
-#### Delete Command Flow
+#### Delete Command Flow (Yao Xiang)
 
 Delete command uses a two-stage approach: type selection then specific item selection with confirmation:
 
-```mermaid
-stateDiagram-v2
-    [*] --> TypeSelection
-    TypeSelection --> ProjectDelete : Choose "1. A project"
-    TypeSelection --> TaskDelete : Choose "2. A task"
-    TypeSelection --> [*] : Choose "3. Cancel"
+```plantuml
+@startuml Delete Command State Diagram
+!theme plain
 
-    ProjectDelete --> ProjectConfirmation
+[*] --> TypeSelection
+TypeSelection --> ProjectDelete : Choose "1. A project"
+TypeSelection --> TaskDelete : Choose "2. A task"
+TypeSelection --> [*] : Choose "3. Cancel"
 
-    ProjectConfirmation --> [*] : Confirmed (return args)
-    ProjectConfirmation --> [*] : Cancelled (return null)
+ProjectDelete --> ProjectConfirmation
 
-    TaskDelete --> ProjectSelection
-    ProjectSelection --> TaskSelection
-    TaskSelection --> TaskConfirmation
+ProjectConfirmation --> [*] : Confirmed (return args)
+ProjectConfirmation --> [*] : Cancelled (return null)
 
-    TaskConfirmation --> [*] : Confirmed (return args)
-    TaskConfirmation --> [*] : Cancelled (return null)
+TaskDelete --> ProjectSelection
+ProjectSelection --> TaskSelection
+TaskSelection --> TaskConfirmation
+
+TaskConfirmation --> [*] : Confirmed (return args)
+TaskConfirmation --> [*] : Cancelled (return null)
+@enduml
 ```
 
 **Safety Features**:
+
 - Confirmation prompts for all destructive operations
 - Clear project/task listing before selection
 - Case-insensitive confirmation ("y", "yes", "n", "no")
 
-#### Update Command Flow
+#### Update Command Flow (Yao Xiang)
 
 Update command implements recursive field updates allowing multiple changes in one session:
 
-```mermaid
-stateDiagram-v2
-    [*] --> ProjectSelection
-    ProjectSelection --> [*] : Cancelled
-    ProjectSelection --> TaskSelection : Project chosen
+```plantuml
+@startuml Update Command State Diagram
+!theme plain
 
-    TaskSelection --> [*] : Cancelled
-    TaskSelection --> FieldSelection : Task chosen
+[*] --> ProjectSelection
+ProjectSelection --> [*] : Cancelled
+ProjectSelection --> TaskSelection : Project chosen
 
-    FieldSelection --> DescriptionUpdate : Choose "1. Description"
-    FieldSelection --> PriorityUpdate : Choose "2. Priority"
-    FieldSelection --> DeadlineUpdate : Choose "3. Deadline"
-    FieldSelection --> TaskSelection : Choose "4. Reselect task"
-    FieldSelection --> ProjectSelection : Choose "5. Reselect project"
-    FieldSelection --> [*] : Choose "6. Done"
+TaskSelection --> [*] : Cancelled
+TaskSelection --> FieldSelection : Task chosen
 
-    DescriptionUpdate --> FieldSelection : Updated/Cancelled
-    PriorityUpdate --> FieldSelection : Updated/Cancelled
-    DeadlineUpdate --> FieldSelection : Updated/Cancelled
+FieldSelection --> DescriptionUpdate : Choose "1. Description"
+FieldSelection --> PriorityUpdate : Choose "2. Priority"
+FieldSelection --> DeadlineUpdate : Choose "3. Deadline"
+FieldSelection --> TaskSelection : Choose "4. Reselect task"
+FieldSelection --> ProjectSelection : Choose "5. Reselect project"
+FieldSelection --> [*] : Choose "6. Done"
+
+DescriptionUpdate --> FieldSelection : Updated/Cancelled
+PriorityUpdate --> FieldSelection : Updated/Cancelled
+DeadlineUpdate --> FieldSelection : Updated/Cancelled
+@enduml
 ```
 
 **Recursive Design**: Users can update multiple fields without restarting the flow, with options to reselect tasks/projects or exit at any point.
 
-#### Export Command Flow
+#### Export Command Flow (Yao Xiang)
 
 Export command offers multiple export options with filtering and sorting:
 
-```mermaid
-stateDiagram-v2
-    [*] --> FilenameInput
-    FilenameInput --> [*] : Cancelled
-    FilenameInput --> ExportTypeSelection : Filename provided
+```plantuml
+@startuml Export Command State Diagram
+!theme plain
 
-    ExportTypeSelection --> [*] : Cancelled
-    ExportTypeSelection --> AllTasks : Choose "1. All tasks"
-    ExportTypeSelection --> SpecificProject : Choose "2. Specific project"
-    ExportTypeSelection --> FilteredTasks : Choose "3. Filtered tasks"
-    ExportTypeSelection --> SortedTasks : Choose "4. Sorted tasks"
-    ExportTypeSelection --> FilteredSorted : Choose "5. Filtered and sorted"
+[*] --> FilenameInput
+FilenameInput --> [*] : Cancelled
+FilenameInput --> ExportTypeSelection : Filename provided
 
-    AllTasks --> Confirmation
-    SpecificProject --> Confirmation
-    FilteredTasks --> Confirmation
-    SortedTasks --> Confirmation
-    FilteredSorted --> Confirmation
+ExportTypeSelection --> [*] : Cancelled
+ExportTypeSelection --> AllTasks : Choose "1. All tasks"
+ExportTypeSelection --> SpecificProject : Choose "2. Specific project"
+ExportTypeSelection --> FilteredTasks : Choose "3. Filtered tasks"
+ExportTypeSelection --> SortedTasks : Choose "4. Sorted tasks"
+ExportTypeSelection --> FilteredSorted : Choose "5. Filtered and sorted"
 
-    Confirmation --> [*] : Confirmed (export file)
-    Confirmation --> [*] : Cancelled
+AllTasks --> Confirmation
+SpecificProject --> Confirmation
+FilteredTasks --> Confirmation
+SortedTasks --> Confirmation
+FilteredSorted --> Confirmation
+
+Confirmation --> [*] : Confirmed (export file)
+Confirmation --> [*] : Cancelled
+@enduml
 ```
 
 **Complex Options**: Supports all combinations of project selection, filtering, and sorting with final confirmation.
 
-#### Create Command Flow
+#### Create Command Flow (Yao Xiang)
 
 Create command prompts for a new project name with validation:
 
-```mermaid
-stateDiagram-v2
-    [*] --> NameInput
-    NameInput --> [*] : Cancelled/Empty
-    NameInput --> Validation : Name provided
+```plantuml
+@startuml Create Command State Diagram
+!theme plain
 
-    Validation --> [*] : Name exists (return null)
-    Validation --> [*] : Valid name (return args)
+[*] --> NameInput
+NameInput --> [*] : Cancelled/Empty
+NameInput --> Validation : Name provided
+
+Validation --> [*] : Name exists (return null)
+Validation --> [*] : Valid name (return args)
+@enduml
 ```
 
 **Validation**: Checks for empty names and duplicate project names.
 
-#### Mark/Unmark Command Flows
+#### Mark/Unmark Command Flows (Yao Xiang)
 
 Mark and unmark commands follow identical selection flow with different validation:
 
-```mermaid
-stateDiagram-v2
-    [*] --> ProjectSelection
-    ProjectSelection --> [*] : Cancelled
-    ProjectSelection --> TaskDisplay : Project chosen
+```plantuml
+@startuml Mark/Unmark Command State Diagram
+!theme plain
 
-    TaskDisplay --> [*] : Cancelled
-    TaskDisplay --> TaskSelection : Tasks displayed with [X]/[ ]
+[*] --> ProjectSelection
+ProjectSelection --> [*] : Cancelled
+ProjectSelection --> TaskDisplay : Project chosen
 
-    TaskSelection --> [*] : Cancelled
-    TaskSelection --> Validation : Task indices entered
+TaskDisplay --> [*] : Cancelled
+TaskDisplay --> TaskSelection : Tasks displayed with [X]/[ ]
 
-    Validation --> [*] : Invalid indices (retry)
-    Validation --> [*] : Mark: already done (retry)
-    Validation --> [*] : Unmark: already not done (retry)
-    Validation --> [*] : Valid (return args)
+TaskSelection --> [*] : Cancelled
+TaskSelection --> Validation : Task indices entered
+
+Validation --> TaskSelection : Invalid indices (retry)
+Validation --> TaskSelection : Mark already done (retry)
+Validation --> TaskSelection : Unmark already not done (retry)
+Validation --> [*] : Valid (return args)
+@enduml
 ```
 
 **Shared Logic**: Both commands use identical project/task selection but different validation rules.
 
-#### Sort Command Flow
+#### Sort Command Flow (Yao Xiang)
 
 Sort command offers field and order selection:
 
-```mermaid
-stateDiagram-v2
-    [*] --> FieldSelection
-    FieldSelection --> [*] : Cancelled
-    FieldSelection --> OrderSelection : Field chosen
+```plantuml
+@startuml Sort Command State Diagram
+!theme plain
 
-    OrderSelection --> [*] : Cancelled
-    OrderSelection --> [*] : Order chosen (return args)
+[*] --> FieldSelection
+FieldSelection --> [*] : Cancelled
+FieldSelection --> OrderSelection : Field chosen
+
+OrderSelection --> [*] : Cancelled
+OrderSelection --> [*] : Order chosen (return args)
+@enduml
 ```
 
 **Simple Flow**: Two sequential choices with no complex validation.
 
-#### Filter Command Flow
+#### Filter Command Flow (Yao Xiang)
 
 Filter command offers priority level selection:
 
-```mermaid
-stateDiagram-v2
-    [*] --> PrioritySelection
-    PrioritySelection --> [*] : Cancelled
-    PrioritySelection --> [*] : Priority chosen (return args)
+```plantuml
+@startuml Filter Command State Diagram
+!theme plain
+
+[*] --> PrioritySelection
+PrioritySelection --> [*] : Cancelled
+PrioritySelection --> [*] : Priority chosen (return args)
+@enduml
 ```
 
 **Single Choice**: Simple selection from three priority options.
 
-### Validation and Error Handling
+#### List Command Flow (Yao Xiang)
 
-#### Input Validation Layers
+```plantuml
+@startuml List Command State Diagram
+!theme plain
 
-1. **Presence Validation**: Check for empty/null inputs
-2. **Format Validation**: Verify correct formats (dates, numbers)
-3. **Range Validation**: Ensure indices within valid bounds
-4. **Business Logic Validation**: Prevent invalid state transitions
+[*] --> ProjectListDisplay
+ProjectListDisplay --> [*] : Cancelled
+ProjectListDisplay --> SpecificProject : Project number entered
+ProjectListDisplay --> AllProjects : Press enter (empty input)
 
-#### Error Message Patterns
-
-All error messages follow consistent patterns with tsundere personality:
-
-- **Range Errors**: "Hmph, choose a task number within the range!"
-- **Format Errors**: "Invalid date format. Use YYYY-MM-DD."
-- **Logic Errors**: "Your task is not even marked, what do you want me to unmark!"
-- **Required Field Errors**: "Task name cannot be empty. I sent you back to main page!"
-
-#### Exit Navigation
-
-Every prompt includes exit options:
-```java
-System.out.print("Enter project number to delete, or press 'enter' to exit: ");
-String input = scanner.nextLine().trim();
-if (input.isEmpty()) {
-    return null; // Cancelled
-}
+SpecificProject --> [*] : Display project tasks (return args)
+AllProjects --> [*] : Display all projects & tasks (return args)
+@enduml
 ```
 
-### Design Considerations
+**Display Logic**: Shows numbered project list, then either displays tasks for selected project or all projects with all tasks.
 
-#### Personality Integration
+#### Status Command Flow (Yao Xiang)
 
-**Decision**: Tsundere personality throughout prompts
-- **Pros**: Creates distinctive, memorable user experience
-- **Cons**: May not suit all user preferences
-- **Rationale**: Differentiates FlowCLI from generic CLI tools, adds character to interactions
 
-#### Exit Options Everywhere
+```plantuml
+@startuml Status Command State Diagram
+!theme plain
 
-**Decision**: Include "press enter to exit" in all prompts
-- **Pros**: Provides escape hatch, prevents user frustration
-- **Cons**: Slightly more verbose prompts
-- **Rationale**: Better user experience, allows graceful cancellation at any step
+[*] --> DisplayChoice
+DisplayChoice --> [*] : Cancelled
+DisplayChoice --> ProjectStatus : Choose "1. Project status"
+DisplayChoice --> TaskStatus : Choose "2. Task status"
 
-#### Status Display Format
+ProjectStatus --> [*] : Display stats (return args)
+TaskStatus --> [*] : Display completion (return args)
+@enduml
+```
 
-**Decision**: Use `[X]` and `[ ]` markers
-- **Pros**: Universally understood, clear visual indicators
-- **Cons**: Limited to two states
-- **Rationale**: Simple, effective, matches common task management conventions
-
-#### Single Handler Class
-
-**Decision**: One class handling all interactive prompts
-- **Pros**: Centralized logic, consistent behavior, easier maintenance
-- **Cons**: Large class (1000+ lines)
-- **Rationale**: Related functionality stays together, easier to ensure consistency
-
-### Testing Approach
-
-Interactive mode is tested through:
-- **Unit Tests**: Individual handler methods with mocked inputs
-- **Integration Tests**: End-to-end command flows
-- **UI Tests**: `EXPECTED.TXT` updated to match interactive output
-- **Edge Case Coverage**: Empty projects, invalid inputs, cancellation flows
-
-### Future Enhancements
-
-- **Tab Completion**: Auto-complete for project/task names
-- **Command History**: Navigate through previous interactive sessions
-- **Bulk Operations**: Select multiple items with ranges ("1-5,7,9-11")
-- **Custom Prompts**: User-configurable personality settings
-- **Progress Indicators**: Show completion progress during multi-step operations
-
-### Core Functionality
-
-Task Management: Add, update, and delete tasks.
-
-Project Management: Create new projects.
-
-### Data Processing
-
-Sorting: Implement algorithms to sort tasks or projects.
-
-Filtering: Implement algorithms to filter tasks or projects.
-
-### Data Persistence
-
-Export: Export current project and task data to a file.
-
-### User Interface
-
-Interactive Mode: A command-line interface for continuous user input.
-
-Help Command: Provides a utility to display usage instructions.
+**Status Types**: Shows either project-level statistics or task completion summaries.
 
 ---
 

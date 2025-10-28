@@ -1,0 +1,18 @@
+@startuml Mark/Unmark Command State Diagram
+!theme plain
+
+[*] --> ProjectSelection
+ProjectSelection --> [*] : Cancelled
+ProjectSelection --> TaskDisplay : Project chosen
+
+TaskDisplay --> [*] : Cancelled
+TaskDisplay --> TaskSelection : Tasks displayed with [X]/[ ]
+
+TaskSelection --> [*] : Cancelled
+TaskSelection --> Validation : Task indices entered
+
+Validation --> TaskSelection : Invalid indices (retry)
+Validation --> TaskSelection : Mark already done (retry)
+Validation --> TaskSelection : Unmark already not done (retry)
+Validation --> [*] : Valid (return args)
+@enduml
