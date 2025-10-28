@@ -55,9 +55,8 @@ public final class AddCommandTest {
         public void showAddedTask(Project targetProject) {
             addedTaskShown = true;
             lastProject = targetProject;
-            if (!targetProject.getProjectTasks().isEmpty()) {
-                var tasks = targetProject.getProjectTasks().getTasks();
-                lastTask = tasks.get(tasks.size() - 1);
+            if (targetProject.getProjectTasks().size() > 0) {
+                lastTask = targetProject.getProjectTasks().get(targetProject.getProjectTasks().size() - 1);
             }
         }
     }

@@ -11,6 +11,11 @@ sourceSets {
             exclude '**/unused/**'
         }
     }
+    test {
+        java {
+            exclude '**/unused/**'
+        }
+    }
 }
 
 repositories {
