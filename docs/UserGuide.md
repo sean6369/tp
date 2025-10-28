@@ -6,13 +6,13 @@ FlowCLI is a fast keyboard-driven task manager for teams who organise work aroun
 
 ## Quick Start
 
-1. Ensure Java 17 or a newer Java runtime is installed: `java -version` should report 17.x.
-2. Download the latest `flowcli.jar` from [here](https://github.com/AY2526S1-CS2113-W13-2/tp/releases/tag/v1.0).
+1. Ensure Java 17 is installed: `java -version` should report 17.x.
+2. Download the latest `flowcli.jar` from [here](https://github.com/AY2526S1-CS2113-W13-2/tp/releases/tag/v2.0).
 3. Run the application from a terminal in the same folder as the JAR:
    ```
    java -jar flowcli.jar
    ```
-4. Type `help` to see the list of commands. FlowCLI reads commands until you enter `bye`.
+4. Type `help` to see the list of commands. FlowCLI will read commands until you enter `bye`.
 
 Projects and tasks exist only for the current session. Use the export feature to save a snapshot if you need to keep a record.
 
@@ -20,36 +20,37 @@ Projects and tasks exist only for the current session. Use the export feature to
 
 ### General Command Format
 
-- Commands are case-insensitive, but project names keep their original casing in output.
-- Project names and task descriptions can contain spaces. Wrap a multi-word project name in double quotes in any command (e.g. `"Project Alpha"`). Separate options from the description with `--`.
+- Commands are case-insensitive.
+- Projects are referenced by their index from `list --all`.
+- Task descriptions can contain spaces. Separate options from the description with `--`.
 - Deadlines use the `YYYY-MM-DD` format. Priorities accept `low`, `medium`, or `high`.
 
-### Create a project: `create <projectName>`
+### Create a project: `create-project <projectName>`
 
 Adds a new project. If you repeat the command with the same name (any casing), FlowCLI reports a duplicate.
 
 ```
-create "Birthday Bash"
+create-project "Birthday Bash"
 ```
 
-### List projects or tasks: `list [projectName]`
+### List projects or tasks: `list --all` or `list <projectIndex>`
 
-- `list` shows all projects if they have one and clears any previous global filter/sort view.
-- `list <projectName>` shows the tasks under a specific project.
+- `list --all` shows all projects and their indices.
+- `list <projectIndex>` shows the tasks under a specific project.
 
 ```
-list "Birthday Bash"
+list 1
 ```
 
-### Add a task: `add <projectName> <description> [--priority <level>] [--deadline <YYYY-MM-DD>]`
+### Add a task: `add-task <projectIndex> <description> [--priority <level>] [--deadline <YYYY-MM-DD>]`
 
 Adds a task under an existing project with optional priority and deadline. Priority defaults to medium, deadline defaults to none.
 
 ```
-add "Birthday Bash" Hang fairy lights --priority high --deadline 2025-01-31
+add-task 1 Hang fairy lights --priority high --deadline 2025-01-31
 ```
 
-### Update a task: `update <projectName> <index> [--description <desc>] [--deadline <YYYY-MM-DD|none>] [--priority <level>]`
+### Update a task: `update-task <projectIndex> <taskIndex> [--description <desc>] [--deadline <YYYY-MM-DD|none>] [--priority <level>]`
 
 Edits the specified task in place. You can change one field or combine multiple options in the same command.
 
@@ -58,60 +59,66 @@ Edits the specified task in place. You can change one field or combine multiple 
 - `--priority` accepts `low`, `medium`, or `high`.
 
 ```
-update "Birthday Bash" 2 --description Assemble party bags --deadline 2025-02-15 --priority medium
-update "Birthday Bash" 3 --deadline none
+update-task 1 2 --description "Assemble party bags" --deadline 2025-02-15 --priority medium
+update-task 1 3 --deadline none
 ```
 
-### Mark or unmark a task: `mark <projectName> <index>` / `unmark <projectName> <index>`
+### Mark or unmark a task: `mark <projectIndex> <taskIndex>` / `unmark <projectIndex> <taskIndex>`
 
-Marks the specified task (based on the number shown in `list <projectName>`) as done or not done.
-
-```
-mark "Birthday Bash" 2
-```
-
-### Delete items: `delete <projectName> [index]`
-
-- `delete <projectName>` removes the entire project and all its tasks.
-- `delete <projectName> <index>` removes the indexed task from that project.
+Marks the specified task (based on the number shown in `list <projectIndex>`) as done or not done.
 
 ```
-delete "Birthday Bash" 3
+mark 1 2
 ```
 
-### Sort tasks across projects: `sort tasks by <deadline|priority> <ascending|descending>`
+### Delete items: `delete-project <projectIndex> --confirm` or `delete-task <projectIndex> <taskIndex>`
+
+- `delete-project <projectIndex> --confirm` removes the entire project and all its tasks.
+- `delete-task <projectIndex> <taskIndex>` removes the indexed task from that project.
+
+```
+delete-task 1 3
+delete-project 1 --confirm
+```
+
+### Sort tasks across projects: `sort-tasks <--deadline|--priority> <ascending|descending>`
 
 Displays every task from every project in the requested order and remembers this view for exporting.
 
 ```
-sort tasks by deadline ascending
+sort-tasks --deadline ascending
 ```
 
-### Filter tasks across projects: `filter tasks by <priority|project> <value>`
+### Filter tasks across projects: `filter-tasks --priority <value>`
 
-Shows only tasks that match the chosen priority or project name (case-insensitive). The filtered view can be exported directly.
+Shows only tasks that match the chosen priority. The filtered view can be exported directly.
 
 ```
-filter tasks by priority high
-filter tasks by project "Birthday Bash"
+filter-tasks --priority high
 ```
 
-### Export tasks: `export tasks to <filename>.txt [projectName] [filter by <type> <value>] [sort by <field> <order>] [--all]`
+### Get project status: `status <projectIndex>` or `status --all`
+
+- `status <projectIndex>` shows the completion status for a specific project.
+- `status --all` shows the completion status for all projects.
+
+```
+status 1
+status --all
+```
+
+### Export tasks: `export-tasks <filename>.txt [projectIndex] [filter-tasks --priority <value>] [sort-tasks <--deadline|--priority> <order>]`
 
 Saves tasks to a plain-text file.
 
 - Without extra parameters, FlowCLI exports the last sorted or filtered view. If no view exists, it exports every task.
-- Include a project name to export just that project:
+- Include a project index to export just that project:
   ```
-  export tasks to party-plan.txt "Birthday Bash"
+  export-tasks party-plan.txt 1
   ```
-- Chain `filter by ...` and/or `sort by ...` to export a customised report:
+- Chain `filter-tasks ...` and/or `sort-tasks ...` to export a customised report:
   ```
-  export tasks to high-priority.txt filter by priority high sort by deadline ascending
-  ```
-- Use `--all` to export everything regardless of the last view:
-  ```
-  export tasks to audit.txt --all
+  export-tasks high-priority.txt filter-tasks --priority high sort-tasks --deadline ascending
   ```
 
 ### Get help and exit: `help` / `bye`
@@ -122,24 +129,25 @@ Saves tasks to a plain-text file.
 ## FAQ
 
 **Q**: How do I transfer my tasks to another machine?  
-**A**: FlowCLI currently stores tasks in memory only. Run `export tasks to <filename>.txt --all` and copy the generated text file to the new machine as a snapshot.
+**A**: FlowCLI currently stores tasks in memory only. Run `export-tasks all_tasks.txt` and copy the generated text file to the new machine as a snapshot.
 
-**Q**: Why do I get “Couldn't find any project with such name”?  
-**A**: The first argument after the command must match an existing project (case-insensitive). Double-check the spelling with `list`.
+**Q**: Why do I get an error about an invalid index?  
+**A**: Project and task indices must be valid numbers corresponding to the lists. Use `list --all` to see project indices and `list <projectIndex>` for task indices.
 
 ## Command Summary
 
-| Action | Format | Example |
-| --- | --- | --- |
-| Create project | `add <projectName>` | `add BirthdayBash` |
-| List projects | `list` | `list` |
-| List tasks | `list <projectName>` | `list BirthdayBash` |
-| Add task | `add <projectName> <desc> [--priority <level>] [--deadline <YYYY-MM-DD>]` | `add BirthdayBash Inflate balloons --priority high --deadline 2024-06-15` |
-| Update task | `update <projectName> <index> [--description <desc>] [--deadline <YYYY-MM-DD|none>] [--priority <level>]` | `update BirthdayBash 1 --priority medium` |
-| Mark / Unmark | `mark <projectName> <index>` / `unmark <projectName> <index>` | `mark BirthdayBash 1` |
-| Delete project | `delete <projectName>` | `delete BirthdayBash` |
-| Delete task | `delete <projectName> <index>` | `delete BirthdayBash 2` |
-| Sort tasks | `sort tasks by <deadline|priority> <ascending|descending>` | `sort tasks by priority descending` |
-| Filter tasks | `filter tasks by <priority|project> <value>` | `filter tasks by priority medium` |
-| Export tasks | `export tasks to <filename>.txt [projectName] [filter by …] [sort by …] [--all]` | `export tasks to party-plan.txt "Birthday Bash"` |
-| Help / Exit | `help` / `bye` | `help` |
+| Action            | Format                                                                                                               | Example                                                               |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Create project    | `create-project <projectName>`                                                                                       | `create-project BirthdayBash`                                         |
+| List all projects | `list --all`                                                                                                         | `list --all`                                                          |
+| List tasks        | `list <projectIndex>`                                                                                                | `list 1`                                                              |
+| Add task          | `add-task <projectIndex> <desc> [--priority <level>] [--deadline <YYYY-MM-DD>]`                                      | `add-task 1 "Inflate balloons" --priority high --deadline 2024-06-15` |
+| Update task       | `update-task <projectIndex> <taskIndex> [--description <desc>] [--deadline <YYYY-MM-DD\|none>] [--priority <level>]` | `update-task 1 1 --priority medium`                                   |
+| Mark / Unmark     | `mark <projectIndex> <taskIndex>` / `unmark <projectIndex> <taskIndex>`                                              | `mark 1 1`                                                            |
+| Delete project    | `delete-project <projectIndex> --confirm`                                                                            | `delete-project 1 --confirm`                                          |
+| Delete task       | `delete-task <projectIndex> <taskIndex>`                                                                             | `delete-task 1 2`                                                     |
+| Sort tasks        | `sort-tasks <--deadline\|--priority> <ascending\|descending>`                                                        | `sort-tasks --priority descending`                                    |
+| Filter tasks      | `filter-tasks --priority <value>`                                                                                    | `filter-tasks --priority medium`                                      |
+| Get status        | `status <projectIndex>` / `status --all`                                                                             | `status 1`                                                            |
+| Export tasks      | `export-tasks <filename>.txt [projectIndex] [filter-tasks ...] [sort-tasks ...]`                                     | `export-tasks party-plan.txt 1`                                       |
+| Help / Exit       | `help` / `bye`                                                                                                       | `help`                                                                |
