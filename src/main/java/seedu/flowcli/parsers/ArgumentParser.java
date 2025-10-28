@@ -1,6 +1,9 @@
 package seedu.flowcli.parsers;
 
 import seedu.flowcli.exceptions.InvalidArgumentException;
+import seedu.flowcli.exceptions.InvalidIndexFormatException;
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
+import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 
@@ -23,7 +26,8 @@ public class ArgumentParser {
     private String parsedProjectToken;
     private Integer targetProjectIndex;
 
-    public ArgumentParser(String argument, ProjectList projects) throws InvalidArgumentException {
+    public ArgumentParser(String argument, ProjectList projects) throws InvalidArgumentException,
+            IndexOutOfRangeException {
         this.argument = argument == null ? "" : argument;
         this.projects = projects;
         parseArgument();
@@ -49,7 +53,7 @@ public class ArgumentParser {
         return parsedProjectToken != null && targetProjectIndex == null;
     }
 
-    private void parseArgument() throws InvalidArgumentException {
+    private void parseArgument() throws InvalidArgumentException, IndexOutOfRangeException {
         targetProject = null;
         remainingArgument = null;
         parsedProjectToken = null;
@@ -92,5 +96,18 @@ public class ArgumentParser {
             return null;
         }
         return null;
+    }
+
+    public void validateProjectIndex() throws InvalidArgumentException,
+            InvalidIndexFormatException, MissingArgumentException, IndexOutOfRangeException {
+        if (targetProject == null) {
+            if (targetProjectIndex != null) {
+                throw new IndexOutOfRangeException(projects.getProjectListSize());
+            }
+            if (hasNonNumericProjectToken()) {
+                throw new InvalidIndexFormatException(parsedProjectToken, "project");
+            }
+            throw new MissingArgumentException();
+        }
     }
 }

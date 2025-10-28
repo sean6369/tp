@@ -1,0 +1,70 @@
+@startuml MarkUnmarkTaskSequenceDiagram
+title FlowCLI: mark/unmark-task Sequence
+autonumber
+
+actor User
+participant "FlowCLI Main" as CLI
+participant "CommandParser" as Parser
+participant "MarkCommand" as MarkCmd
+participant "CommandContext" as Ctx
+participant "Projects Model" as Projects
+participant "Target Project" as Project
+participant "UI" as UI
+participant "Logger" as Log
+
+User -> CLI: Enter "mark 1 /p MyProject"
+CLI -> Parser: parse("mark 1 /p MyProject")
+Parser --> CLI: new MarkCommand(rawArgs)
+
+CLI -> MarkCmd: execute(Ctx)
+
+group Argument parsing
+  MarkCmd -> MarkCmd: extract arguments (project, task index)
+  alt project name is blank
+    MarkCmd -> Log: warn("Missing project name")
+    MarkCmd --> CLI: throw MissingArgumentException
+    CLI -> UI: showError("Missing project name")
+    return
+  end
+  alt task index is blank
+    MarkCmd -> Log: warn("Missing task index")
+    MarkCmd --> CLI: throw MissingIndexException
+    CLI -> UI: showError("Missing task index")
+    return
+  end
+end
+
+MarkCmd -> Ctx: getProjects(), getUi()
+Ctx --> MarkCmd: Projects, UI
+
+group Validation
+  MarkCmd -> Projects: getProject(projectName)
+  Projects --> MarkCmd: project|null
+  alt project not found
+    MarkCmd -> Log: warning("Project not found: {name}")
+    MarkCmd --> CLI: throw ProjectNotFoundException
+    CLI -> UI: showError("Project not found: {name}")
+    return
+  end
+  MarkCmd -> Project: getProjectTasks()
+  alt index out of bounds
+    MarkCmd -> Log: warning("Index out of range")
+    MarkCmd --> CLI: throw IndexOutOfRangeException
+    CLI -> UI: showError("Index out of range")
+    return
+  end
+end
+
+group Execution
+  MarkCmd -> Project: getTask(index)
+  Project --> MarkCmd: task
+  MarkCmd -> task: mark()
+  MarkCmd -> UI: showMarkedTask(task)
+  MarkCmd -> Log: info("Marked task '{desc}' in project {name}")
+  MarkCmd --> CLI: return true
+end
+
+== Logging ==
+CLI -> Log: fine("mark-task completed")
+
+@enduml

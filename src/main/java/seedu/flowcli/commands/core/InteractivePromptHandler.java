@@ -3,6 +3,10 @@ package seedu.flowcli.commands.core;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+import seedu.flowcli.commands.validation.CommandValidator;
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
+import seedu.flowcli.exceptions.InvalidDateException;
+import seedu.flowcli.exceptions.ProjectNotFoundException;
 import seedu.flowcli.project.ProjectList;
 
 /**
@@ -167,16 +171,17 @@ public class InteractivePromptHandler {
         var project = projects.getProjectList().get(projectSelection - 1);
         String projectName = project.getProjectName();
 
-        if (project.size() == 0) {
-            System.out.println("No tasks in this project. I sent you back to main page!");
+        if (project.isEmpty()) {
+            System.out.println("No tasks in this project. Going back...");
             return null;
         }
 
         System.out.println("Hmph, which tasks do you want to mark as done in " + projectName + ":");
-        for (int i = 0; i < project.size(); i++) {
-            var task = project.getProjectTasks().get(i);
+        int i = 0;
+        for (var task : project.getProjectTasks().getTasks()) {
             String status = task.isDone() ? "x" : " ";
             System.out.println((i + 1) + ". [" + status + "] " + task.getDescription());
+            i++;
         }
 
         System.out.println("Enter task number to mark as done [for multiple tasks, separate by commas e.g. 1,2,3,4]:");
@@ -228,16 +233,17 @@ public class InteractivePromptHandler {
         var project = projects.getProjectList().get(projectSelection - 1);
         String projectName = project.getProjectName();
 
-        if (project.size() == 0) {
-            System.out.println("No tasks in this project. I sent you back to main page!");
+        if (project.isEmpty()) {
+            System.out.println("No tasks in this project. Going back...");
             return null;
         }
 
         System.out.println("Hmph, which tasks do you want to mark as not done in " + projectName + ":");
-        for (int i = 0; i < project.size(); i++) {
-            var task = project.getProjectTasks().get(i);
+        int i = 0;
+        for (var task : project.getProjectTasks().getTasks()) {
             String status = task.isDone() ? "x" : " ";
             System.out.println((i + 1) + ". [" + status + "] " + task.getDescription());
+            i++;
         }
 
         System.out.println(
@@ -270,9 +276,14 @@ public class InteractivePromptHandler {
         // Check if any selected task is already not done
         for (String indexStr : indices) {
             int index = Integer.parseInt(indexStr.trim());
-            var task = project.getProjectTasks().get(index - 1);
-            if (!task.isDone()) {
-                System.out.println("Your task is not even marked, what do you want me to unmark!");
+            try {
+                var task = project.getProjectTasks().get(index - 1);
+                if (!task.isDone()) {
+                    System.out.println("Your task is not even marked, what do you want me to unmark!");
+                    return null;
+                }
+            } catch (IndexOutOfRangeException e) {
+                System.out.println("Hmph, choose a task number within the range!");
                 return null;
             }
         }
@@ -370,14 +381,16 @@ public class InteractivePromptHandler {
         var project = projects.getProjectList().get(projectSelection - 1);
         String projectName = project.getProjectName();
 
-        if (project.size() == 0) {
-            System.out.println("No tasks in this project. I sent you back to main page!");
+        if (project.isEmpty()) {
+            System.out.println("No tasks in this project. Going back...");
             return null;
         }
 
         System.out.println("Tasks in " + projectName + ":");
-        for (int i = 0; i < project.size(); i++) {
-            System.out.println((i + 1) + ". " + project.getProjectTasks().get(i).getDescription());
+        int i = 0;
+        for (var task : project.getProjectTasks().getTasks()) {
+            System.out.println((i + 1) + ". " + task.getDescription());
+            i++;
         }
 
         while (true) {
@@ -459,16 +472,17 @@ public class InteractivePromptHandler {
         var project = projects.getProjectList().get(projectSelection - 1);
         String projectName = project.getProjectName();
 
-        if (project.size() == 0) {
-            System.out.println("No tasks in this project. I sent you back to main page!");
+        if (project.isEmpty()) {
+            System.out.println("No tasks in this project. Going back...");
             return null;
         }
 
         System.out.println("Tasks in " + projectName + ":");
-        for (int i = 0; i < project.size(); i++) {
-            var task = project.getProjectTasks().get(i);
+        int i = 0;
+        for (var task : project.getProjectTasks().getTasks()) {
             System.out.println((i + 1) + ". " + task.getDescription() + " - Priority: " + task.getPriority()
                     + " - Deadline: " + (task.getDeadline() != null ? task.getDeadline() : "None"));
+            i++;
         }
 
         while (true) {
@@ -617,10 +631,10 @@ public class InteractivePromptHandler {
             return ""; // Set to none
         }
 
-        // Basic validation
-        if (deadline.matches("\\d{4}-\\d{2}-\\d{2}")) {
+        try {
+            CommandValidator.validateAndParseDate(deadline);
             return deadline;
-        } else {
+        } catch (InvalidDateException e) {
             System.out.println("Invalid date format. Staying in update menu...");
             return null;
         }
@@ -913,16 +927,16 @@ public class InteractivePromptHandler {
                 return null;
             }
 
-            // Check if project already exists
-            boolean exists = projects.getProjectList().stream()
-                    .anyMatch(p -> p.getProjectName().equalsIgnoreCase(name));
-
-            if (exists) {
+            // Check if project already exists using the same validation as CreateCommand
+            try {
+                projects.getProject(name);
+                // If we get here, project exists
                 System.out.println("Project already exists. Choose from existing projects or try a different name.");
                 return null; // Go back to project selection
+            } catch (ProjectNotFoundException e) {
+                // Project doesn't exist, which is what we want - continue with creation
+                return name;
             }
-
-            return name;
         }
     }
 
@@ -1002,10 +1016,10 @@ public class InteractivePromptHandler {
                 return null;
             }
 
-            // Basic date format validation
-            if (date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            try {
+                CommandValidator.validateAndParseDate(date);
                 return date;
-            } else {
+            } catch (InvalidDateException e) {
                 System.out.println("Invalid date format. Use YYYY-MM-DD.");
             }
         }

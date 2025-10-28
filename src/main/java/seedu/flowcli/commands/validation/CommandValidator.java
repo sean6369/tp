@@ -1,6 +1,10 @@
 package seedu.flowcli.commands.validation;
 
 import seedu.flowcli.exceptions.InvalidArgumentException;
+import seedu.flowcli.exceptions.InvalidCommandSyntaxException;
+import seedu.flowcli.exceptions.InvalidDateException;
+
+import java.time.LocalDate;
 
 /**
  * Utility class for validating command parameters.
@@ -113,11 +117,11 @@ public class CommandValidator {
      *
      * @param parts The command parts array
      * @param index The index where "filter" keyword is found
-     * @throws InvalidArgumentException if filter command is incomplete
+     * @throws InvalidCommandSyntaxException if filter command is incomplete
      */
-    public static void validateFilterCommand(String[] parts, int index) throws InvalidArgumentException {
+    public static void validateFilterCommand(String[] parts, int index) throws InvalidCommandSyntaxException {
         if (index + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[index + 1])) {
-            throw new InvalidArgumentException("Incomplete filter command. Use: filter by <type> <value>");
+            throw new InvalidCommandSyntaxException("Incomplete filter command. Use: filter by <type> <value>");
         }
     }
 
@@ -126,11 +130,26 @@ public class CommandValidator {
      *
      * @param parts The command parts array
      * @param index The index where "sort" keyword is found
-     * @throws InvalidArgumentException if sort command is incomplete
+     * @throws InvalidCommandSyntaxException if sort command is incomplete
      */
-    public static void validateSortCommand(String[] parts, int index) throws InvalidArgumentException {
+    public static void validateSortCommand(String[] parts, int index) throws InvalidCommandSyntaxException {
         if (index + 3 >= parts.length || !ValidationConstants.KEYWORD_BY.equals(parts[index + 1])) {
-            throw new InvalidArgumentException("Incomplete sort command. Use: sort by <field> <order>");
+            throw new InvalidCommandSyntaxException("Incomplete sort command. Use: sort by <field> <order>");
+        }
+    }
+
+    /**
+     * Validates date string format and throws custom exception.
+     *
+     * @param dateString The date string to validate
+     * @return LocalDate parsed from the string
+     * @throws InvalidDateException if date format is invalid
+     */
+    public static LocalDate validateAndParseDate(String dateString) throws InvalidDateException {
+        try {
+            return LocalDate.parse(dateString);
+        } catch (Exception e) {
+            throw new InvalidDateException(dateString);
         }
     }
 }

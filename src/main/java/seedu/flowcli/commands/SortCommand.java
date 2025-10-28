@@ -7,7 +7,9 @@ import seedu.flowcli.commands.core.ExportCommandHandler;
 import seedu.flowcli.commands.utility.TaskSorter;
 import seedu.flowcli.commands.validation.CommandValidator;
 import seedu.flowcli.commands.validation.ValidationConstants;
-import seedu.flowcli.exceptions.InvalidArgumentException;
+import seedu.flowcli.exceptions.EmptyProjectListException;
+import seedu.flowcli.exceptions.EmptyTaskListException;
+import seedu.flowcli.exceptions.InvalidCommandSyntaxException;
 import seedu.flowcli.task.TaskWithProject;
 
 public class SortCommand extends Command {
@@ -20,19 +22,23 @@ public class SortCommand extends Command {
     public boolean execute(CommandContext context) throws Exception {
         String trimmed = arguments.trim();
         if (trimmed.isEmpty()) {
-            throw new InvalidArgumentException(
+            throw new InvalidCommandSyntaxException(
                     "Invalid sort command. Use: sort-tasks <--deadline/priority> <ascending/descending>");
+        }
+
+        if (context.getProjects().isEmpty()) {
+            throw new EmptyProjectListException();
         }
 
         String[] parts = trimmed.split("\\s+");
         if (parts.length != 2) {
-            throw new InvalidArgumentException(
+            throw new InvalidCommandSyntaxException(
                     "Invalid sort command. Use: sort-tasks <--deadline/priority> <ascending/descending>");
         }
 
         String fieldToken = parts[0];
         if (!fieldToken.startsWith("--")) {
-            throw new InvalidArgumentException(
+            throw new InvalidCommandSyntaxException(
                     "Invalid sort command. Use: sort-tasks <--deadline/priority> <ascending/descending>");
         }
 
@@ -46,6 +52,11 @@ public class SortCommand extends Command {
 
         TaskSorter sorter = new TaskSorter(context.getProjects(), field, ascending);
         List<TaskWithProject> sortedTasks = sorter.getSortedTasks();
+        
+        if (sortedTasks.isEmpty()) {
+            throw new EmptyTaskListException();
+        }
+        
         context.getUi().showGlobalSortedTasks(sortedTasks, field, order);
 
         context.getExportHandler().updateViewState(sortedTasks, ExportCommandHandler.ViewType.SORTED,

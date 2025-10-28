@@ -1,14 +1,14 @@
 package seedu.flowcli.commands;
 
 import seedu.flowcli.commands.core.CommandContext;
-import seedu.flowcli.exceptions.IndexOutOfRangeException;
-import seedu.flowcli.exceptions.InvalidArgumentException;
-import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.parsers.CommandParser;
 import seedu.flowcli.project.Project;
 
+import java.util.logging.Logger;
+
 public class UnmarkCommand extends Command {
+    private static final Logger logger = Logger.getLogger(UnmarkCommand.class.getName());
 
     public UnmarkCommand(String arguments) {
         super(arguments);
@@ -16,23 +16,19 @@ public class UnmarkCommand extends Command {
 
     @Override
     public boolean execute(CommandContext context) throws Exception {
+        logger.info("Executing UnmarkCommand with arguments: " + arguments);
+
         ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
+        parsedArgument.validateProjectIndex();
         Project targetProject = parsedArgument.getTargetProject();
-        if (targetProject == null) {
-            Integer projectIndex = parsedArgument.getTargetProjectIndex();
-            if (projectIndex != null) {
-                throw new IndexOutOfRangeException(context.getProjects().getProjectListSize());
-            }
-            if (parsedArgument.hasNonNumericProjectToken()) {
-                throw new InvalidArgumentException(String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE,
-                        parsedArgument.getParsedProjectName()));
-            }
-            throw new MissingArgumentException();
-        }
+
+        logger.fine("Unmarking task in project: " + targetProject.getProjectName());
 
         Integer idx = CommandParser.parseIndexOrNull(parsedArgument.getRemainingArgument(), targetProject.size());
 
         targetProject.getProjectTasks().unmark(idx);
+
+        logger.info("Task unmarked successfully at index " + (idx + 1));
         context.getUi().showMarked(targetProject.getProjectName(), targetProject.getProjectTasks().get(idx), false);
         return true;
     }
