@@ -13,13 +13,19 @@
 - [Architecture](#architecture-yao-xiang)
 - [Implementation &amp; Design](#implementation--design)
   - [Core Functionality](#core-functionality)
+    - [CreateCommand Feature](#createcommand-feature-by-xylon-chanteamxylonchanmd)
+    - [Common Classes](#common-classes)
   - [Data Processing](#data-processing)
+    - [Task Sorting Algorithm](#task-sorting-algorithm-yao-xiang)
+    - [Task Filtering Algorithm](#task-filtering-algorithm-yao-xiang)
   - [Data Persistence](#data-persistence)
   - [User Interface](#user-interface)
     - [Interactive Mode](#interactive-mode-yao-xiang)
+    - [Task Status Display System](#task-status-display-system-zhen-zhao)
+    - [Interactive Command Flows](#interactive-command-flows-yao-xiang)
 - [Product scope](#product-scope)
 - [User Stories](#user-stories)
-- [Non-Functional Requirements](#non-functional-requirements)
+- [Non-Functional Requirements](#non-functional-requirements-zhen-zhao)
 - [Glossary](#glossary)
 - [Instructions for manual testing](#instructions-for-manual-testing)
 
@@ -538,15 +544,46 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 
 ---
 
-## Non-Functional Requirements
+## Non-Functional Requirements (Zhen Zhao)
 
-- **Performance**: The CLI should respond to commands within 1 second for typical operations (e.g., adding a task, listing tasks in a project with up to 100 tasks).
-- **Reliability**: Task and project data must be persisted reliably across sessions. Data corruption should be prevented under normal operating conditions.
-- **Usability**: The CLI should be intuitive for users familiar with command-line interfaces, with clear command formats and helpful error messages.
-- **Maintainability**: The codebase should be well-structured, documented, and adhere to established coding standards to facilitate future enhancements and bug fixes.
-- **Portability**: The application should run on major operating systems (Windows, macOS, Linux) where Java is supported.
-- **Scalability**: The application should efficiently handle up to 100 projects, each containing up to 500 tasks, without significant performance degradation.
-- **Security**: Sensitive user data (if any, though currently none is stored) should be protected against unauthorized access or modification.
+1. **Performance**
+   - The application should respond to user commands within 500ms under normal operating conditions.
+   - Loading and parsing project data should complete within 1 second for up to 100 projects with 1000 tasks total.
+   - Sorting and filtering operations should complete within 200ms for typical datasets (up to 500 tasks).
+
+2. **Usability**
+   - The application should be usable by users with basic command-line knowledge without requiring extensive training.
+   - Interactive mode prompts should guide users through command execution with clear, numbered options.
+   - Error messages should be descriptive and suggest corrective actions where applicable.
+   - All commands should have both short-form (for experienced users) and interactive mode (for new users).
+
+3. **Reliability**
+   - The application should handle invalid inputs gracefully without crashing.
+   - All data validation should occur before any state changes to maintain data integrity.
+   - Error handling should prevent data corruption in edge cases (e.g., concurrent file access, invalid date formats).
+
+4. **Portability**
+   - The application should run on any platform with Java 11 or higher installed (Windows, macOS, Linux).
+   - No platform-specific dependencies should be required beyond the Java Runtime Environment.
+   - File paths should use platform-independent representations where possible.
+
+5. **Maintainability**
+   - Code should follow standard Java coding conventions and style guidelines.
+   - All public methods and classes should include Javadoc documentation.
+   - The codebase should maintain clear separation of concerns between UI, logic, and model layers.
+   - Each command should be implemented as a separate, testable class extending the Command base class.
+
+6. **Scalability**
+   - The application should handle at least 50 projects with 20 tasks each without performance degradation.
+   - Memory usage should remain under 100MB for typical usage scenarios.
+
+7. **Security**
+   - User input should be validated and sanitized to prevent command injection or malicious input.
+   - File operations should verify file paths to prevent unauthorized access to system files.
+
+8. **Compatibility**
+   - The application should be compatible with common terminal emulators (Command Prompt, PowerShell, Terminal, Bash).
+   - Text output should be compatible with standard terminal character encoding (UTF-8).
 
 ---
 
