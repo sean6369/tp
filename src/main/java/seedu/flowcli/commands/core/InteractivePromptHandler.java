@@ -21,7 +21,7 @@ public class InteractivePromptHandler {
      * input scanner.
      *
      * @param projects The project list for accessing available projects
-     * @param scanner The scanner for reading user input
+     * @param scanner  The scanner for reading user input
      */
     public InteractivePromptHandler(ProjectList projects, Scanner scanner) {
         assert projects != null : "ProjectList cannot be null";
@@ -52,7 +52,7 @@ public class InteractivePromptHandler {
         System.out.println("Enter task name:");
         String description = scanner.nextLine().trim();
         if (description.isEmpty()) {
-            System.out.println("Task name cannot be empty. Going back...");
+            System.out.println("Task name cannot be empty. I sent you back to main page!");
             return null;
         }
 
@@ -124,7 +124,8 @@ public class InteractivePromptHandler {
         }
 
         while (true) {
-            System.out.println("\nEnter project number to view tasks of that project:");
+            System.out.print("\nEnter project number to view tasks of that project");
+            System.out.println(" or press 'enter' to view all:");
             String input = scanner.nextLine().trim();
 
             if (input.isEmpty()) {
@@ -167,20 +168,22 @@ public class InteractivePromptHandler {
         String projectName = project.getProjectName();
 
         if (project.size() == 0) {
-            System.out.println("No tasks in this project. Going back...");
+            System.out.println("No tasks in this project. I sent you back to main page!");
             return null;
         }
 
         System.out.println("Hmph, which tasks do you want to mark as done in " + projectName + ":");
         for (int i = 0; i < project.size(); i++) {
-            System.out.println((i + 1) + ". [ ] " + project.getProjectTasks().get(i).getDescription());
+            var task = project.getProjectTasks().get(i);
+            String status = task.isDone() ? "x" : " ";
+            System.out.println((i + 1) + ". [" + status + "] " + task.getDescription());
         }
 
         System.out.println("Enter task number to mark as done [for multiple tasks, separate by commas e.g. 1,2,3,4]:");
         String input = scanner.nextLine().trim();
 
         if (input.isEmpty()) {
-            System.out.println("Going back...");
+            System.out.println("I sent you back to main page!");
             return null;
         }
 
@@ -193,7 +196,7 @@ public class InteractivePromptHandler {
             try {
                 int index = Integer.parseInt(indexStr.trim());
                 if (index < 1 || index > project.size()) {
-                    System.out.println("Invalid task number: " + index);
+                    System.out.println("Hmph, choose a task number within the range!");
                     return null;
                 }
                 args.append(" ").append(index);
@@ -226,13 +229,15 @@ public class InteractivePromptHandler {
         String projectName = project.getProjectName();
 
         if (project.size() == 0) {
-            System.out.println("No tasks in this project. Going back...");
+            System.out.println("No tasks in this project. I sent you back to main page!");
             return null;
         }
 
         System.out.println("Hmph, which tasks do you want to mark as not done in " + projectName + ":");
         for (int i = 0; i < project.size(); i++) {
-            System.out.println((i + 1) + ". [x] " + project.getProjectTasks().get(i).getDescription());
+            var task = project.getProjectTasks().get(i);
+            String status = task.isDone() ? "x" : " ";
+            System.out.println((i + 1) + ". [" + status + "] " + task.getDescription());
         }
 
         System.out.println(
@@ -240,7 +245,7 @@ public class InteractivePromptHandler {
         String input = scanner.nextLine().trim();
 
         if (input.isEmpty()) {
-            System.out.println("Going back...");
+            System.out.println("I sent you back to main page!");
             return null;
         }
 
@@ -252,12 +257,22 @@ public class InteractivePromptHandler {
             try {
                 int index = Integer.parseInt(indexStr.trim());
                 if (index < 1 || index > project.size()) {
-                    System.out.println("Invalid task number: " + index);
+                    System.out.println("Hmph, choose a task number within the range!");
                     return null;
                 }
                 args.append(" ").append(index);
             } catch (NumberFormatException e) {
                 System.out.println("Invalid number: " + indexStr);
+                return null;
+            }
+        }
+
+        // Check if any selected task is already not done
+        for (String indexStr : indices) {
+            int index = Integer.parseInt(indexStr.trim());
+            var task = project.getProjectTasks().get(index - 1);
+            if (!task.isDone()) {
+                System.out.println("Your task is not even marked, what do you want me to unmark!");
                 return null;
             }
         }
@@ -295,7 +310,7 @@ public class InteractivePromptHandler {
             case "2":
                 return handleDeleteTask();
             default:
-                System.out.println("Invalid choice. Try again.");
+                System.out.println("Hmph, project or task, decide!");
             }
         }
     }
@@ -305,7 +320,7 @@ public class InteractivePromptHandler {
      */
     private String handleDeleteProject() {
         if (projects.getProjectListSize() == 0) {
-            System.out.println("No projects to delete. Going back...");
+            System.out.println("No projects to delete. I sent you back to main page!");
             return null;
         }
 
@@ -315,7 +330,7 @@ public class InteractivePromptHandler {
         }
 
         while (true) {
-            System.out.print("Enter project number to delete: ");
+            System.out.print("Enter project number to delete, or press 'enter' to exit: ");
             String input = scanner.nextLine().trim();
 
             if (input.isEmpty()) {
@@ -335,7 +350,7 @@ public class InteractivePromptHandler {
                         return null;
                     }
                 } else {
-                    System.out.println("Invalid choice. Try again.");
+                    System.out.println("Hmph, choose a project number within the range!");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid number.");
@@ -356,7 +371,7 @@ public class InteractivePromptHandler {
         String projectName = project.getProjectName();
 
         if (project.size() == 0) {
-            System.out.println("No tasks in this project. Going back...");
+            System.out.println("No tasks in this project. I sent you back to main page!");
             return null;
         }
 
@@ -366,7 +381,8 @@ public class InteractivePromptHandler {
         }
 
         while (true) {
-            System.out.print("Enter task number to delete: ");
+            System.out.print("Enter task number to delete, ");
+            System.out.println("or press 'enter' to exit:");
             String input = scanner.nextLine().trim();
 
             if (input.isEmpty()) {
@@ -385,7 +401,7 @@ public class InteractivePromptHandler {
                         return null;
                     }
                 } else {
-                    System.out.println("Invalid task number. Try again.");
+                    System.out.println("Hmph, choose a task number within the range!");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid number.");
@@ -405,7 +421,7 @@ public class InteractivePromptHandler {
         System.out.println("Hmph you want to update? Which project contains the task?");
         System.out.println("Don't keep me waiting!");
         if (projects.getProjectListSize() == 0) {
-            System.out.println("No projects available. Going back...");
+            System.out.println("No projects available. I sent you back to main page!");
             return null;
         }
 
@@ -428,7 +444,7 @@ public class InteractivePromptHandler {
                 if (choice >= 1 && choice <= projects.getProjectListSize()) {
                     return handleUpdateTaskInProject(choice);
                 } else {
-                    System.out.println("Invalid choice. Try again.");
+                    System.out.println("Hmph, choose a project number within the range!");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid number.");
@@ -444,7 +460,7 @@ public class InteractivePromptHandler {
         String projectName = project.getProjectName();
 
         if (project.size() == 0) {
-            System.out.println("No tasks in this project. Going back...");
+            System.out.println("No tasks in this project. I sent you back to main page!");
             return null;
         }
 
@@ -468,7 +484,7 @@ public class InteractivePromptHandler {
                 if (taskIndex >= 1 && taskIndex <= project.size()) {
                     return handleUpdateTaskFields(projectSelection, taskIndex);
                 } else {
-                    System.out.println("Invalid task number. Try again.");
+                    System.out.println("Hmph, choose a task number within the range!");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid number.");
@@ -535,7 +551,7 @@ public class InteractivePromptHandler {
                 continueUpdating = false;
                 break;
             default:
-                System.out.println("Invalid choice. Try again.");
+                System.out.println("Hmph, pick one of the update options!");
             }
         }
 
@@ -581,7 +597,7 @@ public class InteractivePromptHandler {
             case "4":
                 return null; // Keep current (don't add to args)
             default:
-                System.out.println("Invalid choice. Try again.");
+                System.out.println("Hmph, high, medium, low, or keep current!");
             }
         }
     }
@@ -639,7 +655,7 @@ public class InteractivePromptHandler {
                 field = "priority";
                 break;
             default:
-                System.out.println("Invalid choice. Try again.");
+                System.out.println("Hmph, deadline or priority, choose!");
                 continue;
             }
 
@@ -661,7 +677,7 @@ public class InteractivePromptHandler {
                     order = "descending";
                     break;
                 default:
-                    System.out.println("Invalid choice. Try again.");
+                    System.out.println("Hmph, ascending or descending, decide!");
                     continue;
                 }
 
@@ -704,7 +720,7 @@ public class InteractivePromptHandler {
             case "3":
                 return "--priority low";
             default:
-                System.out.println("Invalid choice. Try again.");
+                System.out.println("Hmph, high, medium, or low only!");
             }
         }
     }
@@ -782,7 +798,7 @@ public class InteractivePromptHandler {
                 args.append(" filter-tasks ").append(filterArgs2).append(" sort-tasks ").append(sortArgs2);
                 break;
             default:
-                System.out.println("Invalid choice. Try again.");
+                System.out.println("Hmph, pick a valid export option!");
                 continue;
             }
 
@@ -836,7 +852,7 @@ public class InteractivePromptHandler {
                 logger.info("Status command arguments constructed: --all");
                 return "--all";
             default:
-                System.out.println("Invalid choice. Try again.");
+                System.out.println("Hmph, individual project or all, pick one!");
             }
         }
     }
@@ -860,11 +876,12 @@ public class InteractivePromptHandler {
         }
 
         while (true) {
-            System.out.print("Enter project number (1-" + projects.getProjectListSize() + "): ");
+            System.out.print("Enter project number (1-" + projects.getProjectListSize() + "), ");
+            System.out.println("or press 'enter' to exit:");
             String input = scanner.nextLine().trim();
 
             if (input.isEmpty()) {
-                System.out.println("Going back...");
+                System.out.println("I sent you back to main page!");
                 return null;
             }
 
@@ -873,7 +890,7 @@ public class InteractivePromptHandler {
                 if (choice >= 1 && choice <= projects.getProjectListSize()) {
                     return choice;
                 } else {
-                    System.out.println("Invalid choice. Try again.");
+                    System.out.println("Hmph, choose a project number within the range!");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid number.");
@@ -892,7 +909,7 @@ public class InteractivePromptHandler {
             String name = scanner.nextLine().trim();
 
             if (name.isEmpty()) {
-                System.out.println("Going back...");
+                System.out.println("I sent you back to main page!");
                 return null;
             }
 
@@ -936,7 +953,7 @@ public class InteractivePromptHandler {
             case "3":
                 return "low";
             default:
-                System.out.println("Invalid choice. Try again.");
+                System.out.println("Hmph, pick high, medium, or low!");
             }
         }
     }
@@ -965,7 +982,7 @@ public class InteractivePromptHandler {
             case "2":
                 return "";
             default:
-                System.out.println("Invalid choice. Try again.");
+                System.out.println("Hmph, yes or no, make a choice!");
             }
         }
     }
@@ -981,7 +998,7 @@ public class InteractivePromptHandler {
             String date = scanner.nextLine().trim();
 
             if (date.isEmpty()) {
-                System.out.println("Going back...");
+                System.out.println("I sent you back to main page!");
                 return null;
             }
 
