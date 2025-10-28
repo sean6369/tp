@@ -5,6 +5,19 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
+sourceSets {
+    main {
+        java {
+            exclude '**/unused/**'
+        }
+    }
+    test {
+        java {
+            exclude '**/unused/**'
+        }
+    }
+}
+
 repositories {
     mavenCentral()
 }
