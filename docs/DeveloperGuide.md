@@ -6,8 +6,11 @@
 
 ## Design & implementation
 
-{Describe the design and implementation of the product. Use UML diagrams and short code snippets where applicable.}
+### Core Functionality
 
+Task Management: Add, update, and delete tasks.
+
+Project Management: Create new projects.
 ### CreateCommand feature by [Xylon Chan](team/xylonchan.md)
 
 The `Create-project` command is facilitated by `ProjectList`and it is accessed by `CommandContext`. It extends `Command` with the feature of reading the user's project name input and creating a project entity.
@@ -103,6 +106,20 @@ An ArrayList container of Project instances offering indexed access, name-lookup
 - `Project getProject(String projectName)` — returns the project via name-based lookup
 
 - `String render()` — concatenate each project’s toString() into a printable block.
+
+
+### Data Processing
+
+Sorting: Implement algorithms to sort tasks or projects.
+
+Filtering: Implement algorithms to filter tasks or projects.
+
+### Data Persistence
+
+Export: Export current project and task data to a file.
+
+### User Interface
+
 
 
 ## Product scope
