@@ -1,0 +1,39 @@
+@startuml Architecture Diagram
+!theme plain
+
+package "UI Layer" {
+    [ConsoleUi]
+}
+
+package "Logic Layer" {
+    [CommandHandler]
+    [InteractivePromptHandler]
+    [CommandFactory]
+    [Individual Command Classes]
+}
+
+package "Model Layer" {
+    [ProjectList]
+    [Project]
+    [Task]
+}
+
+package "Utility Layer" {
+    [Validation Classes]
+    [Utility Classes]
+    [TaskFilter/TaskSorter/etc.]
+}
+
+ConsoleUi --> CommandHandler
+CommandHandler --> InteractivePromptHandler
+CommandHandler --> CommandFactory
+CommandFactory --> "Individual Command Classes"
+"Individual Command Classes" --> ProjectList
+"Individual Command Classes" --> "Task Operations"
+ProjectList --> Project
+Project --> Task
+InteractivePromptHandler --> ProjectList
+InteractivePromptHandler --> "Validation Classes"
+"Individual Command Classes" --> "Utility Classes"
+"Utility Classes" --> "TaskFilter/TaskSorter/etc."
+@enduml

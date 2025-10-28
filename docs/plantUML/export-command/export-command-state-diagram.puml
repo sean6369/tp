@@ -1,0 +1,23 @@
+@startuml Export Command State Diagram
+!theme plain
+
+[*] --> FilenameInput
+FilenameInput --> [*] : Cancelled
+FilenameInput --> ExportTypeSelection : Filename provided
+
+ExportTypeSelection --> [*] : Cancelled
+ExportTypeSelection --> AllTasks : Choose "1. All tasks"
+ExportTypeSelection --> SpecificProject : Choose "2. Specific project"
+ExportTypeSelection --> FilteredTasks : Choose "3. Filtered tasks"
+ExportTypeSelection --> SortedTasks : Choose "4. Sorted tasks"
+ExportTypeSelection --> FilteredSorted : Choose "5. Filtered and sorted"
+
+AllTasks --> Confirmation
+SpecificProject --> Confirmation
+FilteredTasks --> Confirmation
+SortedTasks --> Confirmation
+FilteredSorted --> Confirmation
+
+Confirmation --> [*] : Confirmed (export file)
+Confirmation --> [*] : Cancelled
+@enduml
