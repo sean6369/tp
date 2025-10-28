@@ -14,6 +14,8 @@
 - [Implementation &amp; Design](#implementation--design)
   - [Core Functionality](#core-functionality)
   - [Data Processing](#data-processing)
+    - [Task Sorting Algorithm](#task-sorting-algorithm-yao-xiang)
+    - [Task Filtering Algorithm](#task-filtering-algorithm-yao-xiang)
   - [Data Persistence](#data-persistence)
   - [User Interface](#user-interface)
     - [Interactive Mode](#interactive-mode-yao-xiang)
