@@ -1,5 +1,7 @@
 @startuml InteractivePromptHandler Class Diagram
 !theme plain
+skinparam classAttributeIconSize 0
+hide stereotype
 
 class InteractivePromptHandler {
     -ProjectList projects

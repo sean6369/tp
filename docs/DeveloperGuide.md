@@ -307,6 +307,14 @@ Export: Export current project and task data to a file.
 
 The interactive mode transforms single-word commands into guided conversations. When a user types "add" without arguments, the system prompts for project selection, task details, and optional fields.
 
+#### Command Processing Sequence (Yao Xiang)
+
+The overall command processing workflow shows how user input flows through the system components:
+
+![Command Processing Sequence Diagram](plantUML/command-processing-sequence/Command%20Processing%20Sequence%20Diagram.png)
+
+**Architecture Flow**: User input → CommandHandler → InteractivePromptHandler (if needed) → CommandFactory → Command execution → Result display.
+
 #### Class Diagram: InteractivePromptHandler Structure (Yao Xiang)
 
 ![InteractivePromptHandler Class Diagram](plantUML/interactive-prompt-handler/interactiveprompthandler.png)
@@ -382,7 +390,7 @@ public String toString() {
 
 The add command guides users through project selection, task description, priority, and optional deadline:
 
-![Add Command Sequence Diagram](plantUML/add_command/add-command.png)
+![Add Command Sequence Diagram](plantUML/add-command-sequence/Add%20Command%20Sequence%20Diagram.png)
 
 **Key Features**:
 
@@ -481,7 +489,7 @@ Create command prompts for a new project name with validation:
 
 Mark and unmark commands follow identical selection flow with different validation:
 
-![Mark/Unmark Command State Diagram](plantUML/mark-unmark-command-state/mark-unmark-command-state.png)
+![Mark/Unmark Command Sequence Diagram](plantUML/mark-unmark-sequence/Unmark%20Command%20Sequence%20Diagram.png)
 
 **Shared Logic**: Both commands use identical project/task selection but different validation rules.
 
@@ -598,24 +606,109 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 
 ## Instructions for manual testing
 
-1.  **Prerequisites**: Ensure you have Java Development Kit (JDK) 11 or later installed.
-2.  **Build the application**: Navigate to the project root directory in your terminal and run `./gradlew shadowJar` (on Unix-like systems) or `gradlew.bat shadowJar` (on Windows). This will compile the application and create an executable JAR file in the `build/libs` directory.
-3.  **Run the application**: Execute the JAR file using `java -jar build/libs/FlowCLI.jar`.
-4.  **Loading sample data**: The application starts with an empty state. To test with sample data, you can manually input commands to create projects and tasks. For example:
-    - `create-project MyCapstone`
-    - `add-task 1 "Implement login feature" --deadline 2025-12-31 --priority high`
-    - `add-task 1 "Write unit tests" --priority medium`
-    - `create-project ResearchPaper`
-    - `add-task 2 "Literature review" --deadline 2025-11-15`
-5.  **Test Inline Commands**: Execute commands with all arguments provided on a single line.
-    - **Example (Add Task)**: `add-task 1 "Implement login feature" --deadline 2025-12-31 --priority high`
-    - **Example (Create Project)**: `create-project MyNewProject`
-    - **Example (List Tasks)**: `list --all`
-    - Experiment with all other commands: `mark`, `unmark`, `delete-task`, `update-task`, `delete-project`, `sort`, `filter`, `status`, and `export` using their full inline syntax.
-6.  **Test Interactive Mode**: Trigger interactive mode by typing a command keyword without any arguments, then follow the prompts.
-    - **Example (Add Task)**: Type `add-task` and press Enter. The CLI will then prompt you for the project index, description, deadline, and priority.
-    - **Example (Create Project)**: Type `create-project` and press Enter. The CLI will prompt you for the project name.
-    - Experiment with other commands that support interactive mode (e.g., `list`, `mark`, `unmark`, `delete-task`, `update-task`, `sort`, `filter`, `status`, `export`) by typing the command name alone.
-7.  **Test edge cases**: Try invalid inputs, out-of-range indices, duplicate project names, and missing arguments to observe error handling.
-8.  **Verify data persistence**: Exit the application using `bye`, then restart it. Verify that all previously added projects and tasks are still present.
-9.  **Export and verify**: Use the `export` command to export data and manually check the generated file's content and format.
+These instructions will guide you through comprehensive manual testing of FlowCLI, including both inline command usage and interactive mode functionality.
+
+### Prerequisites
+- Ensure you have Java 17 or higher installed
+- Ensure you have Gradle installed
+
+### Setup Steps
+
+1. **Build the application:**
+   ```
+   ./gradlew build
+   ```
+
+2. **Locate the JAR file:**
+   - Navigate to `build\libs\`
+   - Copy the full path of `flowcli.jar`
+
+3. **Run the application:**
+   ```
+   java -jar <full-path-to-flowcli.jar>
+   ```
+
+### Sample Data Setup
+
+4. **Load sample data:**
+   Copy and paste the following commands to populate the application with sample data:
+   (no need to copy paste one at a time)
+   ```
+   create-project "CS2113T Project"
+   create-project "Internship Hunt"
+   create-project "Household Chores"
+   create-project "Fitness Plan"
+   create-project "Side Project - Website"
+
+   add-task 1 "Finalize DG" --priority high --deadline 2025-11-10
+   add-task 1 "Implement UI" --priority high --deadline 2025-11-20
+   add-task 1 "Write UG" --priority medium --deadline 2025-11-25
+   add-task 1 "Prepare for Demo" --priority medium
+   add-task 1 "Review teammate PR" --priority low
+
+   add-task 2 "Update Resume" --priority high
+   add-task 2 "Apply to 5 companies" --priority medium --deadline 2025-11-15
+   add-task 2 "Research company A" --priority low
+   add-task 2 "Practice LeetCode" --priority medium
+
+   add-task 3 "Buy groceries" --priority medium --deadline 2025-10-29
+   add-task 3 "Clean room" --priority low
+   add-task 3 "Pay utility bill" --priority high --deadline 2025-11-01
+
+   add-task 4 "Go for run" --priority medium
+   add-task 4 "Meal prep for week" --priority low
+   add-task 4 "Go to gym" --priority medium
+
+   add-task 5 "Design homepage" --priority medium
+   add-task 5 "Set up database" --priority high --deadline 2025-12-01
+   add-task 5 "Draft 'About Me' page" --priority low
+
+   mark 1 1
+   mark 2 1
+   mark 3 3
+   mark 4 1
+   ```
+
+   Alternatively, you may create your own test data using the commands above as a reference.
+
+### Testing Commands
+
+5. **View help:**
+   ```
+   help
+   ```
+
+6. **Test inline command variations:**
+   Follow the help output and test all inline command variations.
+
+
+7. **Test interactive mode:**
+   Follow the help output and try all one-word command triggers for interactive mode:
+   - `add` (triggers interactive task addition)
+   - `create` (triggers interactive project creation)
+   - `list` (triggers interactive project/task listing)
+   - `mark` (triggers interactive task marking)
+   - `unmark` (triggers interactive task unmarking)
+   - `update` (triggers interactive task updating)
+   - `delete` (triggers interactive item deletion)
+   - `sort` (triggers interactive sorting)
+   - `filter` (triggers interactive filtering)
+   - `export` (triggers interactive data export)
+
+8. **Exit the application:**
+   ```
+   bye
+   ```
+
+### Expected Behavior
+
+- **Inline commands**: Should execute immediately with provided arguments
+- **Interactive mode**: Should prompt for additional information when commands are given without arguments
+- **Error handling**: Should provide helpful error messages for invalid inputs
+- **Help system**: Should provide comprehensive command reference
+
+### Troubleshooting
+
+- If the JAR file is not found, ensure the build completed successfully
+- If commands fail, check that project/task indices exist
+- If interactive mode doesn't trigger, ensure commands are entered without arguments
