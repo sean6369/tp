@@ -418,7 +418,44 @@ Filter command offers priority level selection:
 
 ## Non-Functional Requirements
 
-{Give non-functional requirements}
+1. **Performance**
+   - The application should respond to user commands within 500ms under normal operating conditions.
+   - Loading and parsing project data should complete within 1 second for up to 100 projects with 1000 tasks total.
+   - Sorting and filtering operations should complete within 200ms for typical datasets (up to 500 tasks).
+
+2. **Usability**
+   - The application should be usable by users with basic command-line knowledge without requiring extensive training.
+   - Interactive mode prompts should guide users through command execution with clear, numbered options.
+   - Error messages should be descriptive and suggest corrective actions where applicable.
+   - All commands should have both short-form (for experienced users) and interactive mode (for new users).
+
+3. **Reliability**
+   - The application should handle invalid inputs gracefully without crashing.
+   - All data validation should occur before any state changes to maintain data integrity.
+   - Error handling should prevent data corruption in edge cases (e.g., concurrent file access, invalid date formats).
+
+4. **Portability**
+   - The application should run on any platform with Java 11 or higher installed (Windows, macOS, Linux).
+   - No platform-specific dependencies should be required beyond the Java Runtime Environment.
+   - File paths should use platform-independent representations where possible.
+
+5. **Maintainability**
+   - Code should follow standard Java coding conventions and style guidelines.
+   - All public methods and classes should include Javadoc documentation.
+   - The codebase should maintain clear separation of concerns between UI, logic, and model layers.
+   - Each command should be implemented as a separate, testable class extending the Command base class.
+
+6. **Scalability**
+   - The application should handle at least 50 projects with 20 tasks each without performance degradation.
+   - Memory usage should remain under 100MB for typical usage scenarios.
+
+7. **Security**
+   - User input should be validated and sanitized to prevent command injection or malicious input.
+   - File operations should verify file paths to prevent unauthorized access to system files.
+
+8. **Compatibility**
+   - The application should be compatible with common terminal emulators (Command Prompt, PowerShell, Terminal, Bash).
+   - Text output should be compatible with standard terminal character encoding (UTF-8).
 
 ---
 
