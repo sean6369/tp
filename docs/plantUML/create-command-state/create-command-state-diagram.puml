@@ -1,0 +1,10 @@
+@startuml Create Command State Diagram
+!theme plain
+
+[*] --> NameInput
+NameInput --> [*] : Cancelled/Empty
+NameInput --> Validation : Name provided
+
+Validation --> [*] : Name exists (return null)
+Validation --> [*] : Valid name (return args)
+@enduml

@@ -1,0 +1,20 @@
+@startuml Delete Command State Diagram
+!theme plain
+
+[*] --> TypeSelection
+TypeSelection --> ProjectDelete : Choose "1. A project"
+TypeSelection --> TaskDelete : Choose "2. A task"
+TypeSelection --> [*] : Choose "3. Cancel"
+
+ProjectDelete --> ProjectConfirmation
+
+ProjectConfirmation --> [*] : Confirmed (return args)
+ProjectConfirmation --> [*] : Cancelled (return null)
+
+TaskDelete --> ProjectSelection
+ProjectSelection --> TaskSelection
+TaskSelection --> TaskConfirmation
+
+TaskConfirmation --> [*] : Confirmed (return args)
+TaskConfirmation --> [*] : Cancelled (return null)
+@enduml

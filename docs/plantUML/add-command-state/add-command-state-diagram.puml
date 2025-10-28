@@ -1,0 +1,16 @@
+@startuml Add Command State Diagram
+!theme plain
+
+[*] --> ProjectSelection
+ProjectSelection --> [*] : Cancelled
+ProjectSelection --> DescriptionInput : Project chosen
+
+DescriptionInput --> [*] : Cancelled/Empty
+DescriptionInput --> PriorityPrompt : Description provided
+
+PriorityPrompt --> DeadlinePrompt : Priority chosen/default
+PriorityPrompt --> DeadlinePrompt : Skipped (default medium)
+
+DeadlinePrompt --> [*] : Deadline provided (return args)
+DeadlinePrompt --> [*] : Skipped (return args)
+@enduml

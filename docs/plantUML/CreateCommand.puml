@@ -1,0 +1,56 @@
+@startuml CreateCommandDiagram
+title FlowCLI: create-project Sequence
+autonumber
+
+actor User
+participant "FlowCLI Main" as CLI
+participant "CommandParser" as Parser
+participant "CreateCommand" as CreateCmd
+participant "CommandContext" as Ctx
+participant "Projects Model" as Projects
+participant "UI" as UI
+participant "Logger" as Log
+
+
+User -> CLI: Enter "create-project Alpha"
+CLI -> Parser: parse("create-project Alpha")
+Parser --> CLI: new CreateCommand(rawArgs)
+
+CLI -> CreateCmd: execute(Ctx)
+
+group Argument parsing
+  CreateCmd -> CreateCmd: extract project name
+  alt name is blank
+    CreateCmd -> Log: warn("Missing project name")
+    CreateCmd --> CLI: throw MissingArgumentException
+    CLI -> UI: showError("Missing project name")
+    return
+  end
+end
+
+CreateCmd -> Ctx: getProjects(), getUi()
+Ctx --> CreateCmd: Projects, UI
+
+group Validation
+  CreateCmd -> Projects: getProject(name)
+  Projects --> CreateCmd: project|null
+  alt duplicate exists
+    CreateCmd -> Log: warning("Project already exists: {name}")
+    CreateCmd --> CLI: throw ProjectAlreadyExistsException
+    CLI -> UI: showError("Project already exists: {name}")
+    return
+  end
+end
+
+group Creation
+  CreateCmd -> Projects: addProject(name)
+  Projects --> CreateCmd: createdProject
+  CreateCmd -> UI: showAddedProject(createdProject)
+  CreateCmd -> Log: info("Created project {name}")
+  CreateCmd --> CLI: return true
+end
+
+== Logging ==
+CLI -> Log: fine("create-project completed")
+
+@enduml

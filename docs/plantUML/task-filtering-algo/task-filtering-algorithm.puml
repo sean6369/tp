@@ -1,0 +1,35 @@
+@startuml Task Filtering Algorithm
+!theme plain
+
+start
+:TaskFilter constructor called
+with (projects/tasks, priority, projectName);
+
+:Initialize empty filteredTasks list;
+
+if (inputTasks provided?) then (yes)
+    :Process provided task list;
+else (no)
+    :Process all projects and their tasks;
+endif
+
+repeat
+    :Get next task and project info;
+
+    if (projectName filter set?) then (yes)
+        if (task project != filter project) then (continue)
+        endif
+    endif
+
+    if (priority filter set?) then (yes)
+        :Convert task priority to string;
+        if (task priority != filter priority) then (continue)
+        endif
+    endif
+
+    :Add task to filtered results;
+repeat while (more tasks?)
+
+:Return filtered task list;
+stop
+@enduml

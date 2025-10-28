@@ -1,0 +1,11 @@
+@startuml Status Command State Diagram
+!theme plain
+
+[*] --> DisplayChoice
+DisplayChoice --> [*] : Cancelled
+DisplayChoice --> ProjectStatus : Choose "1. Project status"
+DisplayChoice --> TaskStatus : Choose "2. Task status"
+
+ProjectStatus --> [*] : Display stats (return args)
+TaskStatus --> [*] : Display completion (return args)
+@enduml
