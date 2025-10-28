@@ -4,7 +4,13 @@
 
 ## Acknowledgements
 
-{list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
+This project is based on AddressBook-Level3 (AB3) from the [SE-EDU initiative](https://se-education.org).  
+We adapted its architecture, parser logic, and command execution framework.
+
+We also acknowledge:
+
+- [PlantUML](https://plantuml.com) for UML diagram generation.
+- NUS CS2113 teaching team for guidance and templates.
 
 ---
 
