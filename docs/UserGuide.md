@@ -2,7 +2,7 @@
 
 ## Introduction
 
-FlowCLI is a fast keyboard-driven task manager for teams who organise work around projects. Keep multiple project backlogs in one place, add tasks with deadlines and priorities in a single command, and instantly filter or sort everything you have on your plate. Export the current view to a text file whenever you need a status report.
+FlowCLI is a Command Line Interface (CLI) app for managing tasks and projects, optimised for fast, fully keyboard-driven workflows. Track priorities, deadlines and statuses of your projects, filter and sort instantly, then export the current view to a TXT file to save your changes. If you're a fast typer, FlowCLI is perfect for you - save hours on project management as it gets your work done faster than click-heavy apps.
 
 ## Quick Start
 
