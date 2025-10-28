@@ -374,7 +374,7 @@ These instructions will guide you through comprehensive manual testing of FlowCL
 
 4. **Load sample data:**
    Copy and paste the following commands to populate the application with sample data:
-
+   (no need to copy paste one at a time)
    ```
    create-project "CS2113T Project"
    create-project "Internship Hunt"
@@ -421,22 +421,8 @@ These instructions will guide you through comprehensive manual testing of FlowCL
    ```
 
 6. **Test inline command variations:**
-   Follow the help output and test all inline command variations, such as:
-   - `list`
-   - `list 1`
-   - `add-task 1 "Test task"`
-   - `add-task 1 "Test task" --priority high`
-   - `add-task 1 "Test task" --priority high --deadline 2025-12-01`
-   - `mark 1 1`
-   - `unmark 1 1`
-   - `update 1 1`
-   - `delete 1 1`
-   - `sort deadline`
-   - `sort priority`
-   - `filter high`
-   - `filter "CS2113T Project"`
-   - `status`
-   - `export`
+   Follow the help output and test all inline command variations.
+
 
 7. **Test interactive mode:**
    Follow the help output and try all one-word command triggers for interactive mode:
@@ -461,7 +447,6 @@ These instructions will guide you through comprehensive manual testing of FlowCL
 - **Inline commands**: Should execute immediately with provided arguments
 - **Interactive mode**: Should prompt for additional information when commands are given without arguments
 - **Error handling**: Should provide helpful error messages for invalid inputs
-- **Data persistence**: Changes should persist between application runs
 - **Help system**: Should provide comprehensive command reference
 
 ### Troubleshooting
