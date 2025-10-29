@@ -1,5 +1,4 @@
 @startuml Interactive Mode Overview
-!theme plain
 
 start
 :User Input;

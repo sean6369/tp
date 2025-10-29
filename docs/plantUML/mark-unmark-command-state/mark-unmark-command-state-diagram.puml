@@ -1,5 +1,4 @@
 @startuml Mark/Unmark Command State Diagram
-!theme plain
 
 [*] --> ProjectSelection
 ProjectSelection --> [*] : Cancelled

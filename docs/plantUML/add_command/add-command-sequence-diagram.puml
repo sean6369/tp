@@ -1,7 +1,4 @@
 @startuml Add Command Sequence Diagram
-!theme plain
-skinparam classAttributeIconSize 0
-hide stereotype
 
 actor User
 participant InteractivePromptHandler

@@ -1,5 +1,4 @@
 @startuml Task Sorting Algorithm
-!theme plain
 
 start
 :TaskSorter constructor called

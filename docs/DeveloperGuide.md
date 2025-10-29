@@ -37,7 +37,7 @@ We also acknowledge:
 
 ---
 
-## Architecture (Yao Xiang)
+## Architecture by [Yao Xiang](team/yaoxiang.md)
 
 FlowCLI follows a layered architecture with clear separation of concerns:
 
@@ -273,7 +273,7 @@ An ArrayList container of Project instances offering indexed access, name-lookup
 
 ### Data Processing
 
-#### Task Sorting Algorithm (Yao Xiang)
+#### Task Sorting Algorithm by [Yao Xiang](team/yaoxiang.md)
 
 The sorting algorithm supports sorting tasks by deadline or priority in ascending/descending order:
 
@@ -286,7 +286,7 @@ The sorting algorithm supports sorting tasks by deadline or priority in ascendin
 - **Deadline Handling**: Tasks without deadlines are sorted last in ascending order
 - **Priority Mapping**: High(1) > Medium(2) > Low(3)
 
-#### Task Filtering Algorithm (Yao Xiang)
+#### Task Filtering Algorithm by [Yao Xiang](team/yaoxiang.md)
 
 The filtering algorithm supports filtering tasks by priority level and/or project name:
 
@@ -299,9 +299,9 @@ The filtering algorithm supports filtering tasks by priority level and/or projec
 - **Case Insensitive**: Project name and priority filtering ignore case
 - **Multiple Filters**: Can combine priority and project name filters
 
-### Data Persistence (Sean)
+### Data Persistence by [Sean Lee](team/seanlee.md)
 
-#### Export Algorithm (Sean)
+#### Export Algorithm by [Sean Lee](team/seanlee.md)
 
 The export algorithm supports saving project and task data to text files with filtering and sorting capabilities:
 
@@ -336,7 +336,7 @@ ProjectName: [ ] Another Task [priority]
 
 ### **User Interface**
 
-### Interactive Mode (Yao Xiang)
+### Interactive Mode by [Yao Xiang](team/yaoxiang.md)
 
 ![Interactive Mode Overview](plantUML/interactive-mode-overview/interactive-mode-overview.png)
 
@@ -344,7 +344,7 @@ ProjectName: [ ] Another Task [priority]
 
 The interactive mode transforms single-word commands into guided conversations. When a user types "add" without arguments, the system prompts for project selection, task details, and optional fields.
 
-#### Command Processing Sequence (Yao Xiang)
+#### Command Processing Sequence by [Yao Xiang](team/yaoxiang.md)
 
 The overall command processing workflow shows how user input flows through the system components:
 
@@ -352,11 +352,11 @@ The overall command processing workflow shows how user input flows through the s
 
 **Architecture Flow**: User input → CommandHandler → InteractivePromptHandler (if needed) → CommandFactory → Command execution → Result display.
 
-#### Class Diagram: InteractivePromptHandler Structure (Yao Xiang)
+#### Class Diagram: InteractivePromptHandler Structure by [Yao Xiang](team/yaoxiang.md)
 
 ![InteractivePromptHandler Class Diagram](plantUML/interactive-prompt-handler/interactiveprompthandler.png)
 
-#### Interactive Mode Detection (Yao Xiang)
+#### Interactive Mode Detection by [Yao Xiang](team/yaoxiang.md)
 
 The `CommandHandler.shouldUseInteractiveMode()` method determines when to trigger interactive mode:
 
@@ -393,7 +393,7 @@ private boolean shouldUseInteractiveMode(CommandParser.ParsedCommand parsed) {
 
 **Decision Rationale**: Interactive mode is triggered for main commands with empty arguments, preserving backward compatibility.
 
-#### Task Status Display System (Zhen Zhao)
+#### Task Status Display System by [Zhen Zhao](team/zhenzhao.md)
 
 Tasks display completion status using visual markers:
 
@@ -421,9 +421,9 @@ public String toString() {
 3. [ ] Fix bug in parser [low]
 ```
 
-#### Interactive Command Flows (Yao Xiang)
+#### Interactive Command Flows by [Yao Xiang](team/yaoxiang.md)
 
-#### Add Command Flow (Yao Xiang)
+#### Add Command Flow by [Yao Xiang](team/yaoxiang.md)
 
 The add command guides users through project selection, task description, priority, and optional deadline:
 
@@ -436,13 +436,13 @@ The add command guides users through project selection, task description, priori
 - Optional priority (defaults to "medium")
 - Optional deadline with YYYY-MM-DD format validation
 
-#### Add Command State Flow (Yao Xiang)
+#### Add Command State Flow by [Yao Xiang](team/yaoxiang.md)
 
 ![Add Command State Diagram](plantUML/add-command-state/add-command-state.png)
 
 **Optional Fields**: Priority and deadline can be skipped, defaulting to "medium" and no deadline respectively.
 
-#### Mark/Unmark Command Flows (Yao Xiang)
+#### Mark/Unmark Command Flows by [Yao Xiang](team/yaoxiang.md)
 
 Mark and unmark commands share similar logic but with different validation:
 
@@ -472,7 +472,7 @@ public String handleMarkCommand() {
 - **Unmark**: Prevents unmarking already incomplete tasks
 - **Error Message**: "Your task is not even marked, what do you want me to unmark!"
 
-#### Delete Command Flow (Yao Xiang)
+#### Delete Command Flow by [Yao Xiang](team/yaoxiang.md)
 
 Delete command uses a two-stage approach: type selection then specific item selection with confirmation:
 
@@ -484,7 +484,7 @@ Delete command uses a two-stage approach: type selection then specific item sele
 - Clear project/task listing before selection
 - Case-insensitive confirmation ("y", "yes", "n", "no")
 
-#### Update Command Flow (Yao Xiang)
+#### Update Command Flow by [Yao Xiang](team/yaoxiang.md)
 
 Update command implements recursive field updates allowing multiple changes in one session:
 
@@ -492,7 +492,7 @@ Update command implements recursive field updates allowing multiple changes in o
 
 **Recursive Design**: Users can update multiple fields without restarting the flow, with options to reselect tasks/projects or exit at any point.
 
-#### Export Command Flow (Yao Xiang)
+#### Export Command Flow by [Yao Xiang](team/yaoxiang.md)
 
 The export command provides comprehensive data export capabilities with multiple filtering and sorting options. Users can export their project and task data in various formats and configurations.
 
@@ -514,7 +514,7 @@ The export command provides comprehensive data export capabilities with multiple
 
 ![Export Command State Diagram](plantUML/export-command/export-command-state-diagram.png)
 
-#### Create Command Flow (Yao Xiang)
+#### Create Command Flow by [Yao Xiang](team/yaoxiang.md)
 
 Create command prompts for a new project name with validation:
 
@@ -522,7 +522,7 @@ Create command prompts for a new project name with validation:
 
 **Validation**: Checks for empty names and duplicate project names.
 
-#### Mark/Unmark Command Flows (Yao Xiang)
+#### Mark/Unmark Command Flows by [Yao Xiang](team/yaoxiang.md)
 
 Mark and unmark commands follow identical selection flow with different validation:
 
@@ -530,7 +530,7 @@ Mark and unmark commands follow identical selection flow with different validati
 
 **Shared Logic**: Both commands use identical project/task selection but different validation rules.
 
-#### Sort Command Flow (Yao Xiang)
+#### Sort Command Flow by [Yao Xiang](team/yaoxiang.md)
 
 Sort command offers field and order selection:
 
@@ -538,7 +538,7 @@ Sort command offers field and order selection:
 
 **Simple Flow**: Two sequential choices with no complex validation.
 
-#### Filter Command Flow (Yao Xiang)
+#### Filter Command Flow by [Yao Xiang](team/yaoxiang.md)
 
 Filter command offers priority level selection:
 
@@ -546,13 +546,13 @@ Filter command offers priority level selection:
 
 **Single Choice**: Simple selection from three priority options.
 
-#### List Command Flow (Yao Xiang)
+#### List Command Flow by [Yao Xiang](team/yaoxiang.md)
 
 ![List Command State Diagram](plantUML/list-command-state/list-command-state.png)
 
 **Display Logic**: Shows numbered project list, then either displays tasks for selected project or all projects with all tasks.
 
-#### Status Command Flow (Yao Xiang)
+#### Status Command Flow by [Yao Xiang](team/yaoxiang.md)
 
 ![Status Command State Diagram](plantUML/status-command-state/status-command-state.png)
 
@@ -589,7 +589,7 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 
 ---
 
-## Non-Functional Requirements (Zhen Zhao)
+## Non-Functional Requirements by [Zhen Zhao](team/zhenzhao.md)
 
 1. **Performance**
    - The application should respond to user commands within 500ms under normal operating conditions.

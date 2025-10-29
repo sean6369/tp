@@ -1,5 +1,4 @@
 @startuml List Command State Diagram
-!theme plain
 
 [*] --> ProjectListDisplay
 ProjectListDisplay --> [*] : Cancelled

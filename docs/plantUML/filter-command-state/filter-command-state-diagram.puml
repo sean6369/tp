@@ -1,5 +1,4 @@
 @startuml Filter Command State Diagram
-!theme plain
 
 [*] --> PrioritySelection
 PrioritySelection --> [*] : Cancelled

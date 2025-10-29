@@ -1,7 +1,4 @@
 @startuml Command Processing Sequence Diagram
-!theme plain
-skinparam classAttributeIconSize 0
-hide stereotype
 
 actor User
 participant ConsoleUi

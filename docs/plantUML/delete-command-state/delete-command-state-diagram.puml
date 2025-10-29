@@ -1,5 +1,4 @@
 @startuml Delete Command State Diagram
-!theme plain
 
 [*] --> TypeSelection
 TypeSelection --> ProjectDelete : Choose "1. A project"
