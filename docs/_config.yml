@@ -1,0 +1,73 @@
+# GitHub Pages Configuration for FlowCLI Documentation
+
+# Site settings
+title: FlowCLI
+description: A fast, minimal CLI project task manager for efficient task and project management
+baseurl: "/tp" # the subpath of your site, e.g. /blog
+url: "https://zhenzha0.github.io" # the base hostname & protocol for your site
+
+# Theme
+theme: jekyll-theme-cayman
+# Alternative themes you can try:
+# theme: jekyll-theme-minimal
+# theme: jekyll-theme-slate
+# theme: jekyll-theme-tactile
+
+# Logo and branding
+logo: /images/logos/flowcli-logo.png
+
+# Navigation
+header_pages:
+  - UserGuide.md
+  - DeveloperGuide.md
+  - AboutUs.md
+
+# Build settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+
+# Plugins
+plugins:
+  - jekyll-relative-links
+  - jekyll-optional-front-matter
+  - jekyll-readme-index
+  - jekyll-titles-from-headings
+
+# Plugin configurations
+relative_links:
+  enabled: true
+  collections: true
+
+titles_from_headings:
+  enabled: true
+  strip_title: true
+  collections: true
+
+# Collections
+collections:
+  team:
+    output: true
+    permalink: /team/:name/
+
+# Exclude from processing
+exclude:
+  - plantUML/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - "*.puml"
+
+# Include
+include:
+  - README.md
+  - UserGuide.md
+  - DeveloperGuide.md
+  - AboutUs.md
+
