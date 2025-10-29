@@ -36,13 +36,13 @@ class DeleteProjectCommandTest {
         }
     }
 
-    private CommandContext makeContext(ProjectList projects, ConsoleUi ui) {
-        return new CommandContext(projects, ui, null);
-    }
-
     private ProjectList projects;
     private SpyUi ui;
     private CommandContext ctx;
+
+    private CommandContext makeContext(ProjectList projects, ConsoleUi ui) {
+        return new CommandContext(projects, ui, null);
+    }
 
     @BeforeEach
     void setUp() {
