@@ -1,5 +1,4 @@
 @startuml Sort Command State Diagram
-!theme plain
 
 [*] --> FieldSelection
 FieldSelection --> [*] : Cancelled

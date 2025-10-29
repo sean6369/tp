@@ -1,5 +1,4 @@
 @startuml Status Command State Diagram
-!theme plain
 
 [*] --> DisplayChoice
 DisplayChoice --> [*] : Cancelled

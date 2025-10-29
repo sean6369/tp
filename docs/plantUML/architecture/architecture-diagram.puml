@@ -1,7 +1,4 @@
 @startuml Architecture Diagram
-!theme plain
-skinparam classAttributeIconSize 0
-hide stereotype
 
 class ConsoleUi {
     -ProjectList projects
