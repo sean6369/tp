@@ -1,3 +1,5 @@
+![FlowCLI Cover](images/logos/FlowCLI-Cover-Image.png)
+
 # User Guide
 
 ## Introduction
