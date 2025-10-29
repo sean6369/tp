@@ -1,0 +1,110 @@
+@startuml StatusCommandSequenceDiagram
+title FlowCLI: status Command Sequence
+autonumber
+
+actor User
+participant "FlowCLI Main" as CLI
+participant "CommandParser" as Parser
+participant "StatusCommand" as StatusCmd
+participant "CommandContext" as Ctx
+participant "ArgumentParser" as ArgParser
+participant "ProjectList" as Projects
+participant "Project" as Proj
+participant "ProjectStatusAnalyzer" as Analyzer
+participant "ConsoleUi" as UI
+participant "Logger" as Log
+
+User -> CLI: Enter "status 1" or "status --all"
+CLI -> Parser: parse("status 1")
+Parser --> CLI: new StatusCommand(rawArgs)
+
+CLI -> StatusCmd: execute(Ctx)
+
+group Argument Validation
+  alt arguments empty
+    StatusCmd -> Log: warn("Missing argument")
+    StatusCmd --> CLI: throw MissingArgumentException
+    CLI -> UI: showError("Missing argument")
+    return
+  end
+end
+
+StatusCmd -> Ctx: getProjects(), getUi()
+Ctx --> StatusCmd: Projects, UI
+
+alt Project list empty
+  StatusCmd -> Log: warn("Empty project list")
+  StatusCmd --> CLI: throw EmptyProjectListException
+  CLI -> UI: showError("No projects found")
+  return
+end
+
+alt Display all projects status (--all flag)
+  StatusCmd -> UI: showAllProjectsStatus(Projects)
+  activate UI
+  
+  loop for each project
+    UI -> Analyzer: analyzeProject(project)
+    activate Analyzer
+    Analyzer -> Proj: getProjectTasks()
+    Proj --> Analyzer: TaskList
+    Analyzer -> Analyzer: count completed tasks
+    Analyzer -> Analyzer: calculate percentage
+    Analyzer --> UI: ProjectStatus(name, total, completed, %)
+    deactivate Analyzer
+    
+    UI -> UI: formatStatusSummary(status)
+    UI -> UI: generateProgressBar(percentage)
+    UI -> UI: getMotivationalMessage(percentage)
+    UI -> User: display project status with progress bar
+  end
+  
+  deactivate UI
+  
+else Display specific project status
+  StatusCmd -> ArgParser: new ArgumentParser(args, Projects)
+  activate ArgParser
+  ArgParser -> ArgParser: parse project index/name
+  ArgParser -> Projects: getProjectByIndex() or getProject()
+  
+  alt project not found
+    ArgParser --> StatusCmd: throw IndexOutOfRangeException\nor ProjectNotFoundException
+    StatusCmd -> Log: warn("Project not found")
+    StatusCmd --> CLI: throw exception
+    CLI -> UI: showError("Project not found")
+    return
+  end
+  
+  Projects --> ArgParser: project
+  ArgParser --> StatusCmd: targetProject
+  deactivate ArgParser
+  
+  StatusCmd -> UI: showProjectStatus(project)
+  activate UI
+  
+  UI -> Analyzer: analyzeProject(project)
+  activate Analyzer
+  Analyzer -> Proj: getProjectTasks()
+  Proj --> Analyzer: TaskList
+  Analyzer -> Analyzer: count completed tasks
+  Analyzer -> Analyzer: calculate percentage
+  Analyzer --> UI: ProjectStatus(name, total, completed, %)
+  deactivate Analyzer
+  
+  alt project has no tasks
+    UI -> User: display "No tasks yet!" message
+  else project has tasks
+    UI -> UI: formatStatusSummary(status)
+    UI -> UI: generateProgressBar(percentage)
+    UI -> UI: getMotivationalMessage(percentage)
+    UI -> User: display status with progress bar
+  end
+  
+  deactivate UI
+end
+
+StatusCmd -> Log: info("status command completed")
+StatusCmd --> CLI: return true
+
+@enduml
+

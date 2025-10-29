@@ -19,19 +19,21 @@ We also acknowledge:
 - [Architecture](#architecture-yao-xiang)
 - [Implementation &amp; Design](#implementation--design)
   - [Core Functionality](#core-functionality)
-    - [CreateCommand Feature](#createcommand-feature-by-xylon-chanteamxylonchanmd)
-    - [Common Classes](#common-classes)
+    - [Command Processing Infrastructure](#command-processing-infrastructure-by-zhenzhaoteamzhenzhamd)
+    - [Task Management Features](#task-management-features-by-zing-jenteamzingjenmd)
+    - [Project Management Features](#project-management-features-by-xylon-chanteamxylonchanmd)
+    - [Common Classes](#common-classes-by-zhenzhaoteamzhenzhamd)
   - [Data Processing](#data-processing)
     - [Task Sorting Algorithm](#task-sorting-algorithm-yao-xiang)
     - [Task Filtering Algorithm](#task-filtering-algorithm-yao-xiang)
   - [Data Persistence](#data-persistence)
   - [User Interface](#user-interface)
     - [Interactive Mode](#interactive-mode-yao-xiang)
-    - [Task Status Display System](#task-status-display-system-zhen-zhao)
+    - [Status Display System](#status-display-system-by-zhenzhaoteamzhenzhamd)
     - [Interactive Command Flows](#interactive-command-flows-yao-xiang)
 - [Product scope](#product-scope)
 - [User Stories](#user-stories)
-- [Non-Functional Requirements](#non-functional-requirements-zhen-zhao)
+- [Non-Functional Requirements](#non-functional-requirements-zhenzhao)
 - [Glossary](#glossary)
 - [Instructions for manual testing](#instructions-for-manual-testing)
 
@@ -55,6 +57,50 @@ FlowCLI follows a layered architecture with clear separation of concerns:
 ## Implementation & Design
 
 ### Core Functionality
+
+#### Command Processing Infrastructure by [Zhenzhao](team/zhenzhao.md)
+
+The command processing infrastructure forms the foundation of FlowCLI, handling all user input parsing, validation, and command execution. It consists of three key components that work together to transform user input into executable commands.
+
+**Key Components:**
+
+- **CommandHandler** - Manages the main command loop, reads user input, coordinates parsing and execution
+- **CommandParser** - Parses command words and extracts arguments, maps input to CommandType enum
+- **ArgumentParser** - Parses project identifiers (index or name), resolves to Project objects, validates existence
+
+![Command Processing Infrastructure Sequence](plantUML/command-processing-infrastructure/Command-processing-infrastructure.png)
+
+**Implementation Details:**
+
+1. **CommandHandler** initializes the application's main loop and scanner, reading user input line by line.
+2. For each input line, **CommandParser** splits the command word from arguments and maps it to a CommandType enum.
+3. The CommandFactory creates the appropriate Command object based on the type.
+4. Before execution, **ArgumentParser** validates and resolves project identifiers (if applicable), converting indices or names into Project objects.
+5. The Command executes with validated arguments and displays results through ConsoleUi.
+6. Exceptions are caught and handled gracefully, displaying user-friendly error messages.
+
+**Design Rationale:**
+
+- **Separation of Concerns**: CommandParser handles syntax, ArgumentParser handles semantics, CommandHandler orchestrates the flow.
+- **Reusability**: ArgumentParser is used by multiple commands that need project resolution.
+- **Extensibility**: New commands can be added by extending the CommandType enum and Command base class.
+- **Error Handling**: Validation happens early in the pipeline, preventing invalid state changes.
+
+**Example Flow:**
+
+```
+User input: "add-task 1 Fix bug --priority high"
+↓
+CommandParser: type=ADD_TASK, args="1 Fix bug --priority high"
+↓
+ArgumentParser: projectIndex=1 → resolves to Project("CS2113T"), remaining="Fix bug --priority high"
+↓
+AddCommand: validates and adds task to project
+↓
+ConsoleUi: displays confirmation
+```
+
+---
 
 #### Task Management features by [Zing Jen](team/zingjen.md)
 
@@ -196,11 +242,20 @@ Here is a sequence diagram illustrating the process:
 
 ![CreateCommandSequenceDiagram](plantUML/project-management/CreateCommandDiagram.png)
 
-#### Common Classes
+#### Common Classes by [Zhenzhao](team/zhenzhao.md)
 
-##### Project and ProjectList classes
+The core data model of FlowCLI consists of four fundamental classes that represent the domain entities and their relationships. These classes form the foundation upon which all features are built.
+
+##### Project, ProjectList, Task, and TaskList classes
 
 ![ProjectRelationshipDiagram](plantUML/project-management/ProjectClassDiagram.png)
+
+**Class Relationships:**
+- **ProjectList** contains multiple **Project** instances
+- Each **Project** contains a **TaskList**
+- Each **TaskList** contains multiple **Task** instances
+
+This hierarchical structure allows for organized task management within distinct projects, with clear ownership and encapsulation of responsibilities.
 
 #### Project class
 
@@ -393,33 +448,77 @@ private boolean shouldUseInteractiveMode(CommandParser.ParsedCommand parsed) {
 
 **Decision Rationale**: Interactive mode is triggered for main commands with empty arguments, preserving backward compatibility.
 
-#### Task Status Display System by [Zhen Zhao](team/zhenzhao.md)
+#### Status Display System by [Zhenzhao](team/zhenzhao.md)
 
-Tasks display completion status using visual markers:
+The status display system provides users with visual feedback on project progress through completion tracking, progress bars, and motivational messages. It separates analysis logic from presentation concerns for maintainability.
+
+##### Architecture Overview
+
+![Status Display System Class Diagram](plantUML/status-display-system/status-display-class-diagram.png)
+
+**Key Components:**
+
+- **StatusCommand** - Entry point that parses arguments and coordinates status display
+- **ProjectStatusAnalyzer** - Pure analysis logic that calculates completion statistics
+- **ProjectStatus** - Immutable data transfer object holding project statistics
+- **ConsoleUi** - Renders status information with progress bars and messages
+
+**Design Principles:**
+
+- **Separation of Concerns**: Analysis logic (ProjectStatusAnalyzer) is separate from UI rendering (ConsoleUi)
+- **Data Transfer Objects**: ProjectStatus acts as an immutable container for statistics
+- **Single Responsibility**: Each class has one clear purpose in the status display pipeline
+
+##### Status Command Execution Flow
+
+![Status Command Sequence Diagram](plantUML/status-command-sequence/Status-command-sequence-diagram.png)
+
+**Implementation Details:**
+
+1. **StatusCommand** receives arguments (project index or `--all` flag)
+2. **ArgumentParser** validates and resolves project identifiers (if specific project)
+3. **ProjectStatusAnalyzer** analyzes each project:
+   - Iterates through tasks in the project's TaskList
+   - Counts completed tasks (where `isDone() == true`)
+   - Calculates completion percentage
+   - Returns a ProjectStatus data object
+4. **ConsoleUi** renders the status information:
+   - Formats status summary (e.g., "3/5 tasks completed, 60%")
+   - Generates visual progress bar: `[=========>      ] 60%`
+   - Selects motivational message based on completion percentage
+   - Displays formatted output to user
+
+**Task Status Markers:**
+
+Individual tasks display completion status using visual markers in list views:
 
 ```java
 public String marker() {
     return isDone ? "[X]" : "[ ]";
-}
-
-public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(marker()).append(" ").append(description);
-    if (deadline != null) {
-        sb.append(" (Due: ").append(deadline).append(")");
-    }
-    sb.append(" [").append(getPriorityString()).append("]");
-    return sb.toString();
 }
 ```
 
 **Display Example**:
 
 ```
-1. [X] Implement login feature (Due: Dec 31, 2024) [high]
-2. [ ] Write unit tests [medium]
-3. [ ] Fix bug in parser [low]
+CS2113T Project - Project Status
+3/5 tasks completed, 60%
+[========================>               ] 60%
+We are on the right track, keep completing your tasks!
 ```
+
+**Motivational Messages:**
+
+The system provides contextual encouragement based on progress:
+- ≤25%: "You are kinda cooked, start doing your tasks!"
+- ≤50%: "You gotta lock in and finish all tasks!"
+- ≤75%: "We are on the right track, keep completing your tasks!"
+- >75%: "We are finishing all tasks!! Upzzz!"
+
+**Status Types:**
+
+1. **Single Project Status** (`status <projectIndex>`): Shows detailed status for one project
+2. **All Projects Status** (`status --all`): Shows summary status for all projects in a compact format
 
 #### Interactive Command Flows by [Yao Xiang](team/yxiang-828.md)
 
@@ -589,7 +688,7 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 
 ---
 
-## Non-Functional Requirements by [Zhen Zhao](team/zhenzhao.md)
+## Non-Functional Requirements by [Zhenzhao](team/zhenzhao.md)
 
 1. **Performance**
    - The application should respond to user commands within 500ms under normal operating conditions.

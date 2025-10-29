@@ -24,6 +24,7 @@ public class ConsoleUi {
         this.projects = projects;
     }
 
+    //@@author Zhenzha0
     public void printLine() {
         System.out.println("____________________________________________________________");
     }
@@ -41,6 +42,7 @@ public class ConsoleUi {
         System.out.println("Bye. Hope to see you again soon!");
         printLine();
     }
+    //@@author
 
     public void showMarked(String projectName, Task t, boolean nowDone) {
         printLine();
@@ -224,6 +226,7 @@ public class ConsoleUi {
         printLine();
     }
 
+    //@@author Zhenzha0
     /**
      * Displays the status of a single project with progress bar and
      * motivational message.
@@ -340,6 +343,7 @@ public class ConsoleUi {
             return "We are finishing all tasks!! Upzzz!";
         }
     }
+    //@@author
 
     /**
      * Displays an error message to the user with consistent formatting.
