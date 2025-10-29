@@ -10,7 +10,7 @@ As the technical lead for the foundational architecture, I was responsible for d
 
 ### Code Contributed
 
-[RepoSense Link to my code contributions](https://nus-cs2113-ay2526s1.github.io/tp-dashboard/?search=zhenzha0&breakdown=true&sort=groupTitle%20dsc&sortWithin=title&since=2024-09-20&timeframe=commit&mergegroup=&groupSelect=groupByRepos&checkedFileTypes=docs~functional-code~test-code~other)
+[RepoSense Link to my code contributions](https://nus-cs2113-ay2526s1.github.io/tp-dashboard/?search=zhenzha0&breakdown=true&sort=groupTitle%20dsc&sortWithin=title&since=2025-09-19T00%3A00%3A00&timeframe=commit&mergegroup=&groupSelect=groupByRepos&checkedFileTypes=docs~functional-code~test-code~other&filteredFileName=)
 
 ### Enhancements Implemented
 
@@ -60,20 +60,17 @@ As the technical lead for the foundational architecture, I was responsible for d
 
 ### Contributions to the User Guide
 
-- **Important Notes Section**: Added critical data persistence warnings to help users understand FlowCLI's memory-only storage model [\[UG Section\]](../UserGuide.md#important-notes)
-- **Common Workflows Section**: Created practical workflow examples demonstrating command combinations for daily task review, weekly planning, project cleanup, and custom reports [\[UG Section\]](../UserGuide.md#common-workflows)
-- **Enhanced Troubleshooting Section**: Expanded troubleshooting coverage with detailed solutions for 7 common error scenarios [\[UG Section\]](../UserGuide.md#troubleshooting)
-- **Tips and Best Practices Section**: Authored comprehensive best practices covering workflow optimization, command usage, task management strategies, and export strategies [\[UG Section\]](../UserGuide.md#tips-and-best-practices)
-- **Export File Format Example**: Added visual example showing users what exported files look like [\[UG Section\]](../UserGuide.md#export-tasks-export-tasks-filenametxt-projectindex-filter-tasks---priority-value-sort-tasks---deadlinepriority-order-or-export-interactive-mode)
+- Added Important Notes section with data persistence warnings
+- Created Common Workflows section with practical command combination examples
+- Expanded Troubleshooting section with solutions for common error scenarios
+- Authored Tips and Best Practices section for workflow optimization
+- Added export file format example
 
 ### Contributions to the Developer Guide
 
-- **Command Processing Infrastructure Section**: Documented the complete command processing architecture, including design rationale, implementation details, and sequence diagrams [\[DG Section\]](../DeveloperGuide.md#command-processing-infrastructure)
-  - Created sequence diagram illustrating command processing flow from user input to execution
-- **Status Display System Section**: Provided in-depth documentation of the status feature architecture, including class diagrams and execution flow [\[DG Section\]](../DeveloperGuide.md#status-display-system)
-  - Created class diagram showing relationships between `StatusCommand`, `ProjectStatusAnalyzer`, and UI components
-  - Created sequence diagram illustrating status command execution flow
-- **Common Classes Section**: Documented the core data models (`Project`, `ProjectList`, `Task`, `TaskList`) and their relationships [\[DG Section\]](../DeveloperGuide.md#common-classes)
+- Documented Command Processing Infrastructure section with architecture design and sequence diagram
+- Documented Status Display System section with class diagram and execution flow
+- Documented Common Classes section covering core data models
 
 ### Contributions to Team-Based Tasks
 
@@ -176,12 +173,13 @@ public static ProjectStatus analyzeProject(Project project) {
 
 **Display Features:**
 
-1. **Progress Bar**: Visual representation using ASCII characters (█ for completed, ░ for incomplete)
+1. **Progress Bar**: Visual representation using ASCII characters (`[=====>     ]` format with percentage)
 2. **Completion Percentage**: Numerical progress indicator
 3. **Motivational Messages**: Context-aware messages based on completion level:
-   - 0%: "Just getting started! Every journey begins with a single step."
-   - 50%: "Halfway there! Keep up the great work!"
-   - 100%: "Amazing work! All tasks completed! 🎉"
+   - ≤25%: "You are kinda cooked, start doing your tasks!"
+   - ≤50%: "You gotta lock in and finish all tasks!"
+   - ≤75%: "We are on the right track, keep completing your tasks!"
+   - >75%: "We are finishing all tasks!! Upzzz!"
 
 ---
 
