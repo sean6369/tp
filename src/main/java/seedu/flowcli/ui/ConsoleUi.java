@@ -4,11 +4,11 @@ import java.util.List;
 
 import seedu.flowcli.commands.utility.ProjectStatusAnalyzer;
 import seedu.flowcli.commands.utility.ProjectStatusAnalyzer.ProjectStatus;
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
 import seedu.flowcli.task.TaskWithProject;
-import seedu.flowcli.exceptions.IndexOutOfRangeException;
 
 /**
  * Handles all user interface interactions for the FlowCLI application. This
@@ -153,6 +153,7 @@ public class ConsoleUi {
         printLine();
     }
 
+    //@@author zeeeing
     public void showHelp() {
         printLine();
         System.out.println("Available Commands:\n");
@@ -226,13 +227,13 @@ public class ConsoleUi {
         printLine();
     }
 
-    //@@author Zhenzha0
     /**
      * Displays the status of a single project with progress bar and
      * motivational message.
      *
      * @param project The project to display status for
      */
+    //@@author Zhenzha0
     public void showProjectStatus(Project project) {
         printLine();
 
@@ -356,7 +357,8 @@ public class ConsoleUi {
     }
 
     /**
-     * Displays an unexpected error message to the user with consistent formatting.
+     * Displays an unexpected error message to the user with consistent
+     * formatting.
      *
      * @param message The error message to display
      */
@@ -368,7 +370,8 @@ public class ConsoleUi {
     }
 
     /**
-     * Displays a generic unexpected error message to the user with consistent formatting.
+     * Displays a generic unexpected error message to the user with consistent
+     * formatting.
      */
     public void showUnexpectedError() {
         printLine();
