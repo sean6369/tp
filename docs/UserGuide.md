@@ -401,6 +401,8 @@ Now explore FlowCLI's full capabilities:
 **Q**: What's the difference between inline commands and interactive mode?
 **A**: Inline commands require you to type the full command with all arguments (e.g., `add-task 1 "Buy groceries" --priority high`). Interactive mode lets you type just the command name (e.g., `add`) and then guides you through each required input step-by-step. Both modes do exactly the same thing - choose whichever you prefer!
 
+
+
 ## Command Summary
 
 | Action            | Format                                                                                                               | Example                                                               |
