@@ -4,6 +4,7 @@ import seedu.flowcli.commands.core.CommandHandler;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
 
+//@@author Zhenzha0
 public class FlowCLI {
     private final ProjectList projects;
     private final ConsoleUi ui;
@@ -24,3 +25,4 @@ public class FlowCLI {
         new FlowCLI().run();
     }
 }
+//@@author

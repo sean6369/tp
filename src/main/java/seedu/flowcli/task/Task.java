@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
  * Represents a basic task with a description and completion status.
  * This is the abstract base class for all task types in the application.
  */
+//@@author Zhenzha0
 public class Task {
     protected String description;
     protected boolean isDone;
@@ -98,3 +99,4 @@ public class Task {
     }
 
 }
+//@@author

@@ -10,6 +10,7 @@ import seedu.flowcli.exceptions.IndexOutOfRangeException;
  * Manages a collection of tasks.
  * Provides methods to add, remove, mark, and retrieve tasks.
  */
+//@@author Zhenzha0
 public class TaskList {
     private final List<Task> tasks = new ArrayList<>();
 
@@ -95,3 +96,4 @@ public class TaskList {
         return sb.toString();
     }
 }
+//@@author
