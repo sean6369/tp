@@ -1,0 +1,8 @@
+title: FlowCLI
+description: A fast, minimal CLI project task manager for efficient task and project management
+
+theme: jekyll-theme-minimal
+
+logo: /images/logos/FlowCLI-Logo.png
+
+markdown: kramdown
