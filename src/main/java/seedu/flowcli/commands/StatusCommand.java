@@ -1,8 +1,9 @@
 package seedu.flowcli.commands;
 
 import seedu.flowcli.commands.core.CommandContext;
+import seedu.flowcli.exceptions.EmptyProjectListException;
 import seedu.flowcli.exceptions.IndexOutOfRangeException;
-import seedu.flowcli.exceptions.InvalidArgumentException;
+import seedu.flowcli.exceptions.InvalidIndexFormatException;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
@@ -23,6 +24,10 @@ public class StatusCommand extends Command {
             throw new MissingArgumentException();
         }
 
+        if (context.getProjects().isEmpty()) {
+            throw new EmptyProjectListException();
+        }
+
         if ("--all".equalsIgnoreCase(trimmedArguments)) {
             context.getUi().showAllProjectsStatus(context.getProjects());
             return true;
@@ -41,8 +46,7 @@ public class StatusCommand extends Command {
         }
 
         if (parsedArgument.hasNonNumericProjectToken()) {
-            throw new InvalidArgumentException(
-                    String.format(ArgumentParser.INVALID_PROJECT_INDEX_MESSAGE, parsedArgument.getParsedProjectName()));
+            throw new InvalidIndexFormatException(parsedArgument.getParsedProjectName(), "project");
         }
 
         // No arguments provided - should not happen as interactive mode handles
@@ -51,3 +55,4 @@ public class StatusCommand extends Command {
         return true;
     }
 }
+//@@author

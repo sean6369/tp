@@ -3,6 +3,10 @@ package seedu.flowcli.project;
 import java.util.ArrayList;
 import java.util.List;
 
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
+import seedu.flowcli.exceptions.ProjectNotFoundException;
+
+//@@author Zhenzha0
 public class ProjectList {
     private final List<Project> projects = new ArrayList<>();
 
@@ -10,7 +14,10 @@ public class ProjectList {
         projects.add(new Project(projectName));
     }
 
-    public Project delete(int zeroBasedIndex) {
+    public Project delete(int zeroBasedIndex) throws IndexOutOfRangeException {
+        if (zeroBasedIndex < 0 || zeroBasedIndex >= projects.size()) {
+            throw new IndexOutOfRangeException(projects.size());
+        }
         Project returnProject = projects.get(zeroBasedIndex);
         projects.remove(zeroBasedIndex);
         return returnProject;
@@ -22,7 +29,10 @@ public class ProjectList {
         return removedProject;
     }
 
-    public Project getProjectByIndex(int zeroBasedIndex) {
+    public Project getProjectByIndex(int zeroBasedIndex) throws IndexOutOfRangeException {
+        if (zeroBasedIndex < 0 || zeroBasedIndex >= projects.size()) {
+            throw new IndexOutOfRangeException(projects.size());
+        }
         return projects.get(zeroBasedIndex);
     }
 
@@ -34,14 +44,14 @@ public class ProjectList {
         return projects.size();
     }
 
-    public Project getProject(String projectName) {
+    public Project getProject(String projectName) throws ProjectNotFoundException {
         for (Project project : projects) {
             if (project.getProjectName().equalsIgnoreCase(projectName)) {
                 return project;
             }
         }
 
-        return null;
+        throw new ProjectNotFoundException(projectName);
     }
 
     public boolean isEmpty() {
@@ -58,3 +68,4 @@ public class ProjectList {
     }
 
 }
+//@@author

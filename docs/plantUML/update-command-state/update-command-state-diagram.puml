@@ -1,5 +1,4 @@
 @startuml Update Command State Diagram
-!theme plain
 
 [*] --> ProjectSelection
 ProjectSelection --> [*] : Cancelled

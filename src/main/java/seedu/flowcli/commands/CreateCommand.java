@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.exceptions.ProjectAlreadyExistsException;
+import seedu.flowcli.exceptions.ProjectNotFoundException;
 
 public class CreateCommand extends Command {
     private static final Logger logger = Logger.getLogger(CreateCommand.class.getName());
@@ -25,9 +26,12 @@ public class CreateCommand extends Command {
             throw new MissingArgumentException();
         }
 
-        if (context.getProjects().getProject(name) != null) {
+        try {
+            context.getProjects().getProject(name);
             logger.warning(() -> "Project already exists for input args: \"" + arguments + "\"");
-            throw new ProjectAlreadyExistsException();
+            throw new ProjectAlreadyExistsException(name);
+        } catch (ProjectNotFoundException e) {
+            // Project doesn't exist, which is what we want - continue with creation
         }
 
         logger.info(() -> "Creating project: \"" + name + "\"");

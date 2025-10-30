@@ -1,0 +1,120 @@
+@startuml Status Display System Class Diagram
+title Status Display System - Class Structure
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam monochrome true
+
+class StatusCommand {
+  - String arguments
+  --
+  + StatusCommand(String arguments)
+  + boolean execute(CommandContext context)
+  --
+  Validates arguments and coordinates
+  status display for single project
+  or all projects
+}
+
+class ProjectStatusAnalyzer {
+  --
+  {static} + ProjectStatus analyzeProject(Project project)
+  --
+  Analyzes project completion
+  and calculates statistics
+}
+
+class ProjectStatus <<inner class>> {
+  - String projectName
+  - int totalTasks
+  - int completedTasks
+  - double percentage
+  --
+  + ProjectStatus(String name, int total, int completed)
+  + String getProjectName()
+  + int getTotalTasks()
+  + int getCompletedTasks()
+  + double getPercentage()
+  + boolean hasNoTasks()
+  --
+  Data class holding
+  project statistics
+}
+
+class ConsoleUi {
+  - ProjectList projects
+  --
+  + showProjectStatus(Project project)
+  + showAllProjectsStatus(ProjectList projectList)
+  - formatStatusSummary(ProjectStatus status): String
+  - generateProgressBar(double percentage): String
+  - getMotivationalMessage(double percentage): String
+  --
+  Renders status information
+  with progress bars and messages
+}
+
+class Project {
+  - String projectName
+  - TaskList projectTasks
+  --
+  + String getProjectName()
+  + TaskList getProjectTasks()
+  + int size()
+  --
+  Project entity
+}
+
+class Task {
+  - boolean isDone
+  - String description
+  --
+  + boolean isDone()
+  --
+  Task entity
+}
+
+class TaskList {
+  - List<Task> tasks
+  --
+  + List<Task> getTasks()
+  --
+  Task collection
+}
+
+' Relationships
+StatusCommand ..> ProjectStatusAnalyzer : uses
+StatusCommand ..> ConsoleUi : uses
+ProjectStatusAnalyzer ..> ProjectStatus : creates
+ProjectStatusAnalyzer ..> Project : analyzes
+ConsoleUi ..> ProjectStatusAnalyzer : uses
+ConsoleUi ..> ProjectStatus : displays
+Project *-- TaskList : contains
+TaskList *-- Task : contains
+
+ProjectStatus --+ ProjectStatusAnalyzer : nested in
+
+note top of StatusCommand
+  Entry point for status command
+  Parses --all flag or project index
+end note
+
+note right of ProjectStatusAnalyzer
+  Pure analysis logic
+  No UI concerns
+  Returns data objects
+end note
+
+note bottom of ConsoleUi
+  UI rendering logic only
+  Progress bar: [=========>      ] 50%
+  Motivational messages
+end note
+
+note left of ProjectStatus
+  Immutable data transfer object
+  Calculated percentage on construction
+end note
+
+@enduml
+

@@ -1,5 +1,4 @@
 @startuml InteractivePromptHandler Class Diagram
-!theme plain
 
 class InteractivePromptHandler {
     -ProjectList projects

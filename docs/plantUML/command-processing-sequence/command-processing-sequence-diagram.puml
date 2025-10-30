@@ -1,0 +1,45 @@
+@startuml Command Processing Sequence Diagram
+
+actor User
+participant ConsoleUi
+participant CommandHandler
+participant InteractivePromptHandler
+participant CommandFactory
+participant Command
+
+User -> ConsoleUi: enters command (e.g., "add")
+activate ConsoleUi
+ConsoleUi -> CommandHandler: resolveCommand(input)
+activate CommandHandler
+CommandHandler -> CommandHandler: parse command type
+
+alt Interactive Mode Required
+    CommandHandler -> InteractivePromptHandler: handleInteractiveCommand()
+    activate InteractivePromptHandler
+    InteractivePromptHandler -> User: prompt for project selection
+    User -> InteractivePromptHandler: selects project
+    InteractivePromptHandler -> User: prompt for description
+    User -> InteractivePromptHandler: enters description
+    InteractivePromptHandler -> User: prompt for priority
+    User -> InteractivePromptHandler: selects priority
+    InteractivePromptHandler -> User: prompt for deadline
+    User -> InteractivePromptHandler: enters deadline
+    InteractivePromptHandler --> CommandHandler: return constructed args
+    deactivate InteractivePromptHandler
+else Normal Mode
+    CommandHandler -> CommandHandler: parse arguments normally
+end
+
+CommandHandler -> CommandFactory: createCommand(type, args)
+activate CommandFactory
+CommandFactory -> Command: new Command(args)
+activate Command
+CommandFactory --> CommandHandler: return Command
+deactivate CommandFactory
+CommandHandler -> Command: execute()
+Command -> ConsoleUi: return result
+deactivate Command
+ConsoleUi --> User: display result
+deactivate ConsoleUi
+
+@enduml

@@ -4,10 +4,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
+
 /**
  * Manages a collection of tasks.
  * Provides methods to add, remove, mark, and retrieve tasks.
  */
+//@@author Zhenzha0
 public class TaskList {
     private final List<Task> tasks = new ArrayList<>();
 
@@ -27,23 +30,32 @@ public class TaskList {
         return tasks.isEmpty();
     }
 
-    public Task get(int zeroBasedIndex) {
+    private void validateIndex(int zeroBasedIndex) throws IndexOutOfRangeException {
+        if (zeroBasedIndex < 0 || zeroBasedIndex >= tasks.size()) {
+            throw new IndexOutOfRangeException(tasks.size());
+        }
+    }
+
+    public Task get(int zeroBasedIndex) throws IndexOutOfRangeException {
+        validateIndex(zeroBasedIndex);
         return tasks.get(zeroBasedIndex);
     }
 
-    public void mark(int zeroBasedIndex) {
+    public void mark(int zeroBasedIndex) throws IndexOutOfRangeException {
+        validateIndex(zeroBasedIndex);
         tasks.get(zeroBasedIndex).mark();
     }
 
-    public void unmark(int zeroBasedIndex) {
+    public void unmark(int zeroBasedIndex) throws IndexOutOfRangeException {
+        validateIndex(zeroBasedIndex);
         tasks.get(zeroBasedIndex).unmark();
     }
 
-    public Task delete(int zeroBasedIndex) {
+    public Task delete(int zeroBasedIndex) throws IndexOutOfRangeException {
+        validateIndex(zeroBasedIndex);
         Task returnTask = tasks.get(zeroBasedIndex);
         tasks.remove(zeroBasedIndex);
         return returnTask;
-
     }
 
     public List<Task> getTasks() {
@@ -84,3 +96,4 @@ public class TaskList {
         return sb.toString();
     }
 }
+//@@author

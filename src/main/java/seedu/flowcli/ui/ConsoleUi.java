@@ -4,6 +4,7 @@ import java.util.List;
 
 import seedu.flowcli.commands.utility.ProjectStatusAnalyzer;
 import seedu.flowcli.commands.utility.ProjectStatusAnalyzer.ProjectStatus;
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
@@ -23,6 +24,7 @@ public class ConsoleUi {
         this.projects = projects;
     }
 
+    //@@author Zhenzha0
     public void printLine() {
         System.out.println("____________________________________________________________");
     }
@@ -40,6 +42,7 @@ public class ConsoleUi {
         System.out.println("Bye. Hope to see you again soon!");
         printLine();
     }
+    //@@author
 
     public void showMarked(String projectName, Task t, boolean nowDone) {
         printLine();
@@ -61,16 +64,26 @@ public class ConsoleUi {
     public void showAddedProject() {
         printLine();
         System.out.println("Got it. I've added this project: ");
-        System.out.println(projects.getProjectList().get(projects.getProjectListSize() - 1));
-        showCurrentProjectListSize();
+        int size = projects.getProjectListSize();
+        if (size > 0) {
+            System.out.println(projects.getProjectList().get(size - 1));
+            showCurrentProjectListSize();
+        } else {
+            System.out.println("[Error: No projects found]");
+        }
         printLine();
     }
 
-    public void showAddedTask(Project targetProject) {
+    public void showAddedTask(Project targetProject) throws IndexOutOfRangeException {
         printLine();
         System.out.println("Got it. I've added this task in " + targetProject.getProjectName() + " : ");
-        System.out.println(targetProject.getProjectTasks().get(targetProject.getProjectTasks().size() - 1));
-        showCurrentTaskListSize(targetProject);
+        int taskSize = targetProject.getProjectTasks().size();
+        if (taskSize > 0) {
+            System.out.println(targetProject.getProjectTasks().get(taskSize - 1));
+            showCurrentTaskListSize(targetProject);
+        } else {
+            System.out.println("[Error: No tasks found]");
+        }
         printLine();
     }
 
@@ -97,6 +110,7 @@ public class ConsoleUi {
         printLine();
     }
 
+    //@@author zeeeing
     public void showProjectList() {
         printLine();
         System.out.println("Here is your list of projects:");
@@ -107,8 +121,8 @@ public class ConsoleUi {
             return;
         }
 
-        for (int taskIdx = 0; taskIdx < projects.getProjectListSize(); taskIdx++) {
-            Project project = projects.getProjectByIndex(taskIdx);
+        int taskIdx = 0;
+        for (Project project : projects.getProjectList()) {
             System.out.println((taskIdx + 1) + ". " + project.getProjectName());
 
             String tasks = project.showAllTasks();
@@ -120,10 +134,12 @@ public class ConsoleUi {
                     }
                 }
             }
+            taskIdx++;
         }
 
         printLine();
     }
+    //@@author
 
     public void showTaskList(Project targetProject) {
         printLine();
@@ -139,6 +155,7 @@ public class ConsoleUi {
         printLine();
     }
 
+    //@@author zeeeing
     public void showHelp() {
         printLine();
         System.out.println("Available Commands:\n");
@@ -175,6 +192,7 @@ public class ConsoleUi {
         System.out.println(" " + command);
         System.out.println("  - " + description + "\n");
     }
+    //@@author
 
     public void showGlobalSortedTasks(List<TaskWithProject> tasks, String field, String order) {
         printLine();
@@ -218,6 +236,7 @@ public class ConsoleUi {
      *
      * @param project The project to display status for
      */
+    //@@author Zhenzha0
     public void showProjectStatus(Project project) {
         printLine();
 
@@ -327,5 +346,39 @@ public class ConsoleUi {
         } else {
             return "We are finishing all tasks!! Upzzz!";
         }
+    }
+    //@@author
+
+    /**
+     * Displays an error message to the user with consistent formatting.
+     *
+     * @param message The error message to display
+     */
+    public void showError(String message) {
+        System.out.println(message);
+        printLine();
+    }
+
+    /**
+     * Displays an unexpected error message to the user with consistent
+     * formatting.
+     *
+     * @param message The error message to display
+     */
+    public void showUnexpectedError(String message) {
+        printLine();
+        System.out.println("An unexpected error occurred: " + message);
+        System.out.println("Please try again.");
+        printLine();
+    }
+
+    /**
+     * Displays a generic unexpected error message to the user with consistent
+     * formatting.
+     */
+    public void showUnexpectedError() {
+        printLine();
+        System.out.println("An unexpected error occurred. Please try again.");
+        printLine();
     }
 }

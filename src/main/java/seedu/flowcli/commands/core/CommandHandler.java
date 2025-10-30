@@ -1,19 +1,23 @@
 package seedu.flowcli.commands.core;
 
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import seedu.flowcli.commands.Command;
+import seedu.flowcli.exceptions.FlowCLIException;
 import seedu.flowcli.parsers.CommandParser;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
 
 public class CommandHandler {
+    private static final Logger logger = Logger.getLogger(CommandHandler.class.getName());
     private final ConsoleUi ui;
     private final CommandParser parser;
     private final CommandFactory factory;
     private final CommandContext context;
     private InteractivePromptHandler interactiveHandler;
 
+    //@@author Zhenzha0
     public CommandHandler(ProjectList projects, ConsoleUi ui) {
         this.ui = ui;
         ExportCommandHandler exportHandler = new ExportCommandHandler(projects, ui);
@@ -37,7 +41,7 @@ public class CommandHandler {
                     ui.printLine();
                     continue;
                 }
-
+                //@@author
                 Command command = resolveCommand(line, scanner);
                 if (command == null) {
                     // Interactive mode was cancelled, continue to next input
@@ -45,9 +49,13 @@ public class CommandHandler {
                 }
                 try {
                     shouldContinue = command.execute(context);
+                } catch (FlowCLIException e) {
+                    // Expected application errors - show user-friendly message
+                    ui.showError(e.getMessage());
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                    ui.printLine();
+                    // Unexpected errors - log for debugging and show generic message
+                    logger.log(java.util.logging.Level.SEVERE, "Unexpected error: " + e.getMessage(), e);
+                    ui.showUnexpectedError();
                 }
             }
         } finally {
@@ -80,6 +88,7 @@ public class CommandHandler {
      * @param parsed The parsed command
      * @return true if interactive mode should be triggered
      */
+    //@@author Yxiang-828 zeeeing
     private boolean shouldUseInteractiveMode(CommandParser.ParsedCommand parsed) {
         // Trigger interactive mode for main commands with minimal/no arguments
         switch (parsed.getType()) {

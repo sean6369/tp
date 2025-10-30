@@ -1,5 +1,4 @@
 @startuml Create Command State Diagram
-!theme plain
 
 [*] --> NameInput
 NameInput --> [*] : Cancelled/Empty
