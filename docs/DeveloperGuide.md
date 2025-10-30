@@ -29,7 +29,7 @@ We also acknowledge:
   - [Data Processing](#data-processing)
     - [Task Sorting Algorithm](#task-sorting-algorithm-by-yao-xiang)
     - [Task Filtering Algorithm](#task-filtering-algorithm-by-yao-xiang)
-- [Data Persistence](#data-persistence-by-sean-lee)
+  - [Data Persistence](#data-persistence-by-sean-lee)
   - [User Interface](#user-interface)
     - [Interactive Mode](#interactive-mode-by-yao-xiang)
     - [Status Display System](#status-display-system-by-zhenzhao)
