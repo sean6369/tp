@@ -14,7 +14,9 @@ FlowCLI is a Command Line Interface (CLI) app for managing tasks and projects, o
    ```
    java -jar flowcli.jar
    ```
-4. Type `help` to see the list of commands. FlowCLI will read commands until you enter `bye`. You can use either inline commands (full syntax) or interactive mode (just type the command name for guided input).
+4. You will see flowCLIs greetings, then you may begin typing the commands
+5. Type `help` to see the list of commands.
+6. FlowCLI will read commands until you enter `bye`. You can use either inline commands (full syntax) or interactive mode (just type the command name for guided input).
 
 Projects and tasks exist only for the current session. Use the export feature to save a snapshot if you need to keep a record.
 
@@ -398,6 +400,8 @@ Now explore FlowCLI's full capabilities:
 
 **Q**: What's the difference between inline commands and interactive mode?
 **A**: Inline commands require you to type the full command with all arguments (e.g., `add-task 1 "Buy groceries" --priority high`). Interactive mode lets you type just the command name (e.g., `add`) and then guides you through each required input step-by-step. Both modes do exactly the same thing - choose whichever you prefer!
+
+
 
 ## Command Summary
 
