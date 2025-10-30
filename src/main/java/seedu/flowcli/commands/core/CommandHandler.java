@@ -88,6 +88,7 @@ public class CommandHandler {
      * @param parsed The parsed command
      * @return true if interactive mode should be triggered
      */
+    //@@author Yxiang-828 zeeeing
     private boolean shouldUseInteractiveMode(CommandParser.ParsedCommand parsed) {
         // Trigger interactive mode for main commands with minimal/no arguments
         switch (parsed.getType()) {
