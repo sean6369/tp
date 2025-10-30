@@ -12,7 +12,9 @@ FlowCLI is a Command Line Interface (CLI) app for managing tasks and projects, o
    ```
    java -jar flowcli.jar
    ```
-4. Type `help` to see the list of commands. FlowCLI will read commands until you enter `bye`.
+4. You will see flowCLIs greetings, then you may begin typing the commands
+5. Type `help` to see the list of commands.
+6. FlowCLI will read commands until you enter `bye`.
 
 Projects and tasks exist only for the current session. Use the export feature to save a snapshot if you need to keep a record.
 
@@ -133,6 +135,8 @@ Saves tasks to a plain-text file.
 
 **Q**: Why do I get an error about an invalid index?  
 **A**: Project and task indices must be valid numbers corresponding to the lists. Use `list --all` to see project indices and `list <projectIndex>` for task indices.
+
+
 
 ## Command Summary
 
