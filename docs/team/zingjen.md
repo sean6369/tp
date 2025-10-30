@@ -22,7 +22,7 @@ FlowCLI is a Command Line Interface (CLI) app for managing tasks and projects, o
 
   - **What it does:** This foundational work created a stable, scalable, and maintainable codebase. It allows for new features to be added easily and ensures the application runs efficiently. The refactoring of all inline commands unified their structure and behavior, providing a consistent user experience.
   - **Justification:** The original codebase was highly coupled and difficult to extend. My contributions introduced a clear separation of concerns, implemented design patterns, and drastically improved code quality. This was crucial for the project's success, as it unblocked further development and reduced the likelihood of bugs.
-  - **Highlights:** A key achievement was the complete refactoring of all inline commands. This involved creating a more abstract and flexible command processing system, which was a complex task requiring changes throughout the application. My focus was always on writing clean, well-documented, and thoroughly tested code.
+  - **Highlights:** A key achievement was the complete refactoring of all inline commands, which involved creating a more abstract and flexible command processing system. I also led the major refactoring of going from using `projectName` to `projectIndex` for all commands, which significantly improved performance and usability. My focus was always on writing clean, well-documented, and thoroughly tested code.
 
 - **Robust Testing Framework**: Established and maintained a comprehensive testing suite.
 
@@ -143,7 +143,7 @@ The `add-task` command allows users to add a new task to a specified project. Us
 
 The following sequence diagram illustrates the process of adding a task:
 
-![AddTaskSequenceDiagram](plantUML/task-management/add-task-seq-diag.png)
+![AddTaskSequenceDiagram](../plantUML/task-management/add-task-seq-diag.png)
 
 **Implementation Details**:
 
@@ -164,7 +164,7 @@ The `update-task` command modifies the attributes of an existing task, such as i
 
 The update process is shown below:
 
-![UpdateTaskSequenceDiagram](plantUML/task-management/update-task-seq-diag.png)
+![UpdateTaskSequenceDiagram](../plantUML/task-management/update-task-seq-diag.png)
 
 **Implementation Details**:
 
