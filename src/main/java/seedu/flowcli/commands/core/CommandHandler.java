@@ -17,6 +17,7 @@ public class CommandHandler {
     private final CommandContext context;
     private InteractivePromptHandler interactiveHandler;
 
+    //@@author Zhenzha0
     public CommandHandler(ProjectList projects, ConsoleUi ui) {
         this.ui = ui;
         ExportCommandHandler exportHandler = new ExportCommandHandler(projects, ui);
@@ -40,7 +41,7 @@ public class CommandHandler {
                     ui.printLine();
                     continue;
                 }
-
+                //@@author
                 Command command = resolveCommand(line, scanner);
                 if (command == null) {
                     // Interactive mode was cancelled, continue to next input
@@ -87,6 +88,7 @@ public class CommandHandler {
      * @param parsed The parsed command
      * @return true if interactive mode should be triggered
      */
+    //@@author Yxiang-828 zeeeing
     private boolean shouldUseInteractiveMode(CommandParser.ParsedCommand parsed) {
         // Trigger interactive mode for main commands with minimal/no arguments
         switch (parsed.getType()) {

@@ -1,0 +1,83 @@
+@startuml Command Processing Infrastructure Sequence
+title Command Processing Infrastructure
+autonumber
+
+actor User
+participant "FlowCLI" as Main
+participant "CommandHandler" as Handler
+participant "CommandParser" as Parser
+participant "ArgumentParser" as ArgParser
+participant "CommandFactory" as Factory
+participant "Command" as Cmd
+participant "ConsoleUi" as UI
+
+User -> Main: enters command string
+activate Main
+
+Main -> Handler: handleCommands()
+activate Handler
+
+Handler -> Handler: read input line
+Handler -> Parser: parse(line)
+activate Parser
+
+Parser -> Parser: split command word\nand arguments
+Parser -> Parser: match command word\nto CommandType
+Parser --> Handler: ParsedCommand(type, args)
+deactivate Parser
+
+Handler -> Factory: create(type, args)
+activate Factory
+Factory -> Cmd: new Command(args)
+activate Cmd
+Factory --> Handler: Command instance
+deactivate Factory
+
+Handler -> Cmd: execute(context)
+
+Cmd -> ArgParser: new ArgumentParser(args, projects)
+activate ArgParser
+ArgParser -> ArgParser: parseArgument()
+ArgParser -> ArgParser: extract project index\nor project name
+ArgParser -> ArgParser: validate and resolve\nto Project object
+ArgParser --> Cmd: targetProject,\nremainingArguments
+deactivate ArgParser
+
+Cmd -> Cmd: validate and\nprocess command logic
+Cmd -> UI: display result
+activate UI
+UI --> User: show output
+deactivate UI
+
+Cmd --> Handler: return boolean\n(continue/exit)
+deactivate Cmd
+
+Handler --> Main: command processed
+deactivate Handler
+deactivate Main
+
+note right of Parser
+  CommandParser responsibilities:
+  - Parse command word
+  - Extract arguments string
+  - Map to CommandType enum
+end note
+
+note right of ArgParser
+  ArgumentParser responsibilities:
+  - Parse project identifier
+  - Resolve to Project object
+  - Extract remaining arguments
+  - Validate project exists
+end note
+
+note right of Handler
+  CommandHandler responsibilities:
+  - Main command loop
+  - Coordinate parsing and execution
+  - Handle exceptions
+  - Manage scanner lifecycle
+end note
+
+@enduml
+
