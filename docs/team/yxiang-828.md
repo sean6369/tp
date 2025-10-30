@@ -46,7 +46,7 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 
 ### Contributions to team-based tasks
 
-- **Documentation Standards**: Ensured AB3 compliance by standardizing author attributions and UML diagram formatting across DeveloperGuide.md
+- **Documentation Standards**: Ensured AB3 compliance by standardizing author attributions and UML diagram formatting across `DeveloperGuide.md`
 - **Code Quality**: Fixed checkstyle violations and maintained coding standards throughout development
 - **Testing**: Added comprehensive JUnit tests and manual testing procedures
 
