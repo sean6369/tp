@@ -131,7 +131,7 @@ update-task 1 3 --deadline none
 
 The following is an extract from the `DeveloperGuide.md` that I contributed to.
 
-#### Task Management features by [Zing Jen](team/zingjen.md)
+#### Task Management features by [Zing Jen](./zeeeing.md)
 
 The task management system forms the core of FlowCLI, allowing users to create, track, and manage their work within different projects. The implementation follows the command pattern, where each user action is encapsulated in a dedicated command class.
 

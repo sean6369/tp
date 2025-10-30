@@ -41,7 +41,7 @@ Contributed to the maintainance as well as the testing of the commands and new f
 
 
 ##### Contributions to the Developer Guide (Extracts)
-#### Project Management features by [Xylon Chan](team/xylonchan.md)
+#### Project Management features by [Xylon Chan](./xylonc.md)
 
 ##### CreateCommand
 
