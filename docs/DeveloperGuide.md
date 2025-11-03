@@ -200,10 +200,19 @@ if (remaining != null && !remaining.trim().isEmpty()) {
 
 **Validation Flow:**
 
-1. **Parser layer**: `CommandParser` and `ArgumentParser` extract and validate basic structure (indices, project references, command syntax)
-2. **Command layer**: Commands use `CommandValidator` methods for domain-specific validation (priorities, dates, filters, sort options)
-3. **Pre-execution**: All validation occurs before model mutation to preserve data integrity
-4. **Error handling**: Commands propagate exceptions (do not catch); `CommandHandler` catches `FlowCLIException` and displays user-friendly messages via `ConsoleUi`
+The following sequence diagram illustrates the validation process, showing both success and exception paths:
+
+![Validation Framework Sequence Diagram](plantUML/validation-framework/validation-framework-sequence-diagram.png)
+
+The validation flow operates in 3 main layers:
+
+1. **Project Index layer**: `ArgumentParser.validateProjectIndex()` validates project index format and range (throws `MissingArgumentException`, `IndexOutOfRangeException`, `InvalidIndexFormatException`) - *always executed first*
+2. **Task Index layer**: `CommandParser.parseIndexOrNull()` validates task index format and range (throws `MissingIndexException`, `InvalidIndexFormatException`, `IndexOutOfRangeException`) - *only for commands that need task indices (Mark, Update, DeleteTask, Unmark)*
+3. **Domain layer**: Commands use `CommandValidator` methods for domain-specific validation (priorities, dates, filters, sort options) which reference `ValidationConstants` for valid values
+
+All exceptions propagate to `CommandHandler`, which catches `FlowCLIException` and displays user-friendly messages via `ConsoleUi`.
+
+**Pre-execution validation**: All validation occurs before model mutation to preserve data integrity.
 
 **Best Practices:**
 
