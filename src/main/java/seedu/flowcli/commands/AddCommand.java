@@ -37,6 +37,9 @@ public class AddCommand extends Command {
             throw new MissingDescriptionException();
         }
 
+        // Collect all validation errors first
+        StringBuilder errors = new StringBuilder();
+        
         for (int i = 1; i < parts.length; i++) {
             String option = parts[i].trim();
             if (option.startsWith("priority ")) {
@@ -46,10 +49,27 @@ public class AddCommand extends Command {
             } else if (option.startsWith("deadline ")) {
                 String dateStr = option.substring(9).trim();
                 deadline = CommandValidator.validateAndParseDate(dateStr);
+            } else if (option.equals("priority")) {
+                if (errors.length() > 0) {
+                    errors.append("\n");
+                }
+                errors.append("Priority value is empty. Use --priority <low|medium|high>.");
+            } else if (option.equals("deadline")) {
+                if (errors.length() > 0) {
+                    errors.append("\n");
+                }
+                errors.append("Deadline value is empty. Use --deadline <yyyy-mm-dd>.");
             } else {
-                throw new InvalidCommandSyntaxException("Unknown option: " + option + 
-                        ". Use --priority or --deadline.");
+                if (errors.length() > 0) {
+                    errors.append("\n");
+                }
+                errors.append("Unknown option: ").append(option).append(". Use --priority or --deadline.");
             }
+        }
+        
+        // Throw exception if any errors were found
+        if (errors.length() > 0) {
+            throw new InvalidCommandSyntaxException(errors.toString());
         }
 
         targetProject.addTask(description, deadline, priority);
