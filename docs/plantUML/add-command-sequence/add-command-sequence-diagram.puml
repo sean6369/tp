@@ -1,10 +1,10 @@
 @startuml Add Command Sequence Diagram
 
-actor User
-participant InteractivePromptHandler
-participant ProjectList
-participant Project
-participant Task
+actor "user: User" as User
+participant "handler: InteractivePromptHandler" as InteractivePromptHandler
+participant "projectList: ProjectList" as ProjectList
+participant "project: Project" as Project
+participant "task: Task" as Task
 
 User -> InteractivePromptHandler: types "add" command
 activate InteractivePromptHandler
@@ -39,5 +39,10 @@ deactivate Task
 
 InteractivePromptHandler -> User: "Task added successfully!"
 deactivate InteractivePromptHandler
+
+destroy InteractivePromptHandler
+destroy ProjectList
+destroy Project
+destroy Task
 
 @enduml
