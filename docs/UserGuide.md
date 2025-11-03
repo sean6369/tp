@@ -399,6 +399,19 @@ Now explore FlowCLI's full capabilities:
 - Case-insensitive (LOW, Low, low all work)
 - Cannot use abbreviations like `l`, `m`, `h`
 
+**"Unexpected extra parameters"**
+- Commands like `status` and `list` expect only the documented arguments
+- Examples of errors:
+  - `status 1 2` → Error: "Unexpected extra parameters: 2" → Use `status 1`
+  - `list 1 extra` → Error: "Unexpected extra parameters: extra" → Use `list 1`
+- Check the command format in `help` or the Command Summary table
+
+**"This command does not accept any parameters"**
+- Commands like `help` and `bye` don't take any arguments
+- Examples of errors:
+  - `help extra` → Use `help` (no arguments needed)
+  - `bye extra` → Use `bye` (no arguments needed)
+
 ## Tips and Best Practices
 
 ### Workflow Optimization
