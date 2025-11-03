@@ -30,6 +30,7 @@ We also acknowledge:
     - [Task Sorting Algorithm](#task-sorting-algorithm-by-yao-xiang)
     - [Task Filtering Algorithm](#task-filtering-algorithm-by-yao-xiang)
   - [Data Persistence](#data-persistence-by-sean-lee)
+    - [Export Algorithm](#export-algorithm-by-sean-lee)
   - [User Interface](#user-interface)
     - [Interactive Mode](#interactive-mode-by-yao-xiang)
     - [Status Display System](#status-display-system-by-zhenzhao)
@@ -71,16 +72,20 @@ The command processing infrastructure forms the foundation of FlowCLI, handling 
 - **CommandParser** - Parses command words and extracts arguments, maps input to CommandType enum
 - **ArgumentParser** - Parses project identifiers (index or name), resolves to Project objects, validates existence
 
-![Command Processing Infrastructure Sequence](plantUML/command-processing-infrastructure/Command-processing-infrastructure.png)
+![Command Processing Infrastructure Sequence](plantUML/command-processing-infrastructure/Command-processing-infrastructure-sequence-diagram.png)
 
 **Implementation Details:**
 
-1. **CommandHandler** initializes the application's main loop and scanner, reading user input line by line.
-2. For each input line, **CommandParser** splits the command word from arguments and maps it to a CommandType enum.
-3. The CommandFactory creates the appropriate Command object based on the type.
-4. Before execution, **ArgumentParser** validates and resolves project identifiers (if applicable), converting indices or names into Project objects.
-5. The Command executes with validated arguments and displays results through ConsoleUi.
-6. Exceptions are caught and handled gracefully, displaying user-friendly error messages.
+1. **FlowCLI** initializes by creating CommandHandler, CommandParser, CommandFactory, and ConsoleUi (these objects exist throughout the application lifecycle).
+2. **CommandHandler** manages the main command loop, reading user input line by line using a Scanner.
+3. For each input line, **CommandParser** splits the command word from arguments and maps it to a CommandType enum.
+4. **CommandFactory** creates a new Command object for each user input based on the type.
+5. During command execution, a new **ArgumentParser** is created to validate and resolve project identifiers (if applicable), converting indices or names into Project objects. This parser is destroyed after parsing completes.
+6. The Command validates arguments, performs business logic, and displays results through ConsoleUi.
+7. After execution, the Command object is destroyed (each command is executed once and discarded).
+8. Exceptions are caught and handled gracefully, displaying user-friendly error messages.
+
+**Note:** The sequence diagram shows constructor calls only for objects created during the command processing flow (Command and ArgumentParser). Pre-existing components (FlowCLI, CommandHandler, CommandParser, CommandFactory, ConsoleUi) are created during application initialization and persist throughout the session.
 
 **Design Rationale:**
 
@@ -111,69 +116,102 @@ Input validation is centralized to ensure consistent rules, clear error messages
 
 **Key Components:**
 
-- `CommandValidator` - Reusable validation utilities used by parsers and commands
-- `Validation` (constants) - Canonical limits, messages, and regex patterns
+- `CommandValidator` - Static utility methods for validating command parameters (priorities, dates, filter/sort options, command syntax)
+- `ValidationConstants` - Canonical constants for valid values (priorities, filter types, sort fields/orders, keywords)
 
-**Responsibilities:**
+**CommandValidator Methods:**
 
-1. Normalize and validate primitive inputs (indices, names, flags, dates, priorities)
-2. Guard command execution with preconditions (presence, range, format)
-3. Reject unexpected extra parameters to prevent user input errors
-4. Provide consistent, user-friendly error messages across commands
+- `validatePriority(String)` - Validates and normalizes priority (`low`, `medium`, `high`, case-insensitive), throws `InvalidArgumentException` on failure
+- `priorityToInt(String)` - Converts validated priority string to integer (1=low, 2=medium, 3=high); use after `validatePriority()`
+- `validateAndParseDate(String)` - Validates date format (`yyyy-MM-dd`) and returns `LocalDate`, throws `InvalidDateException` on failure
+- `validateFilterType(String)` - Validates filter type (currently only `priority`), throws `InvalidArgumentException` on failure
+- `validateSortField(String)` - Validates sort field (`deadline` or `priority`), throws `InvalidArgumentException` on failure
+- `validateSortOrder(String)` - Validates sort order (`ascending` or `descending`), throws `InvalidArgumentException` on failure
+- `validateFilterCommand(String[], int)` - Validates filter command syntax completeness, throws `InvalidCommandSyntaxException` on failure
+- `validateSortCommand(String[], int)` - Validates sort command syntax completeness, throws `InvalidCommandSyntaxException` on failure
 
-**Common Rules (from `Validation`):**
+**ValidationConstants Values:**
 
-- Index range: `INDEX_MIN = 1` (user-facing), non-negative zero-based internally
-- Project name: `MAX_PROJECT_NAME_LENGTH`, `PROJECT_NAME_PATTERN`
-- Task description: `MAX_DESCRIPTION_LENGTH`, non-blank
-- Priority: allowed values {`high`, `medium`, `low`} (case-insensitive)
-- Date format: `DATE_FORMAT = yyyy-MM-dd` with strict parsing
+- Priorities: `PRIORITY_LOW`, `PRIORITY_MEDIUM`, `PRIORITY_HIGH` (string values)
+- Priority integers: `PRIORITY_LOW_VALUE = 1`, `PRIORITY_MEDIUM_VALUE = 2`, `PRIORITY_HIGH_VALUE = 3`
+- Filter types: `FILTER_TYPE_PRIORITY`
+- Sort fields: `SORT_FIELD_DEADLINE`, `SORT_FIELD_PRIORITY`
+- Sort orders: `SORT_ORDER_ASCENDING`, `SORT_ORDER_DESCENDING`
+- Keywords: `KEYWORD_BY`, `KEYWORD_FILTER`, `KEYWORD_SORT`
 
-**Typical Usage:**
+**Parser Integration:**
 
-```java
-// In ArgumentParser / Command classes
-int projectIndex = CommandValidator.requireIndex(arg0, Validation.INDEX_MIN);
-String name = CommandValidator.requireName(projectName, Validation.MAX_PROJECT_NAME_LENGTH, Validation.PROJECT_NAME_PATTERN);
-LocalDate deadline = CommandValidator.optionalDateOrNull(deadlineArg, Validation.DATE_FORMAT);
-int priority = CommandValidator.optionalPriorityOrDefault(priorityArg, Validation.ALLOWED_PRIORITIES, Validation.DEFAULT_PRIORITY);
-
-// Extra parameter validation (e.g., in StatusCommand, ListCommand)
-if (parsedArgument.getRemainingArgument() != null && !parsedArgument.getRemainingArgument().trim().isEmpty()) {
-    throw new MissingArgumentException("Unexpected extra parameters: " + parsedArgument.getRemainingArgument());
-}
-```
-
-**Error Handling:**
-
-- Throws specific exceptions (e.g., `MissingArgumentException`, `InvalidFormatException`, `OutOfRangeException`)
-- Messages are composed using `Validation.MESSAGE_*` templates for consistency
-- All validation happens before model mutation to preserve integrity
-
-**Integration Points:**
-
-1. `CommandParser` uses validator for early syntax/flag checks
-2. `ArgumentParser` uses validator to resolve and range-check indices and names
-3. Individual commands validate optional fields (e.g., update flags, export filters) via the same utilities
-4. Commands validate against extra parameters using `ArgumentParser.getRemainingArgument()` to ensure clean input
-
-**Parser hooks: index parsing and project index validation**
-
-- `CommandParser.parseIndexOrNull(indexText, maxIndex)`
-  - Parses a 1-based user index; converts to zero-based on success
-  - Throws: `MissingIndexException`, `InvalidIndexFormatException`, `IndexOutOfRangeException`
-  - Ensures indices respect `Validation.INDEX_MIN` and the provided upper bound
+- `CommandParser.parseIndexOrNull(String indexText, int maxIndex)`
+  - Parses a 1-based user index and converts to 0-based on success
+  - Validates index is within range [1, maxIndex]
+  - Throws: `MissingIndexException` (if indexText is null), `InvalidIndexFormatException` (if not numeric), `IndexOutOfRangeException` (if out of range)
+  - Returns the 0-based index (never returns null; throws exceptions on validation failure)
 
 - `ArgumentParser.validateProjectIndex()`
   - Verifies that a target project is resolvable from user input
   - Detects non-numeric tokens and out-of-range indices against the current project list
+  - Must be called after `ArgumentParser` construction to validate parsed project index
   - Throws: `MissingArgumentException`, `InvalidIndexFormatException`, `IndexOutOfRangeException`, `InvalidArgumentException`
 
-**Centralized error handling (refactored for consistency):**
+**Usage Example:**
 
-- Specific exceptions replace a catch‑all error: `MissingArgumentException`, `MissingIndexException`, `InvalidIndexFormatException`, `IndexOutOfRangeException`, `InvalidDateException`, `InvalidFilenameException`, etc.
-- Messages are standardized via `Validation.MESSAGE_*` templates and surfaced consistently by the command layer.
-- Validation occurs before any model change; commands catch and render user-friendly messages, keeping parsing/validation logic separate from state mutation.
+```java
+// Typical validation pattern in commands (e.g., AddCommand, UpdateCommand)
+ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
+parsedArgument.validateProjectIndex();  // Validate project index first
+Project targetProject = parsedArgument.getTargetProject();
+
+String remaining = parsedArgument.getRemainingArgument();
+if (remaining == null || remaining.trim().isEmpty()) {
+    throw new MissingDescriptionException();  // Validate required fields
+}
+
+// Validate and convert priority
+String validatedPriority = CommandValidator.validatePriority(priorityStr);
+int priority = CommandValidator.priorityToInt(validatedPriority);
+
+// Validate and parse date
+LocalDate deadline = CommandValidator.validateAndParseDate(dateStr);
+```
+
+**Extra Parameter Validation:**
+
+Commands that don't accept parameters (e.g., `bye`, `help`, `status`, `list`) check for extra arguments using `ArgumentParser.getRemainingArgument()` and throw `ExtraArgumentException`:
+
+```java
+String remaining = parsedArgument.getRemainingArgument();
+if (remaining != null && !remaining.trim().isEmpty()) {
+    throw new ExtraArgumentException("Unexpected extra parameters: " + remaining);
+}
+```
+
+**Exception Types:**
+
+- `MissingArgumentException` - Required argument is missing
+- `ExtraArgumentException` - Unexpected extra parameters provided
+- `MissingIndexException` - Required index argument is missing
+- `MissingDescriptionException` - Required description/field is missing or empty
+- `InvalidIndexFormatException` - Index cannot be parsed as integer
+- `IndexOutOfRangeException` - Index is out of valid range
+- `InvalidArgumentException` - Argument format/value is invalid (e.g., invalid priority, filter type, sort field)
+- `InvalidDateException` - Date format is invalid (expects `yyyy-MM-dd`)
+- `InvalidFilenameException` - Filename format is invalid
+- `InvalidCommandSyntaxException` - Command syntax is malformed or incomplete
+
+**Validation Flow:**
+
+1. **Parser layer**: `CommandParser` and `ArgumentParser` extract and validate basic structure (indices, project references, command syntax)
+2. **Command layer**: Commands use `CommandValidator` methods for domain-specific validation (priorities, dates, filters, sort options)
+3. **Pre-execution**: All validation occurs before model mutation to preserve data integrity
+4. **Error handling**: Commands propagate exceptions (do not catch); `CommandHandler` catches `FlowCLIException` and displays user-friendly messages via `ConsoleUi`
+
+**Best Practices:**
+
+- Always validate project index first using `ArgumentParser.validateProjectIndex()` before accessing project data
+- Validate optional parameters (priority, deadline) before using them
+- Use `validatePriority()` followed by `priorityToInt()` to normalize and convert priorities
+- Check for extra parameters on commands that don't accept arguments
+- Throw specific exception types rather than generic ones for better error messages
 
 ---
 
@@ -442,31 +480,60 @@ The export algorithm supports saving project and task data to text files with fi
 ![Export Command State Diagram](plantUML/export-command/export-command-state-diagram.png)
 
 **Key Classes:**
-- `TaskExporter` - Handles file I/O operations and formatting
-- `ExportCommandHandler` - Orchestrates export process and parameter parsing
 - `TaskCollector` - Aggregates tasks from projects with project context
+- `TaskExporter` - Handles file I/O operations and formatting with error handling
+- `ExportCommandHandler` - Orchestrates export process and parameter parsing
 - `TaskWithProject` - Wrapper class enabling cross-project operations
 
-**Export Process:**
-1. Parse and validate export parameters (filename, project selection, filters, sorting)
-2. Collect tasks based on specific project
-3. Apply filtering and sorting if specified
-4. Write tasks to file with proper formatting and error handling
-5. Display success confirmation to user
+##### TaskCollector
 
-**File Structure:**
+Utility class providing static methods to collect tasks from projects while preserving project association:
+
+- **`getAllTasksWithProjects(ProjectList projects)`** - Returns `List<TaskWithProject>` of all tasks from all projects (O(n) time/space)
+- **`getTasksFromProject(Project project)`** - Returns `List<TaskWithProject>` of tasks from a specific project (O(m) time/space)
+
+Each task is wrapped in `TaskWithProject`, which formats as `"ProjectName: [X] Task Description (Due: YYYY-MM-DD) [priority]"`. The class follows the utility pattern (final class with private constructor, static methods) and is reusable across filtering, sorting, and listing operations.
+
+##### TaskExporter
+
+Utility class that writes tasks to text files with comprehensive error handling:
+
+**Method:** `exportTasksToFile(List<TaskWithProject> tasks, String filename, String header) throws FileWriteException`
+
+**File Format:**
 ```
-Export Header
-=============
+<Header Text>
+================
 
 ProjectName: [X] Task Description (Due: YYYY-MM-DD) [priority]
 ProjectName: [ ] Another Task [priority]
 ```
 
-**Error Handling:**
-- Permission denied, directory not found, disk space issues
-- File locked/in use, invalid filenames, read-only filesystem
-- User-friendly error messages with actionable suggestions
+Uses try-with-resources for automatic cleanup. All I/O exceptions are translated to `FileWriteException` with user-friendly messages covering: permission denied, directory not found, disk space issues, file locking, path length limits, read-only filesystem, and security policy violations. Error messages follow the pattern `"'<filename>': <description>"` with actionable suggestions.
+
+##### Integration with ExportCommandHandler
+
+The export workflow:
+
+1. **Parameter Parsing** - Validates filename, project selection, filters, and sorting options
+2. **Task Collection** - Uses `TaskCollector` based on parameters with 4 strategies:
+   ```java
+   if (params.forceAll) {
+       tasks = TaskCollector.getAllTasksWithProjects(projects);
+   } else if (params.projectIndex != null) {
+       tasks = TaskCollector.getTasksFromProject(projects.getProjectByIndex(params.projectIndex));
+   } else if (!params.hasFilterOrSort() && lastViewType != ViewType.NONE && !lastDisplayedTasks.isEmpty()) {
+       tasks = new ArrayList<>(lastDisplayedTasks);  // Export last cached view (from sort/filter)
+   } else {
+       tasks = TaskCollector.getAllTasksWithProjects(projects);  // Default: all tasks
+   }
+   ```
+   **Last View Caching:** View state is stored in `ExportCommandHandler` instance fields (`lastDisplayedTasks`, `lastViewType`, `lastViewMetadata`). The `sort-tasks` and `filter-tasks` commands update this state via `updateViewState()`. When exporting without parameters, it automatically exports the cached view if available.
+3. **Filtering/Sorting** - Applies `TaskFilter` and `TaskSorter` if specified in export command
+4. **File Export** - Calls `TaskExporter.exportTasksToFile()` with header
+5. **User Feedback** - Displays success via `ConsoleUi.showExportSuccess()`
+
+**Design Benefits:** Separation of concerns, reusability across operations, error isolation, independent testability, and seamless integration with view commands (sort/filter) through view state tracking.
 
 ### **User Interface**
 
