@@ -56,7 +56,6 @@ class Task {
     +unmark(): void
 }
 
-InteractivePromptHandler --> ProjectList : uses
 InteractivePromptHandler --> Project : accesses
 Project --> Task : contains
 @enduml
