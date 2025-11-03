@@ -38,6 +38,12 @@ public class ListCommand extends Command {
         parsedArgument.validateProjectIndex();
         Project targetProject = parsedArgument.getTargetProject();
 
+        // Validate no extra parameters after project index
+        String remaining = parsedArgument.getRemainingArgument();
+        if (remaining != null && !remaining.trim().isEmpty()) {
+            throw new MissingArgumentException("Unexpected extra parameters: " + remaining);
+        }
+
         if (targetProject.isEmpty()) {
             throw new EmptyTaskListException();
         }
