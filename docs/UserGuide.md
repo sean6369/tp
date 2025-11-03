@@ -53,11 +53,17 @@ Both modes work identically - choose whichever feels more comfortable!
 
 ### Create a project: `create-project <projectName> / create (interactive mode)`
 
-Adds a new project. If you repeat the command with the same name (any casing), FlowCLI reports a duplicate.
+Adds a new project. If you add a new project with the same name (any casing), FlowCLI reports a duplicate.
+
+Project names can be wrapped in quotes (double `"` or single `'`). FlowCLI will automatically remove the surrounding quotes when storing the project name. Quotes are optional - you can use them for names with spaces, or omit them entirely.
 
 ```
 create-project "Birthday Bash"
+create-project 'Birthday Bash'
+create-project Birthday Bash
 ```
+
+All three examples above create projects Birthday Bash.
 
 ### List projects or tasks: `list --all` or `list <projectIndex>` or `list (interactive mode)`
 
@@ -156,33 +162,45 @@ status --all
 
 ### Export tasks: `export-tasks <filename>.txt [projectIndex] [filter-tasks --priority <value>] [sort-tasks <--deadline|--priority> <order>]` or `export (interactive mode)`
 
+Saves tasks to a plain-text file with flexible export options.
 
-Saves tasks to a plain-text file.
-
-- Without extra parameters, FlowCLI exports the last sorted or filtered view. If no view exists, it exports every task.
-- Include a project index to export just that project:
+**Export behavior:**
+- **With `--all` flag**: Always exports all tasks from all projects
+  ```
+  export-tasks all-tasks.txt --all
+  ```
+- **With project index**: Exports only tasks from the specified project
   ```
   export-tasks party-plan.txt 1
   ```
-- Chain `filter-tasks ...` and/or `sort-tasks ...` in the same command to export a customised report:
+- **With filter/sort in command**: Exports tasks matching the specified criteria
   ```
   export-tasks high-priority.txt filter-tasks --priority high sort-tasks --deadline ascending
   ```
+- **Without any parameters**: 
+  - If you previously ran `sort-tasks` or `filter-tasks`, exports that cached view
+  - If no cached view exists (or you used `list` command), exports all tasks
+  - To force exporting all tasks, use the `--all` flag
 
-Notes:
+**Clearing the cached view:**
+The cached sorted/filtered view is automatically cleared when you use `list` commands:
+- `list --all` clears the cached view
+- `list <projectIndex>` clears the cached view
+
+**Notes:**
 - Files are written to your current working directory by default. Use absolute or relative paths to choose a location.
   - If the path contains spaces, wrap it in quotes: `export-tasks "My Reports/tasks.txt"`
 - Existing files with the same name will be overwritten.
 - Inline mode requires the `.txt` extension in the filename. In interactive mode, entering the name without `.txt` will auto-append `.txt`.
 
-Common mistakes and fixes:
+**Common mistakes and fixes:**
 - "Invalid filename": Avoid illegal characters and ensure the name ends with `.txt`.
 - "Export failed: Directory does not exist": Create the folder or use an existing path.
 - "Export failed: Permission denied": Export to a writable location (e.g., home directory).
 - "No tasks to export": Broaden scope by removing filters or exporting all tasks.
 
-Interactive mode options:
-- After entering a filename, choose to export: all tasks, a specific project, filtered tasks, sorted tasks, or filtered+sorted tasks, then confirm.
+**Interactive mode options:**
+After entering a filename, choose to export: all tasks, a specific project, filtered tasks, sorted tasks, or filtered+sorted tasks, then confirm.
 
 **Export file format example:**
 When you export tasks, FLowCLI creates a plain text file like this:

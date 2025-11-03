@@ -100,6 +100,7 @@ public class ArgumentParser {
     }
     //@@author
 
+    //@@author sean6369
     public void validateProjectIndex() throws InvalidArgumentException,
             InvalidIndexFormatException, MissingArgumentException, IndexOutOfRangeException {
         if (targetProject == null) {
@@ -113,4 +114,5 @@ public class ArgumentParser {
             throw new MissingArgumentException();
         }
     }
+    //@@author
 }

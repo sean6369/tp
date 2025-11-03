@@ -3,6 +3,7 @@ package seedu.flowcli.commands;
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.exceptions.EmptyProjectListException;
 import seedu.flowcli.exceptions.EmptyTaskListException;
+import seedu.flowcli.exceptions.ExtraArgumentException;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
@@ -41,7 +42,7 @@ public class ListCommand extends Command {
         // Validate no extra parameters after project index
         String remaining = parsedArgument.getRemainingArgument();
         if (remaining != null && !remaining.trim().isEmpty()) {
-            throw new MissingArgumentException("Unexpected extra parameters: " + remaining);
+            throw new ExtraArgumentException("Unexpected extra parameters: " + remaining);
         }
 
         if (targetProject.isEmpty()) {
