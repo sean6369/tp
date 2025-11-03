@@ -4,6 +4,7 @@ title InteractivePromptHandler Class Diagram
 skinparam classAttributeIconSize 0
 skinparam shadowing false
 skinparam monochrome true
+skinparam circledCharacterRadius 0
 
 class InteractivePromptHandler {
     -ProjectList projects
