@@ -6,6 +6,7 @@ skinparam shadowing false
 skinparam monochrome true
 skinparam circledCharacterRadius 0
 skinparam showVisibility false
+skinparam stereotypeCBackgroundColor transparent
 
 class InteractivePromptHandler {
     -ProjectList projects
