@@ -35,6 +35,11 @@ public class StatusCommand extends Command {
 
         // Check if a specific project is targeted
         if (parsedArgument.getTargetProject() != null) {
+            // Validate no extra parameters after project index
+            String remaining = parsedArgument.getRemainingArgument();
+            if (remaining != null && !remaining.trim().isEmpty()) {
+                throw new MissingArgumentException("Unexpected extra parameters: " + remaining);
+            }
             Project project = parsedArgument.getTargetProject();
             context.getUi().showProjectStatus(project);
             return true;

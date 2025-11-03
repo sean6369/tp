@@ -1,6 +1,7 @@
 package seedu.flowcli.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import seedu.flowcli.commands.core.CommandContext;
+import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
 
@@ -40,7 +42,7 @@ class HelpCommandTest {
 
     @Test
     @DisplayName("execute_showsHelp")
-    void executeShowsHelp() {
+    void executeShowsHelp() throws Exception {
         HelpCommand cmd = new HelpCommand("");
 
         boolean result = cmd.execute(ctx);
@@ -50,33 +52,31 @@ class HelpCommandTest {
     }
 
     @Test
-    @DisplayName("execute_withArguments_stillShowsHelp")
-    void executeWithArgumentsShowsHelp() {
+    @DisplayName("execute_withArguments_throwsException")
+    void executeWithArgumentsThrowsException() {
         HelpCommand cmd = new HelpCommand("some random arguments");
 
-        boolean result = cmd.execute(ctx);
-
-        assertTrue(result, "execute() should return true regardless of arguments");
-        assertTrue(ui.helpShown, "UI should show help message");
+        assertThrows(MissingArgumentException.class, () -> cmd.execute(ctx),
+                "Should throw exception when arguments are provided");
     }
 
     @Test
-    @DisplayName("execute_alwaysReturnsTrue")
-    void executeAlwaysReturnsTrue() {
+    @DisplayName("execute_withValidArguments_returnsTrue")
+    void executeWithValidArgumentsReturnsTrue() throws Exception {
         HelpCommand cmd1 = new HelpCommand("");
-        HelpCommand cmd2 = new HelpCommand("arg1 arg2");
-        HelpCommand cmd3 = new HelpCommand("--flag");
+        HelpCommand cmd2 = new HelpCommand(null);
+        HelpCommand cmd3 = new HelpCommand("   ");
 
         boolean result1 = cmd1.execute(ctx);
         boolean result2 = cmd2.execute(ctx);
         boolean result3 = cmd3.execute(ctx);
 
-        assertTrue(result1 && result2 && result3, "Help command should always return true");
+        assertTrue(result1 && result2 && result3, "Help command should return true with empty/null arguments");
     }
 
     @Test
     @DisplayName("execute_withEmptyProjectList_stillShowsHelp")
-    void executeWithEmptyProjectList() {
+    void executeWithEmptyProjectList() throws Exception {
         assertEquals(0, projects.getProjectListSize(), "Project list should be empty");
         
         HelpCommand cmd = new HelpCommand("");

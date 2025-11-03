@@ -3,6 +3,7 @@ package seedu.flowcli.commands;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.logging.Handler;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import seedu.flowcli.commands.core.CommandContext;
+import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
@@ -72,23 +74,18 @@ class ByeCommandTest {
     }
 
     @Test
-    @DisplayName("execute_withExtraArgs_stillExitsAndCallsUi")
-    void executeWithExtraArgsStillExitsAndCallsUi() throws Exception {
+    @DisplayName("execute_withExtraArgs_throwsException")
+    void executeWithExtraArgsThrowsException() {
         // Arrange
         ProjectList projects = new ProjectList();
         SpyUi ui = new SpyUi(projects);
         CommandContext ctx = makeContext(projects, ui);
         ByeCommand cmd = new ByeCommand("   extra stuff   ");
 
-        // Act
-        boolean shouldContinue = cmd.execute(ctx);
-
-        // Assert
-        assertAll("Bye with extra args",
-                () -> assertFalse(shouldContinue, "Bye should still signal exit even with args"),
-                () -> assertTrue(ui.byeShown, "UI.printByeMessage() should be called")
-        );
-        logger.info("Bye with extra arguments passed");
+        // Act & Assert
+        assertThrows(MissingArgumentException.class, () -> cmd.execute(ctx),
+                "Bye command should throw exception when extra arguments are provided");
+        logger.info("Bye with extra arguments correctly throws exception");
     }
 
     @Test
