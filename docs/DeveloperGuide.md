@@ -477,13 +477,31 @@ The filtering algorithm supports filtering tasks by priority level and/or projec
 
 The export algorithm supports saving project and task data to text files with filtering and sorting capabilities:
 
-![Export Command State Diagram](plantUML/export-command/export-command-state-diagram.png)
+##### Architecture Overview
 
-**Key Classes:**
-- `TaskCollector` - Aggregates tasks from projects with project context
-- `TaskExporter` - Handles file I/O operations and formatting with error handling
-- `ExportCommandHandler` - Orchestrates export process and parameter parsing
-- `TaskWithProject` - Wrapper class enabling cross-project operations
+![Export Command Class Diagram](plantUML/export-command/export-command-class-diagram.png)
+
+**Key Components:**
+
+- **ExportCommandHandler** - Orchestrates export process, parameter parsing, and view state management
+- **TaskCollector** - Utility class for aggregating tasks from projects with project context
+- **TaskExporter** - Utility class for file I/O operations with comprehensive error handling
+- **TaskWithProject** - Wrapper class enabling cross-project operations
+- **TaskFilter** - Filters tasks by priority and/or project name
+- **TaskSorter** - Sorts tasks by deadline or priority
+
+**Design Principles:**
+
+- **Separation of Concerns**: Collection (TaskCollector), I/O (TaskExporter), and orchestration (ExportCommandHandler) are separate
+- **Utility Pattern**: TaskCollector and TaskExporter are final classes with static methods only
+- **Reusability**: TaskWithProject enables cross-project operations across filtering, sorting, and listing
+- **Error Isolation**: All I/O exceptions are translated to FileWriteException with user-friendly messages
+
+##### Export Workflow
+
+The following sequence diagram illustrates the export workflow:
+
+![Export Command Sequence Diagram](plantUML/export-command/export-command-sequence-diagram.png)
 
 ##### TaskCollector
 
@@ -492,7 +510,7 @@ Utility class providing static methods to collect tasks from projects while pres
 - **`getAllTasksWithProjects(ProjectList projects)`** - Returns `List<TaskWithProject>` of all tasks from all projects (O(n) time/space)
 - **`getTasksFromProject(Project project)`** - Returns `List<TaskWithProject>` of tasks from a specific project (O(m) time/space)
 
-Each task is wrapped in `TaskWithProject`, which formats as `"ProjectName: [X] Task Description (Due: YYYY-MM-DD) [priority]"`. The class follows the utility pattern (final class with private constructor, static methods) and is reusable across filtering, sorting, and listing operations.
+Each task is wrapped in `TaskWithProject`, which formats as `"ProjectName: [X] Task Description (Due: YYYY-MM-DD) [priority]"`. The class is reusable across filtering, sorting, and listing operations.
 
 ##### TaskExporter
 
@@ -513,7 +531,7 @@ Uses try-with-resources for automatic cleanup. All I/O exceptions are translated
 
 ##### Integration with ExportCommandHandler
 
-The export workflow:
+The export workflow consists of 5 steps:
 
 1. **Parameter Parsing** - Validates filename, project selection, filters, and sorting options
 2. **Task Collection** - Uses `TaskCollector` based on parameters with 4 strategies:

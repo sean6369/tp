@@ -1,0 +1,114 @@
+@startuml ExportCommandSequenceDiagram
+title FlowCLI: export-tasks Sequence
+
+actor User
+participant ":FlowCLI Main" as CLI
+participant ":CommandParser" as Parser
+participant ":ExportCommand" as ExportCmd
+participant ":CommandContext" as Ctx
+participant ":ExportCommandHandler" as Handler
+participant ":ProjectList" as Projects
+participant ":TaskCollector" as Collector
+participant ":TaskFilter" as Filter
+participant ":TaskSorter" as Sorter
+participant ":TaskExporter" as Exporter
+participant ":ConsoleUi" as UI
+
+User -> CLI: Enter "export-tasks tasks.txt 1 filter-tasks --priority high"
+activate CLI
+CLI -> Parser: parse("export-tasks tasks.txt 1 ...")
+activate Parser
+Parser --> CLI: new ExportCommand(rawArgs)
+deactivate Parser
+destroy Parser
+deactivate CLI
+
+CLI -> ExportCmd: execute(Ctx)
+activate ExportCmd
+
+ExportCmd -> Ctx: getExportHandler()
+activate Ctx
+Ctx --> ExportCmd: ExportCommandHandler
+deactivate Ctx
+destroy Ctx
+
+ExportCmd -> Handler: handleExport(args)
+activate Handler
+
+Handler -> Handler: parseParameters(args)
+activate Handler
+Handler --> Handler: ExportParams
+deactivate Handler
+
+group Task Collection
+  alt projectIndex specified
+    Handler -> Projects: getProjectByIndex(projectIndex)
+    activate Projects
+    Projects --> Handler: Project
+    deactivate Projects
+    Handler -> Collector: getTasksFromProject(project)
+    activate Collector
+    Collector --> Handler: List<TaskWithProject>
+    deactivate Collector
+  else --all flag set
+    Handler -> Collector: getAllTasksWithProjects(projects)
+    activate Collector
+    Collector --> Handler: List<TaskWithProject> (all tasks)
+    deactivate Collector
+  else last cached view available
+    Handler -> Handler: tasks = lastDisplayedTasks
+    activate Handler
+    Handler --> Handler: tasks assigned
+    deactivate Handler
+    Handler -> Handler: baseDescriptor = "last view"
+    activate Handler
+    Handler --> Handler: descriptor set
+    deactivate Handler
+  else default (all tasks)
+    Handler -> Collector: getAllTasksWithProjects(projects)
+    activate Collector
+    Collector --> Handler: List<TaskWithProject> (all tasks)
+    deactivate Collector
+  end
+end
+
+group Optional Processing
+  opt filter parameters provided
+    Handler -> Filter: new TaskFilter(tasks, filterValue, null)
+    activate Filter
+    Filter --> Handler: filteredTasks
+    deactivate Filter
+    destroy Filter
+  end
+  
+  opt sort parameters provided
+    Handler -> Sorter: new TaskSorter(tasks, sortField, ascending)
+    activate Sorter
+    Sorter --> Handler: sortedTasks
+    deactivate Sorter
+    destroy Sorter
+  end
+end
+
+Handler -> Handler: buildExportHeader(baseDescriptor, params)
+activate Handler
+Handler --> Handler: header
+deactivate Handler
+
+Handler -> Exporter: exportTasksToFile(tasks, filename, header)
+activate Exporter
+Exporter --> Handler: file written successfully
+deactivate Exporter
+
+Handler -> UI: showExportSuccess(filename, tasks.size())
+activate UI
+UI -> User: display "Exported {count} tasks to {filename}"
+deactivate UI
+
+Handler --> ExportCmd: return
+deactivate Handler
+ExportCmd --> CLI: return true
+deactivate ExportCmd
+destroy ExportCmd
+
+@enduml
