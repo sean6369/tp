@@ -1,110 +1,135 @@
 @startuml StatusCommandSequenceDiagram
-title FlowCLI: status Command Sequence
-autonumber
+title Status Command Execution Flow
 
 actor User
-participant "FlowCLI Main" as CLI
-participant "CommandParser" as Parser
-participant "StatusCommand" as StatusCmd
-participant "CommandContext" as Ctx
-participant "ArgumentParser" as ArgParser
-participant "ProjectList" as Projects
-participant "Project" as Proj
-participant "ProjectStatusAnalyzer" as Analyzer
-participant "ConsoleUi" as UI
-participant "Logger" as Log
+participant ":CommandHandler" as Handler
+participant ":CommandParser" as Parser
+participant ":StatusCommand" as StatusCmd
+participant ":ArgumentParser" as ArgParser
+participant ":ProjectList" as Projects
+participant ":Project" as Proj
+participant ":ProjectStatusAnalyzer" as Analyzer
+participant ":ConsoleUi" as UI
 
-User -> CLI: Enter "status 1" or "status --all"
-CLI -> Parser: parse("status 1")
-Parser --> CLI: new StatusCommand(rawArgs)
+User -> Handler: enters "status 1"
+activate Handler
 
-CLI -> StatusCmd: execute(Ctx)
+Handler -> Parser: parse(input)
+activate Parser
 
-group Argument Validation
-  alt arguments empty
-    StatusCmd -> Log: warn("Missing argument")
-    StatusCmd --> CLI: throw MissingArgumentException
-    CLI -> UI: showError("Missing argument")
-    return
-  end
-end
+Parser -> Parser: split command and arguments
+activate Parser
+Parser --> Parser
+deactivate Parser
 
-StatusCmd -> Ctx: getProjects(), getUi()
-Ctx --> StatusCmd: Projects, UI
+Parser --> Handler: ParsedCommand(STATUS, "1")
+deactivate Parser
 
-alt Project list empty
-  StatusCmd -> Log: warn("Empty project list")
-  StatusCmd --> CLI: throw EmptyProjectListException
-  CLI -> UI: showError("No projects found")
-  return
-end
+create StatusCmd
+Handler -> StatusCmd: new StatusCommand("1")
+activate StatusCmd
+StatusCmd --> Handler
+deactivate StatusCmd
 
-alt Display all projects status (--all flag)
-  StatusCmd -> UI: showAllProjectsStatus(Projects)
-  activate UI
-  
-  loop for each project
-    UI -> Analyzer: analyzeProject(project)
-    activate Analyzer
-    Analyzer -> Proj: getProjectTasks()
-    Proj --> Analyzer: TaskList
-    Analyzer -> Analyzer: count completed tasks
-    Analyzer -> Analyzer: calculate percentage
-    Analyzer --> UI: ProjectStatus(name, total, completed, %)
-    deactivate Analyzer
-    
-    UI -> UI: formatStatusSummary(status)
-    UI -> UI: generateProgressBar(percentage)
-    UI -> UI: getMotivationalMessage(percentage)
-    UI -> User: display project status with progress bar
-  end
-  
-  deactivate UI
-  
-else Display specific project status
-  StatusCmd -> ArgParser: new ArgumentParser(args, Projects)
-  activate ArgParser
-  ArgParser -> ArgParser: parse project index/name
-  ArgParser -> Projects: getProjectByIndex() or getProject()
-  
-  alt project not found
-    ArgParser --> StatusCmd: throw IndexOutOfRangeException\nor ProjectNotFoundException
-    StatusCmd -> Log: warn("Project not found")
-    StatusCmd --> CLI: throw exception
-    CLI -> UI: showError("Project not found")
-    return
-  end
-  
-  Projects --> ArgParser: project
-  ArgParser --> StatusCmd: targetProject
-  deactivate ArgParser
-  
-  StatusCmd -> UI: showProjectStatus(project)
-  activate UI
-  
-  UI -> Analyzer: analyzeProject(project)
-  activate Analyzer
-  Analyzer -> Proj: getProjectTasks()
-  Proj --> Analyzer: TaskList
-  Analyzer -> Analyzer: count completed tasks
-  Analyzer -> Analyzer: calculate percentage
-  Analyzer --> UI: ProjectStatus(name, total, completed, %)
-  deactivate Analyzer
-  
-  alt project has no tasks
-    UI -> User: display "No tasks yet!" message
-  else project has tasks
-    UI -> UI: formatStatusSummary(status)
-    UI -> UI: generateProgressBar(percentage)
-    UI -> UI: getMotivationalMessage(percentage)
-    UI -> User: display status with progress bar
-  end
-  
-  deactivate UI
-end
+Handler -> StatusCmd: execute(context)
+activate StatusCmd
 
-StatusCmd -> Log: info("status command completed")
-StatusCmd --> CLI: return true
+StatusCmd -> StatusCmd: validate arguments not empty
+activate StatusCmd
+StatusCmd --> StatusCmd
+deactivate StatusCmd
+
+create ArgParser
+StatusCmd -> ArgParser: new ArgumentParser("1", projects)
+activate ArgParser
+
+ArgParser -> ArgParser: parseArgument()
+activate ArgParser
+ArgParser --> ArgParser
+deactivate ArgParser
+
+ArgParser -> Projects: getProjectByIndex(0)
+activate Projects
+Projects --> ArgParser: project
+deactivate Projects
+
+ArgParser --> StatusCmd: parsedArgument
+deactivate ArgParser
+
+StatusCmd -> ArgParser: getTargetProject()
+activate ArgParser
+ArgParser --> StatusCmd: project
+deactivate ArgParser
+
+destroy ArgParser
+
+StatusCmd -> UI: showProjectStatus(project)
+activate UI
+
+UI -> Analyzer: analyzeProject(project)
+activate Analyzer
+
+Analyzer -> Proj: size(), getProjectTasks()
+activate Proj
+Proj --> Analyzer: data
+deactivate Proj
+
+Analyzer -> Analyzer: count completed tasks
+activate Analyzer
+Analyzer --> Analyzer
+deactivate Analyzer
+
+Analyzer --> UI: ProjectStatus
+deactivate Analyzer
+
+UI -> UI: formatStatusSummary(status)
+activate UI
+UI --> UI
+deactivate UI
+
+UI -> UI: generateProgressBar(percentage)
+activate UI
+UI --> UI
+deactivate UI
+
+UI -> UI: getMotivationalMessage(percentage)
+activate UI
+UI --> UI
+deactivate UI
+
+UI --> User: display status
+deactivate UI
+
+StatusCmd --> Handler: true
+deactivate StatusCmd
+destroy StatusCmd
+
+Handler --> User
+deactivate Handler
+
+note over StatusCmd
+  Validates arguments and coordinates
+  between ArgumentParser and UI
+end note
+
+note over ArgParser
+  Parses project identifier
+  Resolves to Project object
+  Temporary object - destroyed after use
+end note
+
+note over Analyzer
+  Static utility for calculating
+  project completion statistics
+  Returns ProjectStatus data object
+end note
+
+note over UI
+  Handles all display formatting:
+  - Status summary
+  - Progress bar visualization
+  - Motivational messages
+end note
 
 @enduml
 

@@ -617,26 +617,45 @@ The status display system provides users with visual feedback on project progres
 
 ##### Status Command Execution Flow
 
-![Status Command Sequence Diagram](plantUML/status-command-sequence/Status-command-sequence-diagram.png)
+![Status Command Sequence Diagram](plantUML/status-command-sequence/status-command-sequence-diagram.png)
 
-**Implementation Details:**
+The above diagram shows the execution flow for displaying a specific project's status (e.g., `status 1`). The diagram focuses on the main success path for clarity.
 
-1. **StatusCommand** receives arguments (project index or `--all` flag)
-2. **Argument Validation**: 
-   - Checks for empty arguments (throws `MissingArgumentException`)
-   - Validates project list is not empty (throws `EmptyProjectListException`)
-   - Rejects unexpected extra parameters after project index (e.g., `status 1 2` throws exception)
-3. **ArgumentParser** validates and resolves project identifiers (if specific project)
-4. **ProjectStatusAnalyzer** analyzes each project:
-   - Iterates through tasks in the project's TaskList
-   - Counts completed tasks (where `isDone() == true`)
-   - Calculates completion percentage
-   - Returns a ProjectStatus data object
-5. **ConsoleUi** renders the status information:
-   - Formats status summary (e.g., "3/5 tasks completed, 60%")
-   - Generates visual progress bar: `[=========>      ] 60%`
-   - Selects motivational message based on completion percentage
+**Execution Flow:**
+
+1. **Command Parsing**:
+   - User enters command (e.g., "status 1")
+   - CommandHandler delegates to CommandParser
+   - CommandParser splits command word and arguments, returns ParsedCommand
+   - CommandHandler creates StatusCommand with arguments
+
+2. **Argument Processing**:
+   - StatusCommand validates arguments are not empty
+   - Creates ArgumentParser to parse project identifier
+   - ArgumentParser resolves project index/name to Project object
+   - ArgumentParser is destroyed after returning the parsed result
+
+3. **Status Analysis**:
+   - StatusCommand calls ConsoleUi to display project status
+   - ConsoleUi delegates to ProjectStatusAnalyzer for analysis
+   - ProjectStatusAnalyzer:
+     - Retrieves project's TaskList
+     - Counts completed tasks (where `isDone() == true`)
+     - Calculates completion percentage
+     - Returns ProjectStatus data object
+
+4. **UI Rendering**:
+   - ConsoleUi formats the status output:
+     - `formatStatusSummary()`: Creates summary text (e.g., "3/5 tasks completed, 60%")
+     - `generateProgressBar()`: Creates visual progress bar `[=========>      ] 60%`
+     - `getMotivationalMessage()`: Selects message based on completion percentage
    - Displays formatted output to user
+
+5. **Cleanup**:
+   - StatusCommand returns success flag
+   - StatusCommand is destroyed after execution
+
+**Note**: The command also supports displaying all projects with `status --all`, which follows a similar flow but iterates through all projects in the ProjectList.
 
 **Task Status Markers:**
 
