@@ -41,7 +41,6 @@ public class ByeCommand extends Command {
         while (attempt <= maxAttempts) {
             try {
                 context.getStorage().save(context.getProjects());
-                System.out.println("Data saved successfully to " + context.getStorage().getDataFilePath());
                 return; // Success - exit the retry loop
                 
             } catch (StorageException e) {

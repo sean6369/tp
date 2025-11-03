@@ -30,7 +30,6 @@ public class FlowCLI {
     private ProjectList loadData() {
         try {
             ProjectList loadedProjects = storage.load();
-            System.out.println("Data loaded successfully from " + storage.getDataFilePath());
             return loadedProjects;
         } catch (DataCorruptedException e) {
             // Corrupted data - file has been backed up, start with empty list
