@@ -99,7 +99,7 @@ public class CommandParser {
         }
 
         if (inputIndex < 1 || inputIndex > maxIndex) {
-            throw new IndexOutOfRangeException(maxIndex);
+            throw new IndexOutOfRangeException(inputIndex, maxIndex, true);
         }
         return inputIndex - 1;
     }

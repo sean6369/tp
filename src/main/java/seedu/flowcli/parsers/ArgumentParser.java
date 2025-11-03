@@ -104,7 +104,8 @@ public class ArgumentParser {
             InvalidIndexFormatException, MissingArgumentException, IndexOutOfRangeException {
         if (targetProject == null) {
             if (targetProjectIndex != null) {
-                throw new IndexOutOfRangeException(projects.getProjectListSize());
+                int userEnteredIndex = targetProjectIndex + 1;
+                throw new IndexOutOfRangeException(userEnteredIndex, projects.getProjectListSize());
             }
             if (hasNonNumericProjectToken()) {
                 throw new InvalidIndexFormatException(parsedProjectToken, "project");

@@ -6,6 +6,7 @@ import seedu.flowcli.exceptions.EmptyTaskListException;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
+import seedu.flowcli.project.ProjectList;
 
 public class ListCommand extends Command {
 
@@ -22,8 +23,10 @@ public class ListCommand extends Command {
             throw new MissingArgumentException();
         }
 
+        ProjectList projects = context.getProjects();
+
         if ("--all".equalsIgnoreCase(trimmedArguments)) {
-            if (context.getProjects().isEmpty()) {
+            if (projects.isEmpty()) {
                 throw new EmptyProjectListException();
             }
             context.getUi().showProjectList();
@@ -31,7 +34,7 @@ public class ListCommand extends Command {
             return true;
         }
 
-        ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
+        ArgumentParser parsedArgument = new ArgumentParser(arguments, projects);
         parsedArgument.validateProjectIndex();
         Project targetProject = parsedArgument.getTargetProject();
 
