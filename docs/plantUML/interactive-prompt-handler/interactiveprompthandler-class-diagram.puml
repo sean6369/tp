@@ -5,6 +5,7 @@ skinparam classAttributeIconSize 0
 skinparam shadowing false
 skinparam monochrome true
 skinparam circledCharacterRadius 0
+skinparam showVisibility false
 
 class InteractivePromptHandler {
     -ProjectList projects
