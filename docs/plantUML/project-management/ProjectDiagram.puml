@@ -4,6 +4,7 @@ title Project package — class diagram (simplified)
 skinparam classAttributeIconSize 0
 skinparam shadowing false
 skinparam monochrome true
+hide circle
 
 class Project {
   - String projectName
@@ -41,19 +42,28 @@ class ProjectList {
 }
 
 class TaskList {
+  - List<Task> tasks
+  --
   + int size()
   + boolean isEmpty()
-  + void add(Task)
+  + void add(Task task)
   + Task remove(int index)
   + Task get(int index)
   + String render()
+  + List<Task> getTasks()
 }
 
 class Task {
   - String description
   - LocalDate deadline
   - int priority
+  - boolean isDone
+  --
   + String toString()
+  + boolean isDone()
+  + void mark()
+  + void unmark()
+  + String marker()
 }
 
 ' Relationships
