@@ -3,6 +3,7 @@ package seedu.flowcli.commands.validation;
 /**
  * Contains constants for command validation throughout the application.
  */
+//@@author sean6369
 public class ValidationConstants {
     // Priority constants
     public static final String PRIORITY_LOW = "low";
@@ -34,3 +35,4 @@ public class ValidationConstants {
     public static final String KEYWORD_FILTER = "filter";
     public static final String KEYWORD_SORT = "sort";
 }
+//@@author

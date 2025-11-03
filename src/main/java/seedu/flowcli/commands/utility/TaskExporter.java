@@ -14,6 +14,7 @@ import seedu.flowcli.task.TaskWithProject;
  * Utility class for exporting tasks to TXT files. Handles file I/O operations
  * and formatting.
  */
+//@@author sean6369
 public final class TaskExporter {
     private TaskExporter() {
     }
@@ -95,5 +96,5 @@ public final class TaskExporter {
                             (message != null ? message : "Unknown I/O error."));
         }
     }
-
 }
+//@@author
