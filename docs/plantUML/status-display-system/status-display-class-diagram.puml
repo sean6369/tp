@@ -15,10 +15,10 @@ class StatusCommand {
 
 class ProjectStatusAnalyzer {
   --
-  {static} + ProjectStatus analyzeProject(Project project)
+  + ProjectStatus analyzeProject(Project project)
 }
 
-class ProjectStatus <<inner class>> {
+class ProjectStatus {
   - String projectName
   - int totalTasks
   - int completedTasks
