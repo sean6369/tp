@@ -1,5 +1,10 @@
 @startuml Architecture Diagram
 
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam monochrome true
+hide circle
+
 class ConsoleUi {
     -ProjectList projects
     +ConsoleUi(ProjectList)

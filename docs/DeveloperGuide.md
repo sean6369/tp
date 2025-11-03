@@ -142,12 +142,13 @@ Input validation is centralized to ensure consistent rules, clear error messages
 **Parser Integration:**
 
 - `CommandParser.parseIndexOrNull(String indexText, int maxIndex)`
+
   - Parses a 1-based user index and converts to 0-based on success
   - Validates index is within range [1, maxIndex]
   - Throws: `MissingIndexException` (if indexText is null), `InvalidIndexFormatException` (if not numeric), `IndexOutOfRangeException` (if out of range)
   - Returns the 0-based index (never returns null; throws exceptions on validation failure)
-
 - `ArgumentParser.validateProjectIndex()`
+
   - Verifies that a target project is resolvable from user input
   - Detects non-numeric tokens and out-of-range indices against the current project list
   - Must be called after `ArgumentParser` construction to validate parsed project index
@@ -231,12 +232,12 @@ The following sequence diagram illustrates the process of adding a task:
 
 **Implementation Details**:
 
-1.  The `CommandParser` identifies the `add-task` command and creates an `AddCommand` object.
-2.  `AddCommand#execute()` is called.
-3.  The command parses the arguments to extract the project index, task description, deadline, and priority.
-4.  It validates that the project exists and that a task description is provided.
-5.  If validation passes, it retrieves the `Project` object and calls `project.addTask()` to create and add the new task.
-6.  The `ConsoleUi` then displays a confirmation message to the user.
+1. The `CommandParser` identifies the `add-task` command and creates an `AddCommand` object.
+2. `AddCommand#execute()` is called.
+3. The command parses the arguments to extract the project index, task description, deadline, and priority.
+4. It validates that the project exists and that a task description is provided.
+5. If validation passes, it retrieves the `Project` object and calls `project.addTask()` to create and add the new task.
+6. The `ConsoleUi` then displays a confirmation message to the user.
 
 ---
 
@@ -252,11 +253,11 @@ The sequence diagram below shows the workflow:
 
 **Implementation Details**:
 
-1.  The `CommandParser` creates a `DeleteTaskCommand` object.
-2.  `DeleteTaskCommand#execute()` validates the presence of the project index and task index.
-3.  It ensures the specified project exists and the task index is within the valid range.
-4.  If valid, it calls `project.deleteTask()` to remove the task from the project's `TaskList`.
-5.  A success message, including the details of the deleted task, is shown to the user.
+1. The `CommandParser` creates a `DeleteTaskCommand` object.
+2. `DeleteTaskCommand#execute()` validates the presence of the project index and task index.
+3. It ensures the specified project exists and the task index is within the valid range.
+4. If valid, it calls `project.deleteTask()` to remove the task from the project's `TaskList`.
+5. A success message, including the details of the deleted task, is shown to the user.
 
 ---
 
@@ -278,11 +279,11 @@ The process is illustrated in the following diagram:
 
 **Implementation Details**:
 
-1.  `MarkCommand` or `UnmarkCommand` is instantiated by the parser.
-2.  The `execute()` method validates the project and task index.
-3.  It retrieves the `Task` object and calls its `mark()` or `unmark()` method.
-4.  The command includes logic to prevent redundant operations (e.g., marking an already-marked task).
-5.  The UI confirms that the task status has been updated.
+1. `MarkCommand` or `UnmarkCommand` is instantiated by the parser.
+2. The `execute()` method validates the project and task index.
+3. It retrieves the `Task` object and calls its `mark()` or `unmark()` method.
+4. The command includes logic to prevent redundant operations (e.g., marking an already-marked task).
+5. The UI confirms that the task status has been updated.
 
 ---
 
@@ -298,10 +299,10 @@ The update process is shown below:
 
 **Implementation Details**:
 
-1.  The `UpdateCommand` is responsible for parsing the various optional flags that specify which fields to update.
-2.  It validates the project and task index.
-3.  It calls `project.updateTask()`, passing the new values. The `updateTask` method handles the logic of only changing the fields that were provided in the command.
-4.  The UI displays the updated task details.
+1. The `UpdateCommand` is responsible for parsing the various optional flags that specify which fields to update.
+2. It validates the project and task index.
+3. It calls `project.updateTask()`, passing the new values. The `updateTask` method handles the logic of only changing the fields that were provided in the command.
+4. The UI displays the updated task details.
 
 ---
 
@@ -317,13 +318,13 @@ The diagram below illustrates the listing process:
 
 **Implementation Details**:
 
-1.  The `ListCommand` checks if a project index or `--all` flag was provided.
-2.  **Argument Validation**:
-    - Checks for empty arguments (throws `MissingArgumentException`)
-    - If `--all` flag, validates project list is not empty (throws `EmptyProjectListException`)
-    - If project index provided, validates the index and rejects unexpected extra parameters (e.g., `list 1 extra` throws exception)
-3.  If a valid project index is given, it finds the project and calls `ConsoleUi` to display only the tasks for that project.
-4.  If `--all` flag is given, it iterates through the entire `ProjectList` and instructs the `ConsoleUi` to display all projects and their associated tasks.
+1. The `ListCommand` checks if a project index or `--all` flag was provided.
+2. **Argument Validation**:
+   - Checks for empty arguments (throws `MissingArgumentException`)
+   - If `--all` flag, validates project list is not empty (throws `EmptyProjectListException`)
+   - If project index provided, validates the index and rejects unexpected extra parameters (e.g., `list 1 extra` throws exception)
+3. If a valid project index is given, it finds the project and calls `ConsoleUi` to display only the tasks for that project.
+4. If `--all` flag is given, it iterates through the entire `ProjectList` and instructs the `ConsoleUi` to display all projects and their associated tasks.
 
 #### Project Management features by [Xylon Chan](team/xylonc.md)
 
@@ -368,6 +369,7 @@ The core data model of FlowCLI consists of four fundamental classes that represe
 ![ProjectRelationshipDiagram](plantUML/project-management/ProjectClassDiagram.png)
 
 **Class Relationships:**
+
 - **ProjectList** contains multiple **Project** instances
 - Each **Project** contains a **TaskList**
 - Each **TaskList** contains multiple **Task** instances
@@ -394,21 +396,13 @@ Represents a single project and encapsulates its name and task collection `TaskL
 ##### API
 
 - `Project(String projectName)` — Constructor that constructs an empty project with the given name.
-
 - `String getProjectName()` — returns the name of the project.
-
 - `TaskList getProjectTasks()` — returns the tasks in that project
-
 - `void addTask(String description)` — adds a task.
-
 - `void addTask(String description, LocalDate deadline, int priority)` — add a task with deadline and priority
-
 - `Task deleteTask(int index) — remove and return the task at index.`
-
 - `Task updateTask(int index, String newDescription, boolean updateDescription, LocalDate newDeadline, boolean updateDeadline, Integer newPriority, boolean updatePriority)` — Updates the task description , deadline and priority
-
 - `String showAllTasks()` — render the project’s tasks to a printable string (delegates to `TaskList.render()`).
-
 - `String toString()` — printable representation of the project header + rendered tasks.
 
 #### ProjectList class
@@ -428,19 +422,12 @@ An ArrayList container of Project instances offering indexed access, name-lookup
 ##### API
 
 - `void addProject(String projectName)` — appends a new Project.
-
 - `Project delete(int zeroBasedIndex)` — delete by index, return the removed Project for confirmation.
-
 - `Project deleteProject(Project project)` — remove by identity and returns the removed project
-
 - `Project getProjectByIndex(int zeroBasedIndex)` — indexed accessor.
-
 - `List<Project> getProjectList()` — list the projects by name currently in the list
-
 - `int getProjectListSize()` — returns the number of projects.
-
 - `Project getProject(String projectName)` — returns the project via name-based lookup
-
 - `String render()` — concatenate each project’s toString() into a printable block.
 
 ### Data Processing
@@ -480,6 +467,7 @@ The export algorithm supports saving project and task data to text files with fi
 ![Export Command State Diagram](plantUML/export-command/export-command-state-diagram.png)
 
 **Key Classes:**
+
 - `TaskCollector` - Aggregates tasks from projects with project context
 - `TaskExporter` - Handles file I/O operations and formatting with error handling
 - `ExportCommandHandler` - Orchestrates export process and parameter parsing
@@ -501,6 +489,7 @@ Utility class that writes tasks to text files with comprehensive error handling:
 **Method:** `exportTasksToFile(List<TaskWithProject> tasks, String filename, String header) throws FileWriteException`
 
 **File Format:**
+
 ```
 <Header Text>
 ================
@@ -528,6 +517,7 @@ The export workflow:
        tasks = TaskCollector.getAllTasksWithProjects(projects);  // Default: all tasks
    }
    ```
+
    **Last View Caching:** View state is stored in `ExportCommandHandler` instance fields (`lastDisplayedTasks`, `lastViewType`, `lastViewMetadata`). The `sort-tasks` and `filter-tasks` commands update this state via `updateViewState()`. When exporting without parameters, it automatically exports the cached view if available.
 3. **Filtering/Sorting** - Applies `TaskFilter` and `TaskSorter` if specified in export command
 4. **File Export** - Calls `TaskExporter.exportTasksToFile()` with header
@@ -549,13 +539,13 @@ The interactive mode transforms single-word commands into guided conversations. 
 
 The overall command processing workflow shows how user input flows through the system components:
 
-![Command Processing Sequence Diagram](plantUML/command-processing-sequence/Command%20Processing%20Sequence%20Diagram.png)
+![Command Processing Sequence Diagram](plantUML/command-processing-sequence/Command Processing Sequence Diagram.png)
 
 **Architecture Flow**: User input → CommandHandler → InteractivePromptHandler (if needed) → CommandFactory → Command execution → Result display.
 
 #### Class Diagram: InteractivePromptHandler Structure by [Yao Xiang](team/yxiang-828.md)
 
-![InteractivePromptHandler Class Diagram](plantUML/interactive-prompt-handler/interactiveprompthandler.png)
+![InteractivePromptHandler Class Diagram](plantUML/interactive-prompt-handler/interactiveprompthandler-class-diagram.png)
 
 #### Interactive Mode Detection by [Yao Xiang](team/yxiang-828.md)
 
@@ -622,7 +612,7 @@ The status display system provides users with visual feedback on project progres
 **Implementation Details:**
 
 1. **StatusCommand** receives arguments (project index or `--all` flag)
-2. **Argument Validation**: 
+2. **Argument Validation**:
    - Checks for empty arguments (throws `MissingArgumentException`)
    - Validates project list is not empty (throws `EmptyProjectListException`)
    - Rejects unexpected extra parameters after project index (e.g., `status 1 2` throws exception)
@@ -660,10 +650,12 @@ We are on the right track, keep completing your tasks!
 **Motivational Messages:**
 
 The system provides contextual encouragement based on progress:
+
 - ≤25%: "You are kinda cooked, start doing your tasks!"
 - ≤50%: "You gotta lock in and finish all tasks!"
 - ≤75%: "We are on the right track, keep completing your tasks!"
-- >75%: "We are finishing all tasks!! Upzzz!"
+- > 75%: "We are finishing all tasks!! Upzzz!"
+  >
 
 **Status Types:**
 
@@ -775,7 +767,7 @@ Create command prompts for a new project name with validation:
 
 Mark and unmark commands follow identical selection flow with different validation:
 
-![Mark/Unmark Command Sequence Diagram](plantUML/mark-unmark-sequence/mark-unmark-sequence-diagram.png)
+![Mark/Unmark Command Sequence Diagram](plantUML/mark-unmark-sequence/Unmark-Command-Sequence-Diagram.png)
 
 **Shared Logic**: Both commands use identical project/task selection but different validation rules.
 
@@ -841,41 +833,42 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 ## Non-Functional Requirements by [Zhenzhao](team/zhenzha0.md)
 
 1. **Performance**
+
    - The application should respond to user commands within 500ms under normal operating conditions.
    - Loading and parsing project data should complete within 1 second for up to 100 projects with 1000 tasks total.
    - Sorting and filtering operations should complete within 200ms for typical datasets (up to 500 tasks).
-
 2. **Usability**
+
    - The application should be usable by users with basic command-line knowledge without requiring extensive training.
    - Interactive mode prompts should guide users through command execution with clear, numbered options.
    - Error messages should be descriptive and suggest corrective actions where applicable.
    - All commands should have both short-form (for experienced users) and interactive mode (for new users).
-
 3. **Reliability**
+
    - The application should handle invalid inputs gracefully without crashing.
    - All data validation should occur before any state changes to maintain data integrity.
    - Error handling should prevent data corruption in edge cases (e.g., concurrent file access, invalid date formats).
-
 4. **Portability**
+
    - The application should run on any platform with Java 11 or higher installed (Windows, macOS, Linux).
    - No platform-specific dependencies should be required beyond the Java Runtime Environment.
    - File paths should use platform-independent representations where possible.
-
 5. **Maintainability**
+
    - Code should follow standard Java coding conventions and style guidelines.
    - All public methods and classes should include Javadoc documentation.
    - The codebase should maintain clear separation of concerns between UI, logic, and model layers.
    - Each command should be implemented as a separate, testable class extending the Command base class.
-
 6. **Scalability**
+
    - The application should handle at least 50 projects with 20 tasks each without performance degradation.
    - Memory usage should remain under 100MB for typical usage scenarios.
-
 7. **Security**
+
    - User input should be validated and sanitized to prevent command injection or malicious input.
    - File operations should verify file paths to prevent unauthorized access to system files.
-
 8. **Compatibility**
+
    - The application should be compatible with common terminal emulators (Command Prompt, PowerShell, Terminal, Bash).
    - Text output should be compatible with standard terminal character encoding (UTF-8).
 
@@ -895,21 +888,23 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 These instructions will guide you through comprehensive manual testing of FlowCLI, including both inline command usage and interactive mode functionality.
 
 ### Prerequisites
+
 - Ensure you have Java 17 or higher installed
 - Ensure you have Gradle installed
 
 ### Setup Steps
 
 1. **Build the application:**
+
    ```
    ./gradlew build
    ```
-
 2. **Locate the JAR file:**
+
    - Navigate to `build\libs\`
    - Copy the full path of `flowcli.jar`
-
 3. **Run the application:**
+
    ```
    java -jar <full-path-to-flowcli.jar>
    ```
@@ -919,6 +914,7 @@ These instructions will guide you through comprehensive manual testing of FlowCL
 4. **Load sample data:**
    Copy and paste the following commands to populate the application with sample data:
    (no need to copy paste one at a time)
+
    ```
    create-project "CS2113T Project"
    create-project "Internship Hunt"
@@ -960,16 +956,15 @@ These instructions will guide you through comprehensive manual testing of FlowCL
 ### Testing Commands
 
 5. **View help:**
+
    ```
    help
    ```
-
 6. **Test inline command variations:**
    Follow the help output and test all inline command variations.
-
-
 7. **Test interactive mode:**
    Follow the help output and try all one-word command triggers for interactive mode:
+
    - `add` (triggers interactive task addition)
    - `create` (triggers interactive project creation)
    - `list` (triggers interactive project/task listing)
@@ -980,8 +975,8 @@ These instructions will guide you through comprehensive manual testing of FlowCL
    - `sort` (triggers interactive sorting)
    - `filter` (triggers interactive filtering)
    - `export` (triggers interactive data export)
-
 8. **Exit the application:**
+
    ```
    bye
    ```
