@@ -73,12 +73,12 @@ Given below is an example usage scenario and how the `create-project` feature be
 
 Here is a sequence diagram illustrating the process:
 
-![CreateCommandSequenceDiagram](plantUML/project-management/CreateCommandDiagram.png)
+![CreateCommandSequenceDiagram](../plantUML/project-management/CreateCommandDiagram.png)
 
 
 ##### Project, ProjectList, Task, and TaskList classes
 
-![ProjectRelationshipDiagram](plantUML/project-management/ProjectClassDiagram.png)
+![ProjectRelationshipDiagram](../plantUML/project-management/ProjectClassDiagram.png)
 
 **Class Relationships:**
 - **ProjectList** contains multiple **Project** instances

@@ -1,6 +1,7 @@
 package seedu.flowcli.commands;
 
 import seedu.flowcli.commands.core.CommandContext;
+import seedu.flowcli.exceptions.TaskAlreadyMarkedException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.parsers.CommandParser;
 import seedu.flowcli.project.Project;
@@ -29,6 +30,10 @@ public class MarkCommand extends Command {
         Integer idx = CommandParser.parseIndexOrNull(parsedArgument.getRemainingArgument(), targetProject.size());
 
         assert idx >= 0 && idx < targetProject.size() : "Task index out of bounds";
+
+        if(targetProject.getProjectTasks().get(idx).isDone()){
+            throw new TaskAlreadyMarkedException();
+        } 
 
         targetProject.getProjectTasks().mark(idx);
 

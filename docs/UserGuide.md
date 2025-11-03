@@ -72,6 +72,8 @@ list 1
 
 Adds a task under an existing project with optional priority and deadline. Priority defaults to medium, deadline defaults to none.
 
+Structure is felxible such that you can also input `--deadline` first before `--priority` as long as the input are valid  
+
 ```
 add-task 1 Hang fairy lights --priority high --deadline 2025-01-31
 ```

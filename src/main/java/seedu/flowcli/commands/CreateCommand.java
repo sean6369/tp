@@ -34,7 +34,7 @@ public class CreateCommand extends Command {
             // Project doesn't exist, which is what we want - continue with creation
         }
 
-        logger.info(() -> "Creating project: \"" + name + "\"");
+        logger.fine(() -> "Creating project: \"" + name + "\"");
         context.getProjects().addProject(name);
         context.getUi().showAddedProject();
         logger.fine(() -> "Project created and UI notified for: \"" + name + "\"");
