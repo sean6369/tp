@@ -9,54 +9,54 @@ skinparam showVisibility false
 skinparam stereotypeCBackgroundColor transparent
 
 class InteractivePromptHandler {
-    -ProjectList projects
-    -Scanner scanner
-    +InteractivePromptHandler(ProjectList, Scanner)
-    +handleAddCommand(): String
-    +handleCreateCommand(): String
-    +handleListCommand(): String
-    +handleMarkCommand(): String
-    +handleUnmarkCommand(): String
-    +handleDeleteCommand(): String
-    +handleUpdateCommand(): String
-    +handleSortCommand(): String
-    +handleFilterCommand(): String
-    +handleExportCommand(): String
-    +handleStatusCommand(): String
-    -promptForProjectIndex(): Integer
-    -promptForPriority(): String
-    -promptForDeadline(): String
-    -promptForNewProjectName(): String
-    -handleDeleteProject(): String
-    -handleDeleteTask(): String
-    -handleUpdateTaskInProject(int): String
-    -handleUpdateTaskFields(int, int): String
-    -promptForNewDescription(): String
-    -promptForNewPriority(): String
-    -promptForNewDeadline(): String
-    -handleFilterByPriority(): String
+    ProjectList projects
+    Scanner scanner
+    InteractivePromptHandler(ProjectList, Scanner)
+    handleAddCommand(): String
+    handleCreateCommand(): String
+    handleListCommand(): String
+    handleMarkCommand(): String
+    handleUnmarkCommand(): String
+    handleDeleteCommand(): String
+    handleUpdateCommand(): String
+    handleSortCommand(): String
+    handleFilterCommand(): String
+    handleExportCommand(): String
+    handleStatusCommand(): String
+    promptForProjectIndex(): Integer
+    promptForPriority(): String
+    promptForDeadline(): String
+    promptForNewProjectName(): String
+    handleDeleteProject(): String
+    handleDeleteTask(): String
+    handleUpdateTaskInProject(int): String
+    handleUpdateTaskFields(int, int): String
+    promptForNewDescription(): String
+    promptForNewPriority(): String
+    promptForNewDeadline(): String
+    handleFilterByPriority(): String
 }
 
 class ProjectList {
-    +getProjectListSize(): int
-    +getProjectByIndex(int): Project
+    getProjectListSize(): int
+    getProjectByIndex(int): Project
 }
 
 class Project {
-    +getProjectName(): String
-    +showAllTasks(): String
-    +size(): int
+    getProjectName(): String
+    showAllTasks(): String
+    size(): int
 }
 
 class Task {
-    -boolean isDone
-    -String description
-    -LocalDate deadline
-    -int priority
-    +marker(): String
-    +toString(): String
-    +mark(): void
-    +unmark(): void
+    isDone
+    description
+    deadline
+    priority
+    marker(): String
+    toString(): String
+    mark(): void
+    unmark(): void
 }
 
 InteractivePromptHandler --> Project : accesses
