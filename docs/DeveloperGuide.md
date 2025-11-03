@@ -118,7 +118,8 @@ Input validation is centralized to ensure consistent rules, clear error messages
 
 1. Normalize and validate primitive inputs (indices, names, flags, dates, priorities)
 2. Guard command execution with preconditions (presence, range, format)
-3. Provide consistent, user-friendly error messages across commands
+3. Reject unexpected extra parameters to prevent user input errors
+4. Provide consistent, user-friendly error messages across commands
 
 **Common Rules (from `Validation`):**
 
@@ -136,6 +137,11 @@ int projectIndex = CommandValidator.requireIndex(arg0, Validation.INDEX_MIN);
 String name = CommandValidator.requireName(projectName, Validation.MAX_PROJECT_NAME_LENGTH, Validation.PROJECT_NAME_PATTERN);
 LocalDate deadline = CommandValidator.optionalDateOrNull(deadlineArg, Validation.DATE_FORMAT);
 int priority = CommandValidator.optionalPriorityOrDefault(priorityArg, Validation.ALLOWED_PRIORITIES, Validation.DEFAULT_PRIORITY);
+
+// Extra parameter validation (e.g., in StatusCommand, ListCommand)
+if (parsedArgument.getRemainingArgument() != null && !parsedArgument.getRemainingArgument().trim().isEmpty()) {
+    throw new MissingArgumentException("Unexpected extra parameters: " + parsedArgument.getRemainingArgument());
+}
 ```
 
 **Error Handling:**
@@ -149,6 +155,7 @@ int priority = CommandValidator.optionalPriorityOrDefault(priorityArg, Validatio
 1. `CommandParser` uses validator for early syntax/flag checks
 2. `ArgumentParser` uses validator to resolve and range-check indices and names
 3. Individual commands validate optional fields (e.g., update flags, export filters) via the same utilities
+4. Commands validate against extra parameters using `ArgumentParser.getRemainingArgument()` to ensure clean input
 
 **Parser hooks: index parsing and project index validation**
 
@@ -272,9 +279,13 @@ The diagram below illustrates the listing process:
 
 **Implementation Details**:
 
-1.  The `ListCommand` checks if a project index was provided.
-2.  If a project index is given, it finds the project and calls `ConsoleUi` to display only the tasks for that project.
-3.  If no project name is given, it iterates through the entire `ProjectList` and instructs the `ConsoleUi` to display all projects and their associated tasks.
+1.  The `ListCommand` checks if a project index or `--all` flag was provided.
+2.  **Argument Validation**:
+    - Checks for empty arguments (throws `MissingArgumentException`)
+    - If `--all` flag, validates project list is not empty (throws `EmptyProjectListException`)
+    - If project index provided, validates the index and rejects unexpected extra parameters (e.g., `list 1 extra` throws exception)
+3.  If a valid project index is given, it finds the project and calls `ConsoleUi` to display only the tasks for that project.
+4.  If `--all` flag is given, it iterates through the entire `ProjectList` and instructs the `ConsoleUi` to display all projects and their associated tasks.
 
 #### Project Management features by [Xylon Chan](team/xylonc.md)
 
@@ -544,13 +555,17 @@ The status display system provides users with visual feedback on project progres
 **Implementation Details:**
 
 1. **StatusCommand** receives arguments (project index or `--all` flag)
-2. **ArgumentParser** validates and resolves project identifiers (if specific project)
-3. **ProjectStatusAnalyzer** analyzes each project:
+2. **Argument Validation**: 
+   - Checks for empty arguments (throws `MissingArgumentException`)
+   - Validates project list is not empty (throws `EmptyProjectListException`)
+   - Rejects unexpected extra parameters after project index (e.g., `status 1 2` throws exception)
+3. **ArgumentParser** validates and resolves project identifiers (if specific project)
+4. **ProjectStatusAnalyzer** analyzes each project:
    - Iterates through tasks in the project's TaskList
    - Counts completed tasks (where `isDone() == true`)
    - Calculates completion percentage
    - Returns a ProjectStatus data object
-4. **ConsoleUi** renders the status information:
+5. **ConsoleUi** renders the status information:
    - Formats status summary (e.g., "3/5 tasks completed, 60%")
    - Generates visual progress bar: `[=========>      ] 60%`
    - Selects motivational message based on completion percentage
