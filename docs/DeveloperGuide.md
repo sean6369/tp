@@ -676,7 +676,7 @@ The system provides contextual encouragement based on progress:
 
 The add command guides users through project selection, task description, priority, and optional deadline:
 
-![Add Command Sequence Diagram](plantUML/add-command-sequence/Add%20Command%20Sequence%20Diagram.png)
+![Add Command Sequence Diagram](plantUML/add-command-sequence/add-command-sequence-diagram.png)
 
 **Key Features**:
 
@@ -775,7 +775,7 @@ Create command prompts for a new project name with validation:
 
 Mark and unmark commands follow identical selection flow with different validation:
 
-![Mark/Unmark Command Sequence Diagram](plantUML/mark-unmark-sequence/Unmark%20Command%20Sequence%20Diagram.png)
+![Mark/Unmark Command Sequence Diagram](plantUML/mark-unmark-sequence/mark-unmark-sequence-diagram.png)
 
 **Shared Logic**: Both commands use identical project/task selection but different validation rules.
 
