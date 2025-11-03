@@ -42,6 +42,7 @@ public class CreateCommand extends Command {
         return true;
     }
 
+    //@@author sean6369
     private String stripQuotesIfWrapped(String name) {
         if (name == null || name.length() < 2) {
             return name;
@@ -59,4 +60,5 @@ public class CreateCommand extends Command {
 
         return name;
     }
+    //@@author
 }

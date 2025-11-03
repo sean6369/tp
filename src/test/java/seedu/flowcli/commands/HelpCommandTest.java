@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import seedu.flowcli.commands.core.CommandContext;
-import seedu.flowcli.exceptions.MissingArgumentException;
+import seedu.flowcli.exceptions.ExtraArgumentException;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
 
@@ -56,7 +56,7 @@ class HelpCommandTest {
     void executeWithArgumentsThrowsException() {
         HelpCommand cmd = new HelpCommand("some random arguments");
 
-        assertThrows(MissingArgumentException.class, () -> cmd.execute(ctx),
+        assertThrows(ExtraArgumentException.class, () -> cmd.execute(ctx),
                 "Should throw exception when arguments are provided");
     }
 

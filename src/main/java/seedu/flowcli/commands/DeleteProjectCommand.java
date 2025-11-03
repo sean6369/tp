@@ -24,7 +24,6 @@ public class DeleteProjectCommand extends Command {
         ProjectList projects = context.getProjects();
         ArgumentParser parsedArgument = new ArgumentParser(arguments, projects);
         parsedArgument.validateProjectIndex();
-        Project targetProject = parsedArgument.getTargetProject();
 
         // Check for --confirm flag in remaining arguments
         String remaining = parsedArgument.getRemainingArgument();

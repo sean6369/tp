@@ -11,6 +11,7 @@ import seedu.flowcli.task.TaskWithProject;
 /**
  * Utility class for collecting tasks from projects.
  */
+//@@author sean6369
 public final class TaskCollector {
     private TaskCollector() {
     }
@@ -43,3 +44,4 @@ public final class TaskCollector {
         return tasks;
     }
 }
+//@@author

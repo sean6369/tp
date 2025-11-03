@@ -84,7 +84,9 @@ public class CommandParser {
             return new ParsedCommand(CommandType.UNKNOWN, arguments);
         }
     }
+    //@@author
 
+    //@@author sean6369
     public static Integer parseIndexOrNull(String indexText, int maxIndex)
             throws IndexOutOfRangeException, MissingIndexException, InvalidIndexFormatException {
         if (indexText == null) {
@@ -103,4 +105,5 @@ public class CommandParser {
         }
         return inputIndex - 1;
     }
+    //@@author
 }

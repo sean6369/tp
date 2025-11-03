@@ -4,6 +4,7 @@ package seedu.flowcli.task;
  * Represents a task with its associated project information.
  * Used for operations that work across multiple projects (filtering, sorting, exporting).
  */
+//@@author sean6369
 public class TaskWithProject {
     private final String projectName;
     private final Task task;
@@ -26,3 +27,4 @@ public class TaskWithProject {
         return projectName + ": " + task.toString();
     }
 }
+//@@author

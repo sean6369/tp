@@ -15,7 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import seedu.flowcli.commands.core.CommandContext;
-import seedu.flowcli.exceptions.MissingArgumentException;
+import seedu.flowcli.exceptions.ExtraArgumentException;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
@@ -83,7 +83,7 @@ class ByeCommandTest {
         ByeCommand cmd = new ByeCommand("   extra stuff   ");
 
         // Act & Assert
-        assertThrows(MissingArgumentException.class, () -> cmd.execute(ctx),
+        assertThrows(ExtraArgumentException.class, () -> cmd.execute(ctx),
                 "Bye command should throw exception when extra arguments are provided");
         logger.info("Bye with extra arguments correctly throws exception");
     }
