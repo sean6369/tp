@@ -64,7 +64,7 @@ class ListCommandTest {
         projects = new ProjectList();
         ui = new SpyUi(projects);
         exportHandler = new SpyExportHandler(projects, ui);
-        ctx = new CommandContext(projects, ui, exportHandler);
+        ctx = new CommandContext(projects, ui, exportHandler, null);
     }
 
     @Test

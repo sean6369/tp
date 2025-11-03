@@ -37,7 +37,7 @@ class HelpCommandTest {
     void setUp() {
         projects = new ProjectList();
         ui = new SpyUi(projects);
-        ctx = new CommandContext(projects, ui, null);
+        ctx = new CommandContext(projects, ui, null, null);
     }
 
     @Test

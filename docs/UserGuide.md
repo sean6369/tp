@@ -18,17 +18,15 @@ FlowCLI is a Command Line Interface (CLI) app for managing tasks and projects, o
 5. Type `help` to see the list of commands.
 6. FlowCLI will read commands until you enter `bye`. You can use either inline commands (full syntax) or interactive mode (just type the command name for guided input).
 
-Projects and tasks exist only for the current session. Use the export feature to save a snapshot if you need to keep a record.
-
 ## Important Notes
 
 ### Data Persistence
-⚠️ **FlowCLI does not save your data between sessions.** All projects and tasks exist only in memory while the application is running. When you exit with `bye`, all data is lost.
+✅ **FlowCLI automatically saves your data!** All projects and tasks are automatically saved to `data/flowcli-data.txt` when you exit with `bye`. When you reopen FlowCLI, your data is automatically loaded.
 
-**To preserve your work:**
-- Use `export-tasks <filename>.txt` regularly to save snapshots
-- Export before closing FlowCLI if you need to keep records
-- Consider exporting at the end of each work session
+**Additional features:**
+- Data is saved in the same directory where you run `flowcli.jar`
+- If the data file is corrupted, FlowCLI will back it up and start fresh
+- You can still use `export-tasks` to create human-readable snapshots for reports or sharing
 
 ## Features
 
@@ -438,7 +436,7 @@ Now explore FlowCLI's full capabilities:
 - **Start each session fresh**: Use `list --all` to check what projects you have
 - **Use descriptive project names**: Makes filtering and organizing easier later
 - **Set realistic deadlines**: Helps with priority management and sorting
-- **Export regularly**: Since data doesn't persist, save important snapshots throughout your work session
+- **Export for reports**: Use export to create human-readable snapshots for meetings, sharing, or backups
 - **Combine filter + sort + export**: Create custom reports for different contexts (meetings, weekly reviews, etc.)
 
 ### Command Usage
@@ -457,7 +455,7 @@ Now explore FlowCLI's full capabilities:
 - **Review status frequently**: Use `status --all` to get a quick overview of all your projects
 
 ### Export Strategies
-- **End-of-session export**: Always export before typing `bye` to preserve your work
+- **Exports for sharing**: Export creates human-readable files perfect for sharing with teammates or stakeholders
 - **Filtered exports**: Create focused task lists for specific needs (e.g., `export-tasks meeting.txt filter-tasks --priority high`)
 - **Deadline-sorted exports**: Great for weekly planning (e.g., `export-tasks week.txt sort-tasks --deadline ascending`)
 - **Per-project exports**: Export individual projects for team sharing or handoffs
@@ -467,7 +465,7 @@ Now explore FlowCLI's full capabilities:
 ## FAQ
 
 **Q**: How do I transfer my tasks to another machine?
-**A**: FlowCLI currently stores tasks in memory only. Run `export-tasks all_tasks.txt` and copy the generated text file to the new machine as a snapshot.
+**A**: FlowCLI stores tasks in `data/flowcli-data.txt`. Copy this file to the same location (relative to where you run the JAR) on the new machine. Alternatively, use `export-tasks all_tasks.txt` for a human-readable snapshot.
 
 **Q**: Why do I get an error about an invalid index?
 **A**: Project and task indices must be valid numbers corresponding to the lists. Use `list --all` to see project indices and `list <projectIndex>` for task indices.

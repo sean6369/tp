@@ -20,7 +20,7 @@ class UnknownCommandTest {
     void setUp() {
         ProjectList projects = new ProjectList();
         ConsoleUi ui = new ConsoleUi(projects);
-        ctx = new CommandContext(projects, ui, null);
+        ctx = new CommandContext(projects, ui, null, null);
     }
 
     @Test

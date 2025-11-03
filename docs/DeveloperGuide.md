@@ -110,6 +110,113 @@ ConsoleUi: displays confirmation
 
 ---
 
+#### Data Storage by [Zhenzhao](team/zhenzha0.md)
+
+The storage system provides persistent data storage for FlowCLI, automatically saving and loading all projects and tasks between sessions. It implements robust error handling, data validation, and atomic write operations to ensure data integrity.
+
+**Key Components:**
+
+- **Storage** - Main storage class handling save/load operations, file I/O, data validation, and corruption handling
+- **DataCorruptedException** - Exception thrown when the data file format is invalid or corrupted
+- **StorageException** - Exception thrown when file I/O operations fail (permissions, disk space, etc.)
+
+**Storage Location:**
+
+Data is saved to `./data/flowcli-data.txt` (relative to where the JAR is executed).
+
+**Data Format:**
+
+The storage uses a custom delimiter-based format optimized for parsing and validation:
+
+```
+PROJECT|Project Name
+TASK|isDone|description|deadline|priority
+```
+
+Where:
+- `PROJECT|<name>` - Project header line
+- `TASK|<0/1>|<description>|<YYYY-MM-DD or null>|<1-3>` - Task entry (0=not done, 1=done; 1=low, 2=medium, 3=high priority)
+- Special characters (`|`, newlines) are escaped using `<PIPE>` and `<NEWLINE>` markers
+
+**Implementation Details:**
+
+1. **On Startup (FlowCLI constructor):**
+   - Storage object is created
+   - `load()` is called to read data from file
+   - If file doesn't exist: starts with empty ProjectList (first run)
+   - If file is empty: starts with empty ProjectList
+   - If file is corrupted: backs up to `.backup` file, shows warning, starts with empty ProjectList
+   - If I/O error occurs: shows warning, starts with empty ProjectList
+   - Loaded data is used to initialize the application state
+
+2. **On Exit (ByeCommand execution):**
+   - `save()` is called with current ProjectList
+   - Data is written to temporary file first (`flowcli-data.tmp`)
+   - Temporary file is atomically renamed to `flowcli-data.txt` (prevents corruption if interrupted)
+   - If save fails: user is prompted to retry up to 3 times
+   - If all retries fail: warning is shown, application exits without saving
+
+3. **Data Validation During Load:**
+   - Every line is validated against expected format
+   - Project names cannot be empty
+   - Task fields must have exactly 4 pipe-delimited values
+   - `isDone` must be 0 or 1
+   - Dates must be valid ISO format (YYYY-MM-DD) or "null"
+   - Priority must be 1, 2, or 3
+   - Tasks must follow a PROJECT header (cannot appear before any project)
+   - Any validation failure triggers DataCorruptedException and backup
+
+4. **Special Character Handling:**
+   - Pipe characters `|` in user input are escaped to `<PIPE>`
+   - Newlines in user input are escaped to `<NEWLINE>`
+   - The escape sequences themselves are double-escaped (`<PIPE>` becomes `<PIPE><PIPE>`)
+   - Unescaping happens in reverse order during load
+
+**Error Handling:**
+
+| Error Type | Handling | User Impact |
+|------------|----------|-------------|
+| File not found (first run) | Silent, start with empty list | None |
+| Empty file | Silent, start with empty list | None |
+| Corrupted data | Backup to `.backup`, show warning, start with empty list | Warning message |
+| I/O error (read) | Show warning, start with empty list | Warning message |
+| I/O error (write) | Prompt for retry (3 attempts), allow exit without saving | Error message + retry prompt |
+| Permission denied | Show specific error, prompt for retry or exit | Error message |
+| Disk full | Show specific error, prompt for retry or exit | Error message |
+
+**Design Rationale:**
+
+- **Atomic Writes**: Prevents data corruption if save is interrupted (power loss, forced termination)
+- **Custom Format**: More compact than JSON/XML, easy to parse, validates line-by-line
+- **Graceful Degradation**: Never blocks user from using application even if storage fails
+- **Data Integrity**: Comprehensive validation ensures only valid data is loaded
+- **User Transparency**: Clear messages for errors, automatic backups on corruption
+
+**Example Storage File:**
+
+```
+PROJECT|CS2113T Project
+TASK|1|Complete assignment|2025-12-31|3
+TASK|0|Study for exam|null|2
+PROJECT|Personal Tasks
+TASK|0|Buy groceries|2025-11-10|1
+TASK|1|Call dentist|null|2
+```
+
+**Edge Cases Handled:**
+
+- Empty project list (no projects/tasks)
+- Projects with no tasks
+- Tasks with no deadlines (null)
+- Tasks with empty descriptions
+- Special characters in project/task names
+- Extremely old/future dates
+- Large datasets (100+ projects, 10000+ tasks)
+- Data file is a directory (not a file)
+- Concurrent access (last writer wins)
+
+---
+
 #### Validation Framework by [Sean Lee](team/sean6369.md)
 
 Input validation is centralized to ensure consistent rules, clear error messages, and early failure before any state mutation.

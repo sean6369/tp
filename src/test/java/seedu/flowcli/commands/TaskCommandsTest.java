@@ -31,7 +31,7 @@ class TaskCommandsTest {
         projects.addProject("Alpha");
         project = projects.getProject("Alpha");
         ui = new StubConsoleUi(projects);
-        context = new CommandContext(projects, ui, null);
+        context = new CommandContext(projects, ui, null, null);
     }
 
     @Test
