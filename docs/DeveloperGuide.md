@@ -71,16 +71,20 @@ The command processing infrastructure forms the foundation of FlowCLI, handling 
 - **CommandParser** - Parses command words and extracts arguments, maps input to CommandType enum
 - **ArgumentParser** - Parses project identifiers (index or name), resolves to Project objects, validates existence
 
-![Command Processing Infrastructure Sequence](plantUML/command-processing-infrastructure/Command-processing-infrastructure.png)
+![Command Processing Infrastructure Sequence](plantUML/command-processing-infrastructure/Command-processing-infrastructure-sequence-diagram.png)
 
 **Implementation Details:**
 
-1. **CommandHandler** initializes the application's main loop and scanner, reading user input line by line.
-2. For each input line, **CommandParser** splits the command word from arguments and maps it to a CommandType enum.
-3. The CommandFactory creates the appropriate Command object based on the type.
-4. Before execution, **ArgumentParser** validates and resolves project identifiers (if applicable), converting indices or names into Project objects.
-5. The Command executes with validated arguments and displays results through ConsoleUi.
-6. Exceptions are caught and handled gracefully, displaying user-friendly error messages.
+1. **FlowCLI** initializes by creating CommandHandler, CommandParser, CommandFactory, and ConsoleUi (these objects exist throughout the application lifecycle).
+2. **CommandHandler** manages the main command loop, reading user input line by line using a Scanner.
+3. For each input line, **CommandParser** splits the command word from arguments and maps it to a CommandType enum.
+4. **CommandFactory** creates a new Command object for each user input based on the type.
+5. During command execution, a new **ArgumentParser** is created to validate and resolve project identifiers (if applicable), converting indices or names into Project objects. This parser is destroyed after parsing completes.
+6. The Command validates arguments, performs business logic, and displays results through ConsoleUi.
+7. After execution, the Command object is destroyed (each command is executed once and discarded).
+8. Exceptions are caught and handled gracefully, displaying user-friendly error messages.
+
+**Note:** The sequence diagram shows constructor calls only for objects created during the command processing flow (Command and ArgumentParser). Pre-existing components (FlowCLI, CommandHandler, CommandParser, CommandFactory, ConsoleUi) are created during application initialization and persist throughout the session.
 
 **Design Rationale:**
 
