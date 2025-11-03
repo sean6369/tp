@@ -12,6 +12,7 @@ import seedu.flowcli.commands.core.ExportCommandHandler;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
 
+//@@author sean6369
 @DisplayName("ExportCommand Unit Tests")
 class ExportCommandTest {
 
@@ -93,4 +94,5 @@ class ExportCommandTest {
         assertTrue(result1 && result2 && result3, "Export command should always return true");
     }
 }
+//@@author
 

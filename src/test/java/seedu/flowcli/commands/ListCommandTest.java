@@ -18,6 +18,7 @@ import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
 
+//@@author sean6369
 @DisplayName("ListCommand Unit Tests")
 class ListCommandTest {
 
@@ -153,4 +154,5 @@ class ListCommandTest {
         assertTrue(resultUpper && resultMixed, "All flag should be case insensitive");
     }
 }
+//@@author
 
