@@ -49,6 +49,19 @@ FlowCLI follows a layered architecture with clear separation of concerns:
 
 ![Architecture Diagram](plantUML/architecture/architecture.png)
 
+**Component Relationships:**
+
+The diagram shows the main components and their relationships:
+- **ConsoleUi** handles all user interface interactions
+- **CommandHandler** orchestrates command processing
+- **InteractivePromptHandler** manages interactive mode dialogues
+- **CommandFactory** creates command objects
+- **ProjectList** contains multiple **Project** instances (1-to-many relationship)
+- **Project** contains multiple **Task** instances (1-to-many relationship)
+- **TaskSorter** and **TaskFilter** provide data processing utilities
+
+*Note: The multiplicity notation "1" → "*" indicates a one-to-many relationship in UML. For example, one ProjectList can contain zero or more Projects, and one Project can contain zero or more Tasks.*
+
 **Key Design Principles:**
 
 - **Single Responsibility**: Each class has one primary responsibility

@@ -105,6 +105,6 @@ CommandHandler --> ConsoleUi : uses
 InteractivePromptHandler --> ProjectList : manages
 InteractivePromptHandler --> TaskSorter : uses
 InteractivePromptHandler --> TaskFilter : uses
-ProjectList --> Project : contains *
-Project --> Task : contains *
+ProjectList "1" --> "*" Project : contains
+Project "1" --> "*" Task : contains
 @enduml
