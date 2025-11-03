@@ -93,10 +93,10 @@ public class ArgumentParser {
             if (parsed > 0) {
                 return parsed;
             }
+            return parsed;
         } catch (NumberFormatException e) {
             return null;
         }
-        return null;
     }
     //@@author
 

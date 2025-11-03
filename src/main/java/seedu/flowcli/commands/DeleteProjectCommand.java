@@ -28,7 +28,7 @@ public class DeleteProjectCommand extends Command {
 
         // Check for --confirm flag in remaining arguments
         String remaining = parsedArgument.getRemainingArgument();
-        boolean confirmed = remaining != null && remaining.trim().equalsIgnoreCase("--confirm");
+        boolean confirmed = remaining != null && remaining.toLowerCase().contains("--confirm");
 
         if (!confirmed) {
             throw new InvalidCommandSyntaxException("Confirm project deletion with --confirm.");
