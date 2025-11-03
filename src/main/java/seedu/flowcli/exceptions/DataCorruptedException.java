@@ -3,6 +3,7 @@ package seedu.flowcli.exceptions;
 /**
  * Represents an error when the storage file contains corrupted or invalid data.
  */
+//@@author Zhenzha0
 public class DataCorruptedException extends Exception {
     public DataCorruptedException(String message) {
         super(message);
@@ -12,4 +13,5 @@ public class DataCorruptedException extends Exception {
         super(message, cause);
     }
 }
+//@@author
 
