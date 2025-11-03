@@ -4,9 +4,7 @@ title InteractivePromptHandler Class Diagram
 skinparam classAttributeIconSize 0
 skinparam shadowing false
 skinparam monochrome true
-skinparam circledCharacterRadius 0
-skinparam showVisibility false
-skinparam stereotypeCBackgroundColor transparent
+hide circle
 
 class InteractivePromptHandler {
     ProjectList projects
