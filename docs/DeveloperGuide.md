@@ -18,24 +18,25 @@ We also acknowledge:
 
 ## Table of Contents
 
-- [Architecture](#architecture-yao-xiang)
+- [Architecture](#architecture-by-yao-xiang)
 - [Implementation &amp; Design](#implementation--design)
   - [Core Functionality](#core-functionality)
-    - [Command Processing Infrastructure](#command-processing-infrastructure-by-zhenzhaoteamzhenzhamd)
-    - [Task Management Features](#task-management-features-by-zing-jenteamzingjenmd)
-    - [Project Management Features](#project-management-features-by-xylon-chanteamxylonchanmd)
-    - [Common Classes](#common-classes-by-zhenzhaoteamzhenzhamd)
+    - [Command Processing Infrastructure](#command-processing-infrastructure-by-zhenzhao)
+    - [Validation Framework](#validation-framework-by-sean-lee)
+    - [Task Management Features](#task-management-features-by-zing-jen)
+    - [Project Management Features](#project-management-features-by-xylon-chan)
+    - [Common Classes](#common-classes-by-zhenzhao)
   - [Data Processing](#data-processing)
-    - [Task Sorting Algorithm](#task-sorting-algorithm-yao-xiang)
-    - [Task Filtering Algorithm](#task-filtering-algorithm-yao-xiang)
-  - [Data Persistence](#data-persistence)
+    - [Task Sorting Algorithm](#task-sorting-algorithm-by-yao-xiang)
+    - [Task Filtering Algorithm](#task-filtering-algorithm-by-yao-xiang)
+  - [Data Persistence](#data-persistence-by-sean-lee)
   - [User Interface](#user-interface)
-    - [Interactive Mode](#interactive-mode-yao-xiang)
-    - [Status Display System](#status-display-system-by-zhenzhaoteamzhenzhamd)
-    - [Interactive Command Flows](#interactive-command-flows-yao-xiang)
+    - [Interactive Mode](#interactive-mode-by-yao-xiang)
+    - [Status Display System](#status-display-system-by-zhenzhao)
+    - [Interactive Command Flows](#interactive-command-flows-by-yao-xiang)
 - [Product scope](#product-scope)
 - [User Stories](#user-stories)
-- [Non-Functional Requirements](#non-functional-requirements-zhenzhao)
+- [Non-Functional Requirements](#non-functional-requirements-by-zhenzhao)
 - [Glossary](#glossary)
 - [Instructions for manual testing](#instructions-for-manual-testing)
 
@@ -60,7 +61,7 @@ FlowCLI follows a layered architecture with clear separation of concerns:
 
 ### Core Functionality
 
-#### Command Processing Infrastructure by [Zhenzhao](team/zhenzhao.md)
+#### Command Processing Infrastructure by [Zhenzhao](team/zhenzha0.md)
 
 The command processing infrastructure forms the foundation of FlowCLI, handling all user input parsing, validation, and command execution. It consists of three key components that work together to transform user input into executable commands.
 
@@ -104,7 +105,72 @@ ConsoleUi: displays confirmation
 
 ---
 
-#### Task Management features by [Zing Jen](team/zingjen.md)
+#### Validation Framework by [Sean Lee](team/sean6369.md)
+
+Input validation is centralized to ensure consistent rules, clear error messages, and early failure before any state mutation.
+
+**Key Components:**
+
+- `CommandValidator` - Reusable validation utilities used by parsers and commands
+- `Validation` (constants) - Canonical limits, messages, and regex patterns
+
+**Responsibilities:**
+
+1. Normalize and validate primitive inputs (indices, names, flags, dates, priorities)
+2. Guard command execution with preconditions (presence, range, format)
+3. Provide consistent, user-friendly error messages across commands
+
+**Common Rules (from `Validation`):**
+
+- Index range: `INDEX_MIN = 1` (user-facing), non-negative zero-based internally
+- Project name: `MAX_PROJECT_NAME_LENGTH`, `PROJECT_NAME_PATTERN`
+- Task description: `MAX_DESCRIPTION_LENGTH`, non-blank
+- Priority: allowed values {`high`, `medium`, `low`} (case-insensitive)
+- Date format: `DATE_FORMAT = yyyy-MM-dd` with strict parsing
+
+**Typical Usage:**
+
+```java
+// In ArgumentParser / Command classes
+int projectIndex = CommandValidator.requireIndex(arg0, Validation.INDEX_MIN);
+String name = CommandValidator.requireName(projectName, Validation.MAX_PROJECT_NAME_LENGTH, Validation.PROJECT_NAME_PATTERN);
+LocalDate deadline = CommandValidator.optionalDateOrNull(deadlineArg, Validation.DATE_FORMAT);
+int priority = CommandValidator.optionalPriorityOrDefault(priorityArg, Validation.ALLOWED_PRIORITIES, Validation.DEFAULT_PRIORITY);
+```
+
+**Error Handling:**
+
+- Throws specific exceptions (e.g., `MissingArgumentException`, `InvalidFormatException`, `OutOfRangeException`)
+- Messages are composed using `Validation.MESSAGE_*` templates for consistency
+- All validation happens before model mutation to preserve integrity
+
+**Integration Points:**
+
+1. `CommandParser` uses validator for early syntax/flag checks
+2. `ArgumentParser` uses validator to resolve and range-check indices and names
+3. Individual commands validate optional fields (e.g., update flags, export filters) via the same utilities
+
+**Parser hooks: index parsing and project index validation**
+
+- `CommandParser.parseIndexOrNull(indexText, maxIndex)`
+  - Parses a 1-based user index; converts to zero-based on success
+  - Throws: `MissingIndexException`, `InvalidIndexFormatException`, `IndexOutOfRangeException`
+  - Ensures indices respect `Validation.INDEX_MIN` and the provided upper bound
+
+- `ArgumentParser.validateProjectIndex()`
+  - Verifies that a target project is resolvable from user input
+  - Detects non-numeric tokens and out-of-range indices against the current project list
+  - Throws: `MissingArgumentException`, `InvalidIndexFormatException`, `IndexOutOfRangeException`, `InvalidArgumentException`
+
+**Centralized error handling (refactored for consistency):**
+
+- Specific exceptions replace a catch‑all error: `MissingArgumentException`, `MissingIndexException`, `InvalidIndexFormatException`, `IndexOutOfRangeException`, `InvalidDateException`, `InvalidFilenameException`, etc.
+- Messages are standardized via `Validation.MESSAGE_*` templates and surfaced consistently by the command layer.
+- Validation occurs before any model change; commands catch and render user-friendly messages, keeping parsing/validation logic separate from state mutation.
+
+---
+
+#### Task Management features by [Zing Jen](team/zeeeing.md)
 
 The task management system forms the core of FlowCLI, allowing users to create, track, and manage their work within different projects. The implementation follows the command pattern, where each user action is encapsulated in a dedicated command class.
 
@@ -210,7 +276,7 @@ The diagram below illustrates the listing process:
 2.  If a project index is given, it finds the project and calls `ConsoleUi` to display only the tasks for that project.
 3.  If no project name is given, it iterates through the entire `ProjectList` and instructs the `ConsoleUi` to display all projects and their associated tasks.
 
-#### Project Management features by [Xylon Chan](team/xylonchan.md)
+#### Project Management features by [Xylon Chan](team/xylonc.md)
 
 ##### CreateCommand
 
@@ -244,7 +310,7 @@ Here is a sequence diagram illustrating the process:
 
 ![CreateCommandSequenceDiagram](plantUML/project-management/CreateCommandDiagram.png)
 
-#### Common Classes by [Zhenzhao](team/zhenzhao.md)
+#### Common Classes by [Zhenzhao](team/zhenzha0.md)
 
 The core data model of FlowCLI consists of four fundamental classes that represent the domain entities and their relationships. These classes form the foundation upon which all features are built.
 
@@ -356,9 +422,9 @@ The filtering algorithm supports filtering tasks by priority level and/or projec
 - **Case Insensitive**: Project name and priority filtering ignore case
 - **Multiple Filters**: Can combine priority and project name filters
 
-### Data Persistence by [Sean Lee](team/seanlee.md)
+### Data Persistence by [Sean Lee](team/sean6369.md)
 
-#### Export Algorithm by [Sean Lee](team/seanlee.md)
+#### Export Algorithm by [Sean Lee](team/sean6369.md)
 
 The export algorithm supports saving project and task data to text files with filtering and sorting capabilities:
 
@@ -450,7 +516,7 @@ private boolean shouldUseInteractiveMode(CommandParser.ParsedCommand parsed) {
 
 **Decision Rationale**: Interactive mode is triggered for main commands with empty arguments, preserving backward compatibility.
 
-#### Status Display System by [Zhenzhao](team/zhenzhao.md)
+#### Status Display System by [Zhenzhao](team/zhenzha0.md)
 
 The status display system provides users with visual feedback on project progress through completion tracking, progress bars, and motivational messages. It separates analysis logic from presentation concerns for maintainability.
 
@@ -690,7 +756,7 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 
 ---
 
-## Non-Functional Requirements by [Zhenzhao](team/zhenzhao.md)
+## Non-Functional Requirements by [Zhenzhao](team/zhenzha0.md)
 
 1. **Performance**
    - The application should respond to user commands within 500ms under normal operating conditions.

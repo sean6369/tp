@@ -78,6 +78,11 @@ Structure is felxible such that you can also input `--deadline` first before `--
 add-task 1 Hang fairy lights --priority high --deadline 2025-01-31
 ```
 
+Common mistakes and fixes:
+- "Project index is out of range": Run `list --all` and use the shown index (starts at 1).
+- "Invalid priority value": Use one of `low`, `medium`, `high` (case-insensitive).
+- "Invalid date format": Use `YYYY-MM-DD` (e.g., `2025-11-15`).
+
 ### Update a task: `update-task <projectIndex> <taskIndex> [--description <desc>] [--deadline <YYYY-MM-DD|none>] [--priority <level>]` or `update (interactive mode)`
 
 Edits the specified task in place. You can change one field or combine multiple options in the same command.
@@ -90,6 +95,11 @@ Edits the specified task in place. You can change one field or combine multiple 
 update-task 1 2 --description "Assemble party bags" --deadline 2025-02-15 --priority medium
 update-task 1 3 --deadline none
 ```
+
+Common mistakes and fixes:
+- "Task index is out of range": Use `list <projectIndex>` to see valid task numbers.
+- "Invalid date format": Use `YYYY-MM-DD`, or `none` to clear the deadline.
+- "Invalid priority value": Use `low`, `medium`, or `high`.
 
 ### Mark or unmark a task: `mark <projectIndex> <taskIndex>` / `unmark <projectIndex> <taskIndex>` or `mark/unmark (interactive mode)`
 
@@ -118,6 +128,10 @@ Displays every task from every project in the requested order and remembers this
 sort-tasks --deadline ascending
 ```
 
+Common mistakes and fixes:
+- "Invalid sort field": Use `--deadline` or `--priority`.
+- "Invalid sort order": Use `ascending` or `descending`.
+
 ### Filter tasks across projects: `filter-tasks --priority <value>` or `filter (interactive mode)`
 
 Shows only tasks that match the chosen priority. The filtered view can be exported directly.
@@ -125,6 +139,9 @@ Shows only tasks that match the chosen priority. The filtered view can be export
 ```
 filter-tasks --priority high
 ```
+
+Common mistakes and fixes:
+- "Invalid priority value": Use `low`, `medium`, or `high`.
 
 ### Get project status: `status <projectIndex>` or `status --all` or `status (interactive mode)`
 
@@ -147,14 +164,28 @@ Saves tasks to a plain-text file.
   ```
   export-tasks party-plan.txt 1
   ```
-- Chain `filter-tasks ...` and/or `sort-tasks ...` to export a customised report:
+- Chain `filter-tasks ...` and/or `sort-tasks ...` in the same command to export a customised report:
   ```
   export-tasks high-priority.txt filter-tasks --priority high sort-tasks --deadline ascending
   ```
 
-**Export File Format Example:**
+Notes:
+- Files are written to your current working directory by default. Use absolute or relative paths to choose a location.
+  - If the path contains spaces, wrap it in quotes: `export-tasks "My Reports/tasks.txt"`
+- Existing files with the same name will be overwritten.
+- Inline mode requires the `.txt` extension in the filename. In interactive mode, entering the name without `.txt` will auto-append `.txt`.
 
-When you export tasks, FlowCLI creates a plain text file like this:
+Common mistakes and fixes:
+- "Invalid filename": Avoid illegal characters and ensure the name ends with `.txt`.
+- "Export failed: Directory does not exist": Create the folder or use an existing path.
+- "Export failed: Permission denied": Export to a writable location (e.g., home directory).
+- "No tasks to export": Broaden scope by removing filters or exporting all tasks.
+
+Interactive mode options:
+- After entering a filename, choose to export: all tasks, a specific project, filtered tasks, sorted tasks, or filtered+sorted tasks, then confirm.
+
+**Export file format example:**
+When you export tasks, FLowCLI creates a plain text file like this:
 ```
 CS2113T Project - high priority
 ============================================
@@ -342,6 +373,14 @@ Now explore FlowCLI's full capabilities:
 - Try exporting to a different location (e.g., your home directory)
 - On Windows, avoid system directories like `C:\Windows`
 
+**"Export failed: Directory does not exist"**
+- Create the parent folders first or export to an existing path
+- Use a valid absolute or relative path (e.g., `~/exports/report.txt`)
+
+**"Export failed due to filesystem error (read-only, disk full, etc.)"**
+- Ensure the target drive/folder is writable and has free space
+- Try exporting to another drive or your home directory
+
 **"File is currently open or locked"**
 - Close the exported file in other programs (Excel, text editors, etc.)
 - Try using a different filename
@@ -391,6 +430,8 @@ Now explore FlowCLI's full capabilities:
 - **Filtered exports**: Create focused task lists for specific needs (e.g., `export-tasks meeting.txt filter-tasks --priority high`)
 - **Deadline-sorted exports**: Great for weekly planning (e.g., `export-tasks week.txt sort-tasks --deadline ascending`)
 - **Per-project exports**: Export individual projects for team sharing or handoffs
+ - **Be explicit about paths**: Use absolute/relative paths to control where files are saved
+ - **Overwrites**: Export will overwrite files with the same name; pick unique names when needed
 
 ## FAQ
 
