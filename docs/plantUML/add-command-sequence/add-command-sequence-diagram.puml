@@ -42,9 +42,4 @@ deactivate Project
 InteractivePromptHandler -> User: "Task added successfully!"
 deactivate InteractivePromptHandler
 
-destroy Task
-destroy Project
-destroy ProjectList
-destroy InteractivePromptHandler
-
 @enduml
