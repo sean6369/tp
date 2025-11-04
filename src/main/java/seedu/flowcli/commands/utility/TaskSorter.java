@@ -34,7 +34,7 @@ public class TaskSorter {
         this.sortBy = sortBy;
         this.ascending = ascending;
 
-        logger.info(String.format("Creating TaskSorter with sortBy='%s', ascending=%b", sortBy, ascending));
+        logger.fine(String.format("Creating TaskSorter with sortBy='%s', ascending=%b", sortBy, ascending));
 
         sort();
     }
@@ -52,7 +52,7 @@ public class TaskSorter {
         this.sortBy = sortBy;
         this.ascending = ascending;
 
-        logger.info(String.format("Creating TaskSorter with sortBy='%s', ascending=%b on %d tasks", sortBy, ascending,
+        logger.fine(String.format("Creating TaskSorter with sortBy='%s', ascending=%b on %d tasks", sortBy, ascending,
                                         tasks.size()));
 
         sort();
@@ -98,7 +98,7 @@ public class TaskSorter {
         });
 
         long duration = System.nanoTime() - startTime;
-        logger.info(String.format("Task sorting completed in %d ns. Sorted %d tasks by %s (%s)", duration,
+        logger.fine(String.format("Task sorting completed in %d ns. Sorted %d tasks by %s (%s)", duration,
                                         sortedTasks.size(), sortBy, ascending ? "ascending" : "descending"));
     }
 }

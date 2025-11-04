@@ -1,105 +1,70 @@
+---
+header-includes: |
+  <style>
+  @media print {
+    img { display: none !important; }
+    h2 { margin-top: 0.5em; margin-bottom: 0.3em; }
+    h3 { margin-top: 0.8em; margin-bottom: 0.4em; }
+    h4 { margin-top: 0.4em; margin-bottom: 0.2em; }
+    p { margin-top: 0.15em; margin-bottom: 0.15em; }
+    ul { margin-top: 0.2em; margin-bottom: 0.2em; }
+    li { margin-top: 0.08em; margin-bottom: 0.08em; }
+    pre { margin-top: 0.3em; margin-bottom: 0.3em; }
+    hr { margin-top: 0.5em; margin-bottom: 0.5em; page-break-after: always; }
+  }
+  </style>
+---
+
 # Yang Zhenzhao - Project Portfolio Page
 
 ## Overview
 
-FlowCLI is a Command Line Interface (CLI) application for managing tasks and projects, optimized for fast, fully keyboard-driven workflows. It offers two convenient ways to work: inline commands for power users who want to type everything at once, and interactive mode for guided step-by-step input. Users can track priorities, deadlines and statuses of their projects, filter and sort instantly, then export the current view to a TXT file.
+FlowCLI is a CLI application for managing tasks and projects with keyboard-driven workflows. It supports inline commands and interactive mode for users. Users can track priorities, deadlines and statuses, filter and sort instantly, then export to TXT files.
 
-As the technical lead for the foundational architecture, I was responsible for designing and implementing the core command processing infrastructure, project and task management systems, and the status display feature. My contributions focused on creating a robust, extensible architecture that enables efficient command handling and provides users with comprehensive project tracking capabilities.
+I designed and implemented the core command processing infrastructure, project/task management systems, data persistence, and status display features.
 
 ## Summary of Contributions
 
 ### Code Contributed
 
-[RepoSense Link to my code contributions](https://nus-cs2113-ay2526s1.github.io/tp-dashboard/?search=zhenzha0&breakdown=true&sort=groupTitle%20dsc&sortWithin=title&since=2025-09-19T00%3A00%3A00&timeframe=commit&mergegroup=&groupSelect=groupByRepos&checkedFileTypes=docs~functional-code~test-code~other&filteredFileName=)
+[RepoSense Link](https://nus-cs2113-ay2526s1.github.io/tp-dashboard/?search=zhenzha0&breakdown=true&sort=groupTitle%20dsc&sortWithin=title&since=2025-09-19T00%3A00%3A00&timeframe=commit&mergegroup=&groupSelect=groupByRepos&checkedFileTypes=docs~functional-code~test-code~other&filteredFileName=)
 
 ### Enhancements Implemented
 
 #### 1. Command Processing Infrastructure
-- **What it does**: Provides a centralized, extensible framework for parsing and executing user commands through `CommandHandler`, `CommandParser`, and `ArgumentParser` classes.
-- **Justification**: This infrastructure is critical for maintaining clean separation of concerns and enabling easy addition of new commands without modifying existing code. It supports both inline command mode and interactive mode seamlessly.
-- **Highlights**: The design uses the Command pattern to encapsulate command logic, making the system highly maintainable and testable. The `ArgumentParser` utility provides robust flag-based argument parsing that all commands can leverage.
-- **Code contributed**: 
-  - `CommandHandler` class: Core command execution loop and coordination [\[Functional code\]](../../src/main/java/seedu/flowcli/commands/core/CommandHandler.java)
-  - `CommandParser` class: Command parsing and routing logic [\[Functional code\]](../../src/main/java/seedu/flowcli/parsers/CommandParser.java)
-  - `ArgumentParser` class: Reusable argument parsing utility [\[Functional code\]](../../src/main/java/seedu/flowcli/parsers/ArgumentParser.java)
+Designed and implemented the core framework using Command pattern for parsing and executing user commands. Built `CommandHandler`, `CommandParser`, and `ArgumentParser` to enable clean separation of concerns and support both inline and interactive modes. This extensible architecture allows easy addition of new commands.
+- [\[CommandHandler\]](../../src/main/java/seedu/flowcli/commands/core/CommandHandler.java) [\[CommandParser\]](../../src/main/java/seedu/flowcli/parsers/CommandParser.java) [\[ArgumentParser\]](../../src/main/java/seedu/flowcli/parsers/ArgumentParser.java)
 
 #### 2. Core Data Models (Project and Task Management)
-- **What it does**: Implements the fundamental `Project`, `ProjectList`, `Task`, and `TaskList` classes that form the backbone of FlowCLI's data management.
-- **Justification**: These classes provide a clean, object-oriented approach to managing hierarchical project-task relationships with built-in validation and error handling.
-- **Highlights**: Designed with encapsulation principles, ensuring data integrity through controlled access methods. Supports efficient CRUD operations with comprehensive exception handling for edge cases.
-- **Code contributed**:
-  - `Project` and `ProjectList` classes [\[Functional code\]](../../src/main/java/seedu/flowcli/project/)
-  - `Task` and `TaskList` classes [\[Functional code\]](../../src/main/java/seedu/flowcli/task/)
+Implemented fundamental classes (`Project`, `ProjectList`, `Task`, `TaskList`) forming the data management backbone with encapsulation, validation, and comprehensive exception handling.
+- [\[Project & ProjectList\]](../../src/main/java/seedu/flowcli/project/) [\[Task & TaskList\]](../../src/main/java/seedu/flowcli/task/)
 
 #### 3. Status Display System
-- **What it does**: Provides users with visual progress tracking through completion percentages, progress bars, and motivational messages for individual projects or across all projects.
-- **Justification**: Essential for users to quickly assess project progress at a glance, improving productivity and project management efficiency.
-- **Highlights**: Implements sophisticated status analysis with multiple display formats. The `ProjectStatusAnalyzer` separates analysis logic from presentation, following single-responsibility principles.
-- **Code contributed**:
-  - `StatusCommand` class [\[Functional code\]](../../src/main/java/seedu/flowcli/commands/StatusCommand.java)
-  - `ProjectStatusAnalyzer` utility class [\[Functional code\]](../../src/main/java/seedu/flowcli/commands/utility/ProjectStatusAnalyzer.java)
-  - Status-related UI methods in `ConsoleUi` [\[Functional code\]](../../src/main/java/seedu/flowcli/ui/ConsoleUi.java)
+Built visual progress tracking with completion percentages, ASCII progress bars, and context-aware motivational messages. Uses `ProjectStatusAnalyzer` following single-responsibility principles.
+- [\[StatusCommand\]](../../src/main/java/seedu/flowcli/commands/StatusCommand.java) [\[ProjectStatusAnalyzer\]](../../src/main/java/seedu/flowcli/commands/utility/ProjectStatusAnalyzer.java) [\[ConsoleUi\]](../../src/main/java/seedu/flowcli/ui/ConsoleUi.java)
 
 #### 4. Data Persistence System
-- **What it does**: Implements automatic data storage and loading for all projects and tasks, ensuring data persists between application sessions.
-- **Justification**: Critical for production usability - users need their work saved automatically without manual export. Prevents data loss and improves user experience significantly.
-- **Highlights**: Implements robust error handling with atomic write operations (temp file + rename), comprehensive data validation, special character escaping, corruption detection with automatic backup, and retry logic for save failures. Handles all edge cases including first-time runs, empty data, corrupted files, and filesystem errors.
-- **Code contributed**:
-  - `Storage` class with save/load operations [\[Functional code\]](../../src/main/java/seedu/flowcli/storage/Storage.java)
-  - `StorageException` and `DataCorruptedException` custom exceptions [\[Functional code\]](../../src/main/java/seedu/flowcli/exceptions/)
-  - Integration into `FlowCLI` main class (startup loading) [\[Functional code\]](../../src/main/java/seedu/flowcli/FlowCLI.java)
-  - Integration into `ByeCommand` (exit saving with retry) [\[Functional code\]](../../src/main/java/seedu/flowcli/commands/ByeCommand.java)
-  - Comprehensive test suite with 24 test cases [\[Test code\]](../../src/test/java/seedu/flowcli/storage/StorageTest.java)
+Implemented automatic save/load with atomic write operations (temp file + rename), data validation, special character escaping, corruption detection with backup, and retry logic. Handles edge cases: first-time runs, empty data, corrupted files, filesystem errors.
+- [\[Storage\]](../../src/main/java/seedu/flowcli/storage/Storage.java) [\[Exceptions\]](../../src/main/java/seedu/flowcli/exceptions/) [\[FlowCLI integration\]](../../src/main/java/seedu/flowcli/FlowCLI.java) [\[ByeCommand integration\]](../../src/main/java/seedu/flowcli/commands/ByeCommand.java) [\[Tests\]](../../src/test/java/seedu/flowcli/storage/StorageTest.java)
 
-#### 5. Exception Handling Framework
-- **What it does**: Implements custom exception classes that provide meaningful error messages to users when validation fails or invalid operations are attempted.
-- **Justification**: Proper exception handling is crucial for user experience, helping users understand what went wrong and how to fix it.
-- **Code contributed**:
-  - `IndexOutOfRangeException`, `ProjectNotFoundException`, `MissingIndexException`, `MissingDescriptionException`, `MissingArgumentException`, `EmptyProjectListException`, `UnknownInputException` [\[Functional code\]](../../src/main/java/seedu/flowcli/exceptions/)
-
-#### 6. User Interface Components
-- **What it does**: Implements core UI methods for displaying messages, task lists, and interactive feedback to users.
-- **Justification**: Provides consistent, user-friendly console output across all commands.
-- **Code contributed**:
-  - Basic UI methods in `ConsoleUi` class (welcome messages, task lists, confirmations) [\[Functional code\]](../../src/main/java/seedu/flowcli/ui/ConsoleUi.java)
-
-#### 7. Main Application Class
-- **What it does**: Orchestrates the entire application lifecycle from initialization to shutdown, including storage integration for automatic data loading.
-- **Justification**: Serves as the entry point and coordinates all major components.
-- **Code contributed**:
-  - `FlowCLI` main class with storage initialization [\[Functional code\]](../../src/main/java/seedu/flowcli/FlowCLI.java)
+#### 5. Exception Handling & Application Lifecycle
+Created custom exception classes for meaningful error messages and implemented main application class coordinating all components.
+- [\[Exception classes\]](../../src/main/java/seedu/flowcli/exceptions/) [\[FlowCLI\]](../../src/main/java/seedu/flowcli/FlowCLI.java) [\[ConsoleUi\]](../../src/main/java/seedu/flowcli/ui/ConsoleUi.java)
 
 ### Contributions to the User Guide
-
-- Added Data Persistence section explaining automatic save/load functionality
-- Created Common Workflows section with practical command combination examples
-- Expanded Troubleshooting section with solutions for parameter validation errors
-- Authored Tips and Best Practices section for workflow optimization
-- Added export file format example
+Data Persistence section • Common Workflows section • Troubleshooting section • Tips and Best Practices section • Export file format example
 
 ### Contributions to the Developer Guide
-
-- Documented Command Processing Infrastructure section with architecture design and sequence diagram
-- Documented Status Display System section with class diagram and execution flow
-- Documented Common Classes section covering core data models
-- Documented Data Storage section with implementation details, class diagram, and data format specification
+Command Processing Infrastructure (architecture + sequence diagram) • Status Display System (class diagram + execution flow) • Common Classes section • Data Storage (implementation details + class diagram + data format)
 
 ### Contributions to Team-Based Tasks
-
-- **Project Structure Setup**: Established the initial project architecture, including package structure and core class hierarchies
-- **Code Architecture Design**: Designed the command processing infrastructure that all team members used when implementing their commands
-- **Code Review Standards**: Set up review guidelines and participated in code quality discussions
-- **GitHub Pages Configuration**: Created `_config.yml` and configured documentation site with minimalist theme and branding
-- **Documentation Branding**: Added FlowCLI cover images and logo across all documentation files
+Set up project architecture and package structure • Designed command processing infrastructure for team use • Established code review standards • Configured GitHub Pages with `_config.yml` • Added documentation branding (cover images, logo)
 
 ### Review/Mentoring Contributions
-
-While specific PR reviews were conducted throughout the project, my primary mentoring contribution was establishing the foundational architecture and coding patterns that team members could follow when implementing their features. The command processing infrastructure I designed served as a reference implementation for the team.
+Established foundational architecture and coding patterns as reference implementation for the team.
 
 ### Contributions Beyond the Project Team
-
-- **Bug Reports**: Identified and reported bugs in other teams' products during PE-D (mock practical exam)
-  - [View all bug reports](https://github.com/nus-cs2113-AY2526S1/ped-Zhenzha0/issues)
+[Bug reports](https://github.com/nus-cs2113-AY2526S1/ped-Zhenzha0/issues) submitted during PE-D
 
 ---
 
@@ -229,6 +194,10 @@ TASK|isDone|description|deadline|priority
 
 The common classes form FlowCLI's core data model, providing robust project and task management capabilities.
 
+**Class Diagram:**
+
+![Project and Task Class Diagram](../plantUML/project-management/Project-and-task-class-diagram.png)
+
 **Class Overview:**
 
 - **Project**: Represents a project containing multiple tasks, with methods for task CRUD operations
@@ -236,26 +205,17 @@ The common classes form FlowCLI's core data model, providing robust project and 
 - **Task**: Represents an individual task with description, priority, deadline, and completion status
 - **TaskList**: Manages collections of tasks with validation and index-based access
 
+**Class Relationships:**
+- ProjectList contains multiple Project instances
+- Each Project contains a TaskList
+- Each TaskList contains multiple Task instances
+
 **Design Principles:**
 
 These classes follow object-oriented design principles:
 - **Encapsulation**: Internal state is private with controlled access through methods
 - **Validation**: All operations include input validation with meaningful exceptions
 - **Immutability where appropriate**: Certain fields are final to prevent unintended modifications
-
-**Example Usage:**
-
-```java
-// Creating a project with tasks
-Project project = new Project("CS2113T Project");
-Task task = new Task("Implement feature", Priority.HIGH, "2025-11-15");
-project.addTask(task);
-
-// Managing projects
-ProjectList projects = new ProjectList();
-projects.add(project);
-Project retrieved = projects.getProjectByIndex(0);
-```
 
 ---
 
