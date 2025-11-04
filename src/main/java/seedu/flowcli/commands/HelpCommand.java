@@ -9,10 +9,11 @@ public class HelpCommand extends Command {
         super(arguments);
     }
 
+    //@@author zeeeing
     @Override
     public boolean execute(CommandContext context) throws ExtraArgumentException {
-        // Validate that no parameters are provided
-        if (arguments != null && !arguments.trim().isEmpty()) {
+        String trimmedArguments = arguments.trim();
+        if (!trimmedArguments.isEmpty()) {
             throw new ExtraArgumentException("The 'help' command does not accept any parameters.");
         }
         context.getUi().showHelp();
