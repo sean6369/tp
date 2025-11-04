@@ -98,8 +98,8 @@ While specific PR reviews were conducted throughout the project, my primary ment
 
 ### Contributions Beyond the Project Team
 
-- **Documentation Best Practices**: Created comprehensive documentation structure that other CS2113 teams could reference
-- **Architecture Patterns**: The command processing infrastructure design could serve as a reference for other CLI projects
+- **Bug Reports**: Identified and reported bugs in other teams' products during Practical Exam Dry Run (PE-D)
+  - [View all bug reports](https://github.com/nus-cs2113-AY2526S1/ped-Zhenzha0/issues)
 
 ---
 
