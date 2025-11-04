@@ -673,10 +673,7 @@ TASK|1|Call dentist|null|2
 - Tasks with no deadlines (null)
 - Tasks with empty descriptions
 - Special characters in project/task names
-- Extremely old/future dates
-- Large datasets (100+ projects, 10000+ tasks)
-- Data file is a directory (not a file)
-- Concurrent access (last writer wins)
+- Large datasets (100+ projects, 1000+ tasks)
 
 ---
 
