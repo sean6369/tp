@@ -33,8 +33,6 @@ public class InteractivePromptHandler {
 
         this.projects = projects;
         this.scanner = scanner;
-
-        logger.fine("InteractivePromptHandler initialized");
     }
 
     /**
@@ -635,7 +633,8 @@ public class InteractivePromptHandler {
             CommandValidator.validateAndParseDate(deadline);
             return deadline;
         } catch (InvalidDateException e) {
-            System.out.println("Invalid date format. Staying in update menu...");
+            System.out.println(e.getMessage());
+            System.out.println("Staying in update menu...");
             return null;
         }
     }
@@ -1020,7 +1019,7 @@ public class InteractivePromptHandler {
                 CommandValidator.validateAndParseDate(date);
                 return date;
             } catch (InvalidDateException e) {
-                System.out.println("Invalid date format. Use YYYY-MM-DD.");
+                System.out.println(e.getMessage());
             }
         }
     }
