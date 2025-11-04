@@ -12,23 +12,9 @@ FlowCLI is a Command Line Interface (CLI) app for managing tasks and projects, o
 
 #### Enhancements implemented
 
-- **Task Management Implementation**: Was primarily responsible for implementing all core task management commands, providing users with the essential tools to manage their workflow.
-
-  - **What it does:** This includes the `add-task`, `update-task`, `delete-task`, `mark`, and `unmark` commands, which form the backbone of the application's functionality.
-  - **Justification:** A robust set of task management features is critical for a task management application. These commands provide users with a comprehensive set of tools to create, modify, and track their tasks effectively.
-  - **Highlights:** The `update-task` command is particularly versatile, allowing users to modify any attribute of a task with a single command. The implementation of these commands also included thorough validation and error handling to ensure a smooth user experience.
-
-- **Major Refactoring of Core Application & Inline Commands**: Led a massive refactoring effort across the entire project, including overhauling all inline commands and restructuring the application's core logic to adhere to OOP principles.
-
-  - **What it does:** This foundational work created a stable, scalable, and maintainable codebase. Initially, code was heavily coupled and divided due to the different coding habits by each developer. Standardising and integrating across core components like `Parser`, `Commands` and `Handlers` allows for new features to be added easily and ensures the application runs efficiently. The refactoring of all inline commands unified their structure and behavior, providing a consistent user experience.
-  - **Justification:** The original codebase was highly coupled and difficult to extend. My contributions introduced a clear separation of concerns, implemented design patterns, and drastically improved code quality. This was crucial for the project's success, as it unblocked further development and reduced the likelihood of bugs.
-  - **Highlights:** A key achievement was the complete refactoring of all inline commands, which involved creating a more abstract and flexible command processing system. I also led the major refactoring of going from using `projectName` to `projectIndex` for all commands, which significantly improved performance and usability. My focus was always on writing clean, well-documented, and thoroughly tested code.
-
-- **Robust Testing Framework**: Established and maintained a comprehensive testing suite.
-
-  - **What it does:** This ensures the reliability and correctness of the application's features.
-  - **Justification:** A strong testing culture is crucial for long-term project health. By writing extensive JUnit tests for command logic and maintaining the Text UI tests, I helped prevent regressions and ensure that new changes did not break existing functionality.
-  - **Highlights:** I wrote a significant number of unit tests covering various commands and edge cases. This involved mocking dependencies and carefully designing test cases to validate the behavior of each component in isolation, leading to a more stable and trustworthy application.
+- **Task management commands**: Implemented the core `add-task`, `update-task`, `delete-task`, `mark`, and `unmark` flows with robust validation so users can reliably manage their work.
+- **Core refactor & inline commands**: Reworked the parser/command architecture, standardised every inline command, and migrated the codebase from `projectName` to `projectIndex` for better consistency and performance.
+- **Test suite**: Built and maintained comprehensive JUnit and Text UI coverage for command logic and edge cases to keep regressions out.
 
 #### Contributions to the User Guide (UG)
 
