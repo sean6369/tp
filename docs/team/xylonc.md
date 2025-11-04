@@ -78,7 +78,7 @@ Here is a sequence diagram illustrating the process:
 
 ##### Project, ProjectList, Task, and TaskList classes
 
-![ProjectRelationshipDiagram](../plantUML/project-management/ProjectClassDiagram.png)
+![ProjectRelationshipDiagram](../plantUML/project-management/Project-and-task-class-diagram.png)
 
 **Class Relationships:**
 - **ProjectList** contains multiple **Project** instances
