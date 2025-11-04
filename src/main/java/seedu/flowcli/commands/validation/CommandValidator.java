@@ -1,16 +1,20 @@
 package seedu.flowcli.commands.validation;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.regex.Pattern;
+
 import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.exceptions.InvalidCommandSyntaxException;
 import seedu.flowcli.exceptions.InvalidDateException;
 
-import java.time.LocalDate;
-
 /**
  * Utility class for validating command parameters.
  */
-//@@author sean6369
+// @@author sean6369
 public class CommandValidator {
+
+    private static final Pattern DATE_PATTERN = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$");
 
     /**
      * Validates and normalizes priority value.
@@ -146,12 +150,21 @@ public class CommandValidator {
      * @return LocalDate parsed from the string
      * @throws InvalidDateException if date format is invalid
      */
+    //@@author zeeeing
     public static LocalDate validateAndParseDate(String dateString) throws InvalidDateException {
+        if (dateString == null) {
+            throw InvalidDateException.invalidFormat("null");
+        }
+
+        String normalized = dateString.trim();
+        if (!DATE_PATTERN.matcher(normalized).matches()) {
+            throw InvalidDateException.invalidFormat(normalized);
+        }
+
         try {
-            return LocalDate.parse(dateString);
-        } catch (Exception e) {
-            throw new InvalidDateException(dateString);
+            return LocalDate.parse(normalized);
+        } catch (DateTimeParseException e) {
+            throw InvalidDateException.invalidDate(normalized);
         }
     }
 }
-//@@author
