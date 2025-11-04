@@ -1,6 +1,5 @@
 @startuml AddTaskSequenceDiagram
 title FlowCLI: add-task Sequence
-autonumber
 
 actor User
 participant "FlowCLI Main" as CLI
@@ -10,53 +9,28 @@ participant "CommandContext" as Ctx
 participant "Projects Model" as Projects
 participant "Target Project" as Project
 participant "UI" as UI
-participant "Logger" as Log
 
-User -> CLI: Enter "add /p MyProject /t MyTask /d 2025-12-25 /P 1"
-CLI -> Parser: parse("add /p MyProject /t MyTask /d 2025-12-25 /P 1")
-Parser --> CLI: new AddCommand(rawArgs)
+User -> CLI: add-task 1 Write project spec --priority high --deadline 2025-12-25
+CLI -> Parser: parse(...)
+Parser --> CLI: AddCommand
 
 CLI -> AddCmd: execute(Ctx)
-
-group Argument parsing
-  AddCmd -> AddCmd: extract arguments (project, task, deadline, priority)
-  alt project name is blank
-    AddCmd -> Log: warn("Missing project name")
-    AddCmd --> CLI: throw MissingArgumentException
-    CLI -> UI: showError("Missing project name")
-    return
-  end
-  alt task description is blank
-    AddCmd -> Log: warn("Missing task description")
-    AddCmd --> CLI: throw MissingDescriptionException
-    CLI -> UI: showError("Missing task description")
-    return
-  end
-end
 
 AddCmd -> Ctx: getProjects(), getUi()
 Ctx --> AddCmd: Projects, UI
 
-group Validation
-  AddCmd -> Projects: getProject(projectName)
-  Projects --> AddCmd: project|null
-  alt project not found
-    AddCmd -> Log: warning("Project not found: {name}")
-    AddCmd --> CLI: throw ProjectNotFoundException
-    CLI -> UI: showError("Project not found: {name}")
-    return
-  end
-end
+AddCmd -> Projects: getProjectByIndex(projectIndex)
 
-group Creation
-  AddCmd -> Project: addTask(description, deadline, priority)
-  Project --> AddCmd: createdTask
-  AddCmd -> UI: showAddedTask(createdTask)
-  AddCmd -> Log: info("Added task '{desc}' to project {name}")
-  AddCmd --> CLI: return true
+alt invalid project index
+    Projects --> AddCmd: IndexOutOfRangeException
+    AddCmd --> CLI: IndexOutOfRangeException
+    CLI -> UI: showError("Invalid project index")
+else valid project
+    Projects --> AddCmd: Project
+    AddCmd -> Project: addTask(taskDesc, deadline, priority)
+    Project --> AddCmd: updated tasks
+    AddCmd -> UI: showAddedTask(Project)
+    AddCmd --> CLI: success
 end
-
-== Logging ==
-CLI -> Log: fine("add-task completed")
 
 @enduml

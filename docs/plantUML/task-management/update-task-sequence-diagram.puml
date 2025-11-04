@@ -1,6 +1,5 @@
 @startuml UpdateTaskSequenceDiagram
 title FlowCLI: update-task Sequence
-autonumber
 
 actor User
 participant "FlowCLI Main" as CLI
@@ -10,54 +9,45 @@ participant "CommandContext" as Ctx
 participant "Projects Model" as Projects
 participant "Target Project" as Project
 participant "UI" as UI
-participant "Logger" as Log
 
-User -> CLI: Enter "update 1 /p MyProject /t NewDesc"
-CLI -> Parser: parse("update 1 /p MyProject /t NewDesc")
-Parser --> CLI: new UpdateCommand(rawArgs)
+User -> CLI: update-task 1 2 --description Refine spec --deadline 2025-12-25 --priority high
+CLI -> Parser: parse(...)
+Parser --> CLI: UpdateCommand
 
 CLI -> UpdateCmd: execute(Ctx)
 
-group Argument parsing
-  UpdateCmd -> UpdateCmd: extract arguments (project, index, new desc/deadline/priority)
-  alt no update fields provided
-    UpdateCmd -> Log: warn("No update fields provided")
-    UpdateCmd --> CLI: throw InvalidArgumentException
-    CLI -> UI: showError("No update fields provided")
+UpdateCmd -> UpdateCmd: validate update fields
+
+opt missing project index or fields
+    UpdateCmd --> CLI: InvalidArgumentException
+    CLI -> UI: showError("Missing project index or fields to update.")
     return
-  end
 end
 
 UpdateCmd -> Ctx: getProjects(), getUi()
 Ctx --> UpdateCmd: Projects, UI
 
-group Validation
-  UpdateCmd -> Projects: getProject(projectName)
-  Projects --> UpdateCmd: project|null
-  alt project not found
-    UpdateCmd -> Log: warning("Project not found: {name}")
-    UpdateCmd --> CLI: throw ProjectNotFoundException
-    CLI -> UI: showError("Project not found: {name}")
-    return
-  end
-  UpdateCmd -> Project: getProjectTasks()
-  alt index out of bounds
-    UpdateCmd -> Log: warning("Index out of range")
-    UpdateCmd --> CLI: throw IndexOutOfRangeException
-    CLI -> UI: showError("Index out of range")
-    return
-  end
-end
+UpdateCmd -> Projects: getProjectByIndex(projectIndex)
 
-group Update
-  UpdateCmd -> Project: updateTask(index, new values...)
-  Project --> UpdateCmd: updatedTask
-  UpdateCmd -> UI: showUpdatedTask(updatedTask)
-  UpdateCmd -> Log: info("Updated task in project {name}")
-  UpdateCmd --> CLI: return true
-end
+alt invalid project index
+    Projects --> UpdateCmd: IndexOutOfRangeException
+    UpdateCmd --> CLI: IndexOutOfRangeException
+    CLI -> UI: showError("Invalid project index")
+else valid project
+    Projects --> UpdateCmd: Project
+    UpdateCmd -> Project: getTask(taskIndex)
 
-== Logging ==
-CLI -> Log: fine("update-task completed")
+    alt invalid task index
+        Project --> UpdateCmd: IndexOutOfRangeException
+        UpdateCmd --> CLI: IndexOutOfRangeException
+        CLI -> UI: showError("Invalid task index")
+    else task located
+        Project --> UpdateCmd: Task
+        UpdateCmd -> Project: updateTask(taskIndex, new values)
+        Project --> UpdateCmd: updatedTask
+        UpdateCmd -> UI: showUpdatedTask(Project, updatedTask)
+        UpdateCmd --> CLI: success
+    end
+end
 
 @enduml
