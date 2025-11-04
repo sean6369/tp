@@ -647,13 +647,6 @@ Where:
 | Permission denied | Show specific error, prompt for retry or exit | Error message |
 | Disk full | Show specific error, prompt for retry or exit | Error message |
 
-**Design Rationale:**
-
-- **Atomic Writes**: Prevents data corruption if save is interrupted (power loss, forced termination)
-- **Custom Format**: More compact than JSON/XML, easy to parse, validates line-by-line
-- **Graceful Degradation**: Never blocks user from using application even if storage fails
-- **Data Integrity**: Comprehensive validation ensures only valid data is loaded
-- **User Transparency**: Clear messages for errors, automatic backups on corruption
 
 **Example Storage File:**
 
