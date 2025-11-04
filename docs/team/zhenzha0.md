@@ -195,6 +195,36 @@ public static ProjectStatus analyzeProject(Project project) {
 
 ---
 
+### Data Storage
+
+The storage system provides persistent data storage for FlowCLI, automatically saving and loading all projects and tasks between sessions.
+
+**Architecture Overview:**
+
+![Storage Class Diagram](../plantUML/data-storage/storage-class-diagram.png)
+
+**Key Components:**
+- **Storage**: Main class handling file I/O, validation, and atomic write operations
+- **DataCorruptedException**: Thrown when data file format is invalid
+- **StorageException**: Thrown on I/O failures (permissions, disk space, etc.)
+
+**Storage Location:** `./data/flowcli-data.txt`
+
+**Data Format:**
+```
+PROJECT|Project Name
+TASK|isDone|description|deadline|priority
+```
+
+**Implementation Highlights:**
+
+1. **Atomic Writes**: Data is written to a temp file first, then renamed atomically to prevent corruption
+2. **Data Validation**: All loaded data is validated; corrupted files are backed up and user warned
+3. **Error Handling**: Retry logic for save failures; graceful degradation on load errors
+4. **Edge Cases Handled**: First-time runs, empty data, corrupted files, filesystem errors
+
+---
+
 ### Common Classes
 
 The common classes form FlowCLI's core data model, providing robust project and task management capabilities.
