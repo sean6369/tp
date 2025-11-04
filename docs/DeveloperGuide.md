@@ -249,6 +249,12 @@ The `add-task` command allows users to add a new task to a specified project. Us
 
 **Command format**: `add-task <projectIndex> <description> [--priority <level>] [--deadline <YYYY-MM-DD>]`
 
+**Example:** `add-task 2 "Draft project charter" --priority high --deadline 2025-02-15`
+
+**Typical use cases:**
+- Capture newly scoped work items while planning the next project milestone.
+- Log ad-hoc tasks (e.g., quick client follow-up) without leaving the relevant project.
+
 The following sequence diagram illustrates the process of adding a task:
 
 ![AddTaskSequenceDiagram](plantUML/task-management/add-task-seq-diag.png)
@@ -269,6 +275,12 @@ The following sequence diagram illustrates the process of adding a task:
 The `delete-task` command is used to remove a task from a project. It requires the project index and the 1-based index of the task to be deleted.
 
 **Command format**: `delete-task <projectIndex> <taskIndex>`
+
+**Example:** `delete-task 3 5`
+
+**Typical use cases:**
+- Clean up duplicate tasks created by mistake before sharing project status.
+- Remove outdated work items that are no longer relevant after reprioritisation.
 
 The sequence diagram below shows the workflow:
 
@@ -296,6 +308,14 @@ These commands allow users to change the completion status of a task.
 - `mark <projectIndex> <taskIndex>`
 - `unmark <projectIndex> <taskIndex>`
 
+**Examples:**
+- `mark 1 4` — mark the fourth task in project 1 as completed once QA signs off.
+- `unmark 2 1` — reopen the first task in project 2 when new changes are requested.
+
+**Typical use cases:**
+- Track daily progress by marking tasks complete immediately after finishing them.
+- Reopen items that regress after code review, testing, or stakeholder feedback.
+
 The process is illustrated in the following diagram:
 
 ![MarkUnmarkTaskSequenceDiagram](plantUML/task-management/mark-unmark-task-seq-diag.png)
@@ -316,6 +336,14 @@ The `update-task` command modifies the attributes of an existing task, such as i
 
 **Command format**: `update-task <projectIndex> <taskIndex> [--description <desc>] [--deadline <YYYY-MM-DD|none>] [--priority <level>]`
 
+**Examples:**
+- `update-task 1 3 --deadline 2025-03-10 --priority medium`
+- `update-task 4 2 --description "Align scope with Design team"`
+
+**Typical use cases:**
+- Adjust timelines after a change request shifts the expected delivery date.
+- Refine task descriptions or priority following stakeholder feedback or scope updates.
+
 The update process is shown below:
 
 ![UpdateTaskSequenceDiagram](plantUML/task-management/update-task-seq-diag.png)
@@ -334,6 +362,14 @@ The update process is shown below:
 The `list` command displays tasks. It can either list all tasks in all projects or list the tasks of a specific project.
 
 **Command format**: `list --all` or `list <projectIndex>`
+
+**Examples:**
+- `list --all` — review every project before the weekly sync.
+- `list 2` — focus on outstanding work for project 2 while planning the day.
+
+**Typical use cases:**
+- Provide a consolidated snapshot of workload for progress reviews.
+- Drill into a single project to decide the next actionable tasks.
 
 The diagram below illustrates the listing process:
 
