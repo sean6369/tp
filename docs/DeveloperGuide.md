@@ -33,9 +33,9 @@ We also acknowledge:
   - [Export Algorithm](#export-algorithm-by-sean-lee)
   - [Data Storage](#data-storage-by-zhenzhao)
 - [User Interface](#user-interface)
-    - [Interactive Mode](#interactive-mode-by-yao-xiang)
-    - [Status Display System](#status-display-system-by-zhenzhao)
-    - [Interactive Command Flows](#interactive-command-flows-by-yao-xiang)
+  - [Interactive Mode](#interactive-mode-by-yao-xiang)
+  - [Status Display System](#status-display-system-by-zhenzhao)
+  - [Interactive Command Flows](#interactive-command-flows-by-yao-xiang)
 - [Product scope](#product-scope)
 - [User Stories](#user-stories)
 - [Non-Functional Requirements](#non-functional-requirements-by-zhenzhao)
@@ -53,6 +53,7 @@ FlowCLI follows a layered architecture with clear separation of concerns:
 **Component Relationships:**
 
 The diagram shows the main components and their relationships:
+
 - **ConsoleUi** handles all user interface interactions
 - **CommandHandler** orchestrates command processing
 - **InteractivePromptHandler** manages interactive mode dialogues
@@ -61,7 +62,7 @@ The diagram shows the main components and their relationships:
 - **Project** contains multiple **Task** instances (1-to-many relationship)
 - **TaskSorter** and **TaskFilter** provide data processing utilities
 
-*Note: The multiplicity notation "1" → "*" indicates a one-to-many relationship in UML. For example, one ProjectList can contain zero or more Projects, and one Project can contain zero or more Tasks.*
+_Note: The multiplicity notation "1" → "_" indicates a one-to-many relationship in UML. For example, one ProjectList can contain zero or more Projects, and one Project can contain zero or more Tasks.\*
 
 **Key Design Principles:**
 
@@ -161,6 +162,7 @@ Input validation is centralized to ensure consistent rules, clear error messages
   - Validates index is within range [1, maxIndex]
   - Throws: `MissingIndexException` (if indexText is null), `InvalidIndexFormatException` (if not numeric), `IndexOutOfRangeException` (if out of range)
   - Returns the 0-based index (never returns null; throws exceptions on validation failure)
+
 - `ArgumentParser.validateProjectIndex()`
 
   - Verifies that a target project is resolvable from user input
@@ -221,8 +223,8 @@ The following sequence diagram illustrates the validation process, showing both 
 
 The validation flow operates in 3 main layers:
 
-1. **Project Index layer**: `ArgumentParser.validateProjectIndex()` validates project index format and range (throws `MissingArgumentException`, `IndexOutOfRangeException`, `InvalidIndexFormatException`) - *always executed first*
-2. **Task Index layer**: `CommandParser.parseIndexOrNull()` validates task index format and range (throws `MissingIndexException`, `InvalidIndexFormatException`, `IndexOutOfRangeException`) - *only for commands that need task indices (Mark, Update, DeleteTask, Unmark)*
+1. **Project Index layer**: `ArgumentParser.validateProjectIndex()` validates project index format and range (throws `MissingArgumentException`, `IndexOutOfRangeException`, `InvalidIndexFormatException`) - _always executed first_
+2. **Task Index layer**: `CommandParser.parseIndexOrNull()` validates task index format and range (throws `MissingIndexException`, `InvalidIndexFormatException`, `IndexOutOfRangeException`) - _only for commands that need task indices (Mark, Update, DeleteTask, Unmark)_
 3. **Domain layer**: Commands use `CommandValidator` methods for domain-specific validation (priorities, dates, filters, sort options) which reference `ValidationConstants` for valid values
 
 All exceptions propagate to `CommandHandler`, which catches `FlowCLIException` and displays user-friendly messages via `ConsoleUi`.
@@ -252,6 +254,7 @@ The `add-task` command allows users to add a new task to a specified project. Us
 **Example:** `add-task 2 "Draft project charter" --priority high --deadline 2025-02-15`
 
 **Typical use cases:**
+
 - Capture newly scoped work items while planning the next project milestone.
 - Log ad-hoc tasks (e.g., quick client follow-up) without leaving the relevant project.
 
@@ -279,6 +282,7 @@ The `delete-task` command is used to remove a task from a project. It requires t
 **Example:** `delete-task 3 5`
 
 **Typical use cases:**
+
 - Clean up duplicate tasks created by mistake before sharing project status.
 - Remove outdated work items that are no longer relevant after reprioritisation.
 
@@ -309,10 +313,12 @@ These commands allow users to change the completion status of a task.
 - `unmark <projectIndex> <taskIndex>`
 
 **Examples:**
+
 - `mark 1 4` — mark the fourth task in project 1 as completed once QA signs off.
 - `unmark 2 1` — reopen the first task in project 2 when new changes are requested.
 
 **Typical use cases:**
+
 - Track daily progress by marking tasks complete immediately after finishing them.
 - Reopen items that regress after code review, testing, or stakeholder feedback.
 
@@ -337,10 +343,12 @@ The `update-task` command modifies the attributes of an existing task, such as i
 **Command format**: `update-task <projectIndex> <taskIndex> [--description <desc>] [--deadline <YYYY-MM-DD|none>] [--priority <level>]`
 
 **Examples:**
+
 - `update-task 1 3 --deadline 2025-03-10 --priority medium`
 - `update-task 4 2 --description "Align scope with Design team"`
 
 **Typical use cases:**
+
 - Adjust timelines after a change request shifts the expected delivery date.
 - Refine task descriptions or priority following stakeholder feedback or scope updates.
 
@@ -364,10 +372,12 @@ The `list` command displays tasks. It can either list all tasks in all projects 
 **Command format**: `list --all` or `list <projectIndex>`
 
 **Examples:**
+
 - `list --all` — review every project before the weekly sync.
 - `list 2` — focus on outstanding work for project 2 while planning the day.
 
 **Typical use cases:**
+
 - Provide a consolidated snapshot of workload for progress reviews.
 - Drill into a single project to decide the next actionable tasks.
 
@@ -582,6 +592,7 @@ The export workflow consists of 5 steps:
 
 1. **Parameter Parsing** - Validates filename, project selection, filters, and sorting options
 2. **Task Collection** - Uses `TaskCollector` based on parameters with 4 strategies:
+
    ```java
    if (params.forceAll) {
        tasks = TaskCollector.getAllTasksWithProjects(projects);
@@ -595,6 +606,7 @@ The export workflow consists of 5 steps:
    ```
 
    **Last View Caching:** View state is stored in `ExportCommandHandler` instance fields (`lastDisplayedTasks`, `lastViewType`, `lastViewMetadata`). The `sort-tasks` and `filter-tasks` commands update this state via `updateViewState()`. When exporting without parameters, it automatically exports the cached view if available.
+
 3. **Filtering/Sorting** - Applies `TaskFilter` and `TaskSorter` if specified in export command
 4. **File Export** - Calls `TaskExporter.exportTasksToFile()` with header
 5. **User Feedback** - Displays success via `ConsoleUi.showExportSuccess()`
@@ -633,6 +645,7 @@ TASK|isDone|description|deadline|priority
 ```
 
 Where:
+
 - `PROJECT|<name>` - Project header line
 - `TASK|<0/1>|<description>|<YYYY-MM-DD or null>|<1-3>` - Task entry (0=not done, 1=done; 1=low, 2=medium, 3=high priority)
 - Special characters (`|`, newlines) are escaped using `<PIPE>` and `<NEWLINE>` markers
@@ -640,6 +653,7 @@ Where:
 **Implementation Details:**
 
 1. **On Startup (FlowCLI constructor):**
+
    - Storage object is created
    - `load()` is called to read data from file
    - If file doesn't exist: starts with empty ProjectList (first run)
@@ -649,6 +663,7 @@ Where:
    - Loaded data is used to initialize the application state
 
 2. **On Exit (ByeCommand execution):**
+
    - `save()` is called with current ProjectList
    - Data is written to temporary file first (`flowcli-data.tmp`)
    - Temporary file is atomically renamed to `flowcli-data.txt` (prevents corruption if interrupted)
@@ -656,6 +671,7 @@ Where:
    - If all retries fail: warning is shown, application exits without saving
 
 3. **Data Validation During Load:**
+
    - Every line is validated against expected format
    - Project names cannot be empty
    - Task fields must have exactly 4 pipe-delimited values
@@ -673,16 +689,15 @@ Where:
 
 **Error Handling:**
 
-| Error Type | Handling | User Impact |
-|------------|----------|-------------|
-| File not found (first run) | Silent, start with empty list | None |
-| Empty file | Silent, start with empty list | None |
-| Corrupted data | Backup to `.backup`, show warning, start with empty list | Warning message |
-| I/O error (read) | Show warning, start with empty list | Warning message |
-| I/O error (write) | Prompt for retry (3 attempts), allow exit without saving | Error message + retry prompt |
-| Permission denied | Show specific error, prompt for retry or exit | Error message |
-| Disk full | Show specific error, prompt for retry or exit | Error message |
-
+| Error Type                 | Handling                                                 | User Impact                  |
+| -------------------------- | -------------------------------------------------------- | ---------------------------- |
+| File not found (first run) | Silent, start with empty list                            | None                         |
+| Empty file                 | Silent, start with empty list                            | None                         |
+| Corrupted data             | Backup to `.backup`, show warning, start with empty list | Warning message              |
+| I/O error (read)           | Show warning, start with empty list                      | Warning message              |
+| I/O error (write)          | Prompt for retry (3 attempts), allow exit without saving | Error message + retry prompt |
+| Permission denied          | Show specific error, prompt for retry or exit            | Error message                |
+| Disk full                  | Show specific error, prompt for retry or exit            | Error message                |
 
 **Example Storage File:**
 
@@ -795,18 +810,21 @@ The above diagram shows the execution flow for displaying a specific project's s
 **Execution Flow:**
 
 1. **Command Parsing**:
+
    - User enters command (e.g., "status 1")
    - CommandHandler delegates to CommandParser
    - CommandParser splits command word and arguments, returns ParsedCommand
    - CommandHandler creates StatusCommand with arguments
 
 2. **Argument Processing**:
+
    - StatusCommand validates arguments are not empty
    - Creates ArgumentParser to parse project identifier
    - ArgumentParser resolves project index/name to Project object
    - ArgumentParser is destroyed after returning the parsed result
 
 3. **Status Analysis**:
+
    - StatusCommand calls ConsoleUi to display project status
    - ConsoleUi delegates to ProjectStatusAnalyzer for analysis
    - ProjectStatusAnalyzer:
@@ -816,6 +834,7 @@ The above diagram shows the execution flow for displaying a specific project's s
      - Returns ProjectStatus data object
 
 4. **UI Rendering**:
+
    - ConsoleUi formats the status output:
      - `formatStatusSummary()`: Creates summary text (e.g., "3/5 tasks completed, 60%")
      - `generateProgressBar()`: Creates visual progress bar `[=========>      ] 60%`
@@ -1036,36 +1055,43 @@ FlowCLI addresses the challenge of managing complex academic or personal project
    - The application should respond to user commands within 500ms under normal operating conditions.
    - Loading and parsing project data should complete within 1 second for up to 100 projects with 1000 tasks total.
    - Sorting and filtering operations should complete within 200ms for typical datasets (up to 500 tasks).
+
 2. **Usability**
 
    - The application should be usable by users with basic command-line knowledge without requiring extensive training.
    - Interactive mode prompts should guide users through command execution with clear, numbered options.
    - Error messages should be descriptive and suggest corrective actions where applicable.
    - All commands should have both short-form (for experienced users) and interactive mode (for new users).
+
 3. **Reliability**
 
    - The application should handle invalid inputs gracefully without crashing.
    - All data validation should occur before any state changes to maintain data integrity.
    - Error handling should prevent data corruption in edge cases (e.g., concurrent file access, invalid date formats).
+
 4. **Portability**
 
    - The application should run on any platform with Java 11 or higher installed (Windows, macOS, Linux).
    - No platform-specific dependencies should be required beyond the Java Runtime Environment.
    - File paths should use platform-independent representations where possible.
+
 5. **Maintainability**
 
    - Code should follow standard Java coding conventions and style guidelines.
    - All public methods and classes should include Javadoc documentation.
    - The codebase should maintain clear separation of concerns between UI, logic, and model layers.
    - Each command should be implemented as a separate, testable class extending the Command base class.
+
 6. **Scalability**
 
    - The application should handle at least 50 projects with 20 tasks each without performance degradation.
    - Memory usage should remain under 100MB for typical usage scenarios.
+
 7. **Security**
 
    - User input should be validated and sanitized to prevent command injection or malicious input.
    - File operations should verify file paths to prevent unauthorized access to system files.
+
 8. **Compatibility**
 
    - The application should be compatible with common terminal emulators (Command Prompt, PowerShell, Terminal, Bash).
@@ -1098,10 +1124,12 @@ These instructions will guide you through comprehensive manual testing of FlowCL
    ```
    ./gradlew build
    ```
+
 2. **Locate the JAR file:**
 
    - Navigate to `build\libs\`
    - Copy the full path of `flowcli.jar`
+
 3. **Run the application:**
 
    ```
@@ -1159,6 +1187,7 @@ These instructions will guide you through comprehensive manual testing of FlowCL
    ```
    help
    ```
+
 6. **Test inline command variations:**
    Follow the help output and test all inline command variations.
 7. **Test interactive mode:**
@@ -1174,6 +1203,7 @@ These instructions will guide you through comprehensive manual testing of FlowCL
    - `sort` (triggers interactive sorting)
    - `filter` (triggers interactive filtering)
    - `export` (triggers interactive data export)
+
 8. **Exit the application:**
 
    ```
