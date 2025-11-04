@@ -647,13 +647,6 @@ Where:
 | Permission denied | Show specific error, prompt for retry or exit | Error message |
 | Disk full | Show specific error, prompt for retry or exit | Error message |
 
-**Design Rationale:**
-
-- **Atomic Writes**: Prevents data corruption if save is interrupted (power loss, forced termination)
-- **Custom Format**: More compact than JSON/XML, easy to parse, validates line-by-line
-- **Graceful Degradation**: Never blocks user from using application even if storage fails
-- **Data Integrity**: Comprehensive validation ensures only valid data is loaded
-- **User Transparency**: Clear messages for errors, automatic backups on corruption
 
 **Example Storage File:**
 
@@ -673,10 +666,7 @@ TASK|1|Call dentist|null|2
 - Tasks with no deadlines (null)
 - Tasks with empty descriptions
 - Special characters in project/task names
-- Extremely old/future dates
-- Large datasets (100+ projects, 10000+ tasks)
-- Data file is a directory (not a file)
-- Concurrent access (last writer wins)
+- Large datasets (100+ projects, 1000+ tasks)
 
 ---
 
