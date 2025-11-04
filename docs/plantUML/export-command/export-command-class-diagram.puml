@@ -1,0 +1,122 @@
+@startuml export-command-class-diagram
+title Export System - Class Structure
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam monochrome true
+hide circle
+
+class ExportCommandHandler {
+  - ProjectList projects
+  - ConsoleUi ui
+  - List<TaskWithProject> lastDisplayedTasks
+  - ViewType lastViewType
+  - String lastViewMetadata
+  --
+  + ExportCommandHandler(ProjectList, ConsoleUi)
+  + void handleExport(String args)
+  + void updateViewState(List<TaskWithProject>, ViewType, String)
+  + void clearViewState()
+  - ExportParams parseParameters(String)
+  - FilterResult applyFiltering(List<TaskWithProject>, String, String)
+  - List<TaskWithProject> applySorting(List<TaskWithProject>, String, String)
+  - String buildExportHeader(String, ExportParams)
+}
+
+enum ViewType {
+  NONE
+  SORTED
+  FILTERED
+  PROJECT
+}
+
+class TaskCollector {
+  --
+  + List<TaskWithProject> getAllTasksWithProjects(ProjectList)
+  + List<TaskWithProject> getTasksFromProject(Project)
+}
+
+class TaskExporter {
+  --
+  + void exportTasksToFile(List<TaskWithProject>, String, String)
+}
+
+class TaskWithProject {
+  - String projectName
+  - Task task
+  --
+  + TaskWithProject(String, Task)
+  + String getProjectName()
+  + Task getTask()
+  + String toString()
+}
+
+class TaskFilter {
+  - List<TaskWithProject> inputTasks
+  - String priorityFilter
+  - String projectNameFilter
+  --
+  + TaskFilter(List<TaskWithProject>, String, String)
+  + List<TaskWithProject> getFilteredTasks()
+}
+
+class TaskSorter {
+  - List<TaskWithProject> inputTasks
+  - String sortBy
+  - boolean ascending
+  --
+  + TaskSorter(List<TaskWithProject>, String, boolean)
+  + List<TaskWithProject> getSortedTasks()
+}
+
+' External dependencies (simplified)
+package "Domain Model" {
+  class ProjectList
+  class Project
+  class Task
+}
+
+' Relationships - Export flow
+ExportCommandHandler --> TaskCollector : uses
+ExportCommandHandler --> TaskExporter : uses
+ExportCommandHandler --> TaskFilter : uses
+ExportCommandHandler --> TaskSorter : uses
+ExportCommandHandler --> ProjectList : manages
+ExportCommandHandler ..> ViewType : uses
+
+TaskCollector --> ProjectList : collects from
+TaskCollector --> Project : collects from
+TaskCollector ..> TaskWithProject : creates
+
+TaskExporter ..> TaskWithProject : writes
+
+TaskFilter ..> TaskWithProject : filters
+TaskSorter ..> TaskWithProject : sorts
+
+TaskWithProject --> Task : wraps
+
+ProjectList *-- Project : contains
+Project *-- Task : contains
+
+note top of ExportCommandHandler
+  Orchestrates export process
+  Manages view state caching
+  Parses parameters, coordinates filtering/sorting
+end note
+
+note right of TaskCollector
+  Utility: static methods only
+  Collects tasks with project context
+end note
+
+note right of TaskExporter
+  Utility: static methods only
+  Handles file I/O with error handling
+end note
+
+note bottom of TaskWithProject
+  Wrapper for cross-project operations
+  Formats: "ProjectName: [X] Task..."
+end note
+
+@enduml

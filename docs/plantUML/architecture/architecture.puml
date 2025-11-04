@@ -1,0 +1,110 @@
+@startuml Architecture Diagram
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam monochrome true
+hide circle
+
+class ConsoleUi {
+    -ProjectList projects
+    +ConsoleUi(ProjectList)
+    +printWelcomeMessage()
+    +showTaskList(Project)
+    +showProjectList()
+    +showExportSuccess(String, int)
+    +showError()
+}
+
+class CommandHandler {
+    -ConsoleUi ui
+    -CommandParser parser
+    -CommandFactory factory
+    -CommandContext context
+    -InteractivePromptHandler interactiveHandler
+    +CommandHandler(ProjectList, ConsoleUi)
+    +handleCommands()
+}
+
+class InteractivePromptHandler {
+    -ProjectList projects
+    -Scanner scanner
+    +InteractivePromptHandler(ProjectList, Scanner)
+    +handleAddCommand()
+    +handleCreateCommand()
+    +handleListCommand()
+    +handleMarkCommand()
+    +handleUnmarkCommand()
+    +handleDeleteCommand()
+    +handleUpdateCommand()
+    +handleSortCommand()
+    +handleFilterCommand()
+    +handleExportCommand()
+    +handleStatusCommand()
+}
+
+class CommandFactory {
+    +createCommand(String)
+}
+
+class ProjectList {
+    +addProject(String)
+    +delete(int)
+    +getProjectByIndex(int)
+    +getProjectList()
+    +getProjectListSize()
+    +getProject(String)
+    +render()
+}
+
+class Project {
+    -String projectName
+    -TaskList tasks
+    +Project(String)
+    +size()
+    +getProjectName()
+    +getProjectTasks()
+    +addTask(String)
+    +addTask(String, LocalDate, int)
+    +deleteTask(int)
+    +updateTask(int, String, boolean, LocalDate, int)
+    +showAllTasks()
+}
+
+class Task {
+    -boolean isDone
+    -String description
+    -LocalDate deadline
+    -int priority
+    +Task(String)
+    +Task(String, LocalDate, int)
+    +getDescription()
+    +isDone()
+    +getDeadline()
+    +getPriority()
+    +mark()
+    +unmark()
+    +setDescription(String)
+    +setDeadline(LocalDate)
+    +setPriority(int)
+    +marker()
+    +toString()
+}
+
+class TaskSorter {
+    +sortTasks(List<TaskWithProject>, String, String)
+}
+
+class TaskFilter {
+    +filterTasks(List<TaskWithProject>, String, String)
+}
+
+ConsoleUi --> CommandHandler : uses
+CommandHandler --> InteractivePromptHandler : creates
+CommandHandler --> CommandFactory : uses
+CommandHandler --> ConsoleUi : uses
+InteractivePromptHandler --> ProjectList : manages
+InteractivePromptHandler --> TaskSorter : uses
+InteractivePromptHandler --> TaskFilter : uses
+ProjectList "1" --> "*" Project : contains
+Project "1" --> "*" Task : contains
+@enduml

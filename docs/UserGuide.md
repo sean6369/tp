@@ -1,3 +1,5 @@
+![FlowCLI Cover](images/logos/FlowCLI-Cover-Image.png)
+
 # User Guide
 
 ## Introduction
@@ -12,9 +14,19 @@ FlowCLI is a Command Line Interface (CLI) app for managing tasks and projects, o
    ```
    java -jar flowcli.jar
    ```
-4. Type `help` to see the list of commands. FlowCLI will read commands until you enter `bye`. You can use either inline commands (full syntax) or interactive mode (just type the command name for guided input).
+4. You will see flowCLIs greetings, then you may begin typing the commands
+5. Type `help` to see the list of commands.
+6. FlowCLI will read commands until you enter `bye`. You can use either inline commands (full syntax) or interactive mode (just type the command name for guided input).
 
-Projects and tasks exist only for the current session. Use the export feature to save a snapshot if you need to keep a record.
+## Important Notes
+
+### Data Persistence
+✅ **FlowCLI automatically saves your data!** All projects and tasks are automatically saved to `data/flowcli-data.txt` when you exit with `bye`. When you reopen FlowCLI, your data is automatically loaded.
+
+**Additional features:**
+- Data is saved in the same directory where you run `flowcli.jar`
+- If the data file is corrupted, FlowCLI will back it up and start fresh
+- You can still use `export-tasks` to create human-readable snapshots for reports or sharing
 
 ## Features
 
@@ -39,11 +51,17 @@ Both modes work identically - choose whichever feels more comfortable!
 
 ### Create a project: `create-project <projectName> / create (interactive mode)`
 
-Adds a new project. If you repeat the command with the same name (any casing), FlowCLI reports a duplicate.
+Adds a new project. If you add a new project with the same name (any casing), FlowCLI reports a duplicate.
+
+Project names can be wrapped in quotes (double `"` or single `'`). FlowCLI will automatically remove the surrounding quotes when storing the project name. Quotes are optional - you can use them for names with spaces, or omit them entirely.
 
 ```
 create-project "Birthday Bash"
+create-project 'Birthday Bash'
+create-project Birthday Bash
 ```
+
+All three examples above create projects Birthday Bash.
 
 ### List projects or tasks: `list --all` or `list <projectIndex>` or `list (interactive mode)`
 
@@ -58,9 +76,16 @@ list 1
 
 Adds a task under an existing project with optional priority and deadline. Priority defaults to medium, deadline defaults to none.
 
+Structure is felxible such that you can also input `--deadline` first before `--priority` as long as the input are valid  
+
 ```
 add-task 1 Hang fairy lights --priority high --deadline 2025-01-31
 ```
+
+Common mistakes and fixes:
+- "Project index is out of range": Run `list --all` and use the shown index (starts at 1).
+- "Invalid priority value": Use one of `low`, `medium`, `high` (case-insensitive).
+- "Invalid date format": Use `YYYY-MM-DD` (e.g., `2025-11-15`).
 
 ### Update a task: `update-task <projectIndex> <taskIndex> [--description <desc>] [--deadline <YYYY-MM-DD|none>] [--priority <level>]` or `update (interactive mode)`
 
@@ -74,6 +99,11 @@ Edits the specified task in place. You can change one field or combine multiple 
 update-task 1 2 --description "Assemble party bags" --deadline 2025-02-15 --priority medium
 update-task 1 3 --deadline none
 ```
+
+Common mistakes and fixes:
+- "Task index is out of range": Use `list <projectIndex>` to see valid task numbers.
+- "Invalid date format": Use `YYYY-MM-DD`, or `none` to clear the deadline.
+- "Invalid priority value": Use `low`, `medium`, or `high`.
 
 ### Mark or unmark a task: `mark <projectIndex> <taskIndex>` / `unmark <projectIndex> <taskIndex>` or `mark/unmark (interactive mode)`
 
@@ -102,6 +132,10 @@ Displays every task from every project in the requested order and remembers this
 sort-tasks --deadline ascending
 ```
 
+Common mistakes and fixes:
+- "Invalid sort field": Use `--deadline` or `--priority`.
+- "Invalid sort order": Use `ascending` or `descending`.
+
 ### Filter tasks across projects: `filter-tasks --priority <value>` or `filter (interactive mode)`
 
 Shows only tasks that match the chosen priority. The filtered view can be exported directly.
@@ -109,6 +143,9 @@ Shows only tasks that match the chosen priority. The filtered view can be export
 ```
 filter-tasks --priority high
 ```
+
+Common mistakes and fixes:
+- "Invalid priority value": Use `low`, `medium`, or `high`.
 
 ### Get project status: `status <projectIndex>` or `status --all` or `status (interactive mode)`
 
@@ -123,23 +160,108 @@ status --all
 
 ### Export tasks: `export-tasks <filename>.txt [projectIndex] [filter-tasks --priority <value>] [sort-tasks <--deadline|--priority> <order>]` or `export (interactive mode)`
 
+Saves tasks to a plain-text file with flexible export options.
 
-Saves tasks to a plain-text file.
-
-- Without extra parameters, FlowCLI exports the last sorted or filtered view. If no view exists, it exports every task.
-- Include a project index to export just that project:
+**Export behavior:**
+- **With `--all` flag**: Always exports all tasks from all projects
+  ```
+  export-tasks all-tasks.txt --all
+  ```
+- **With project index**: Exports only tasks from the specified project
   ```
   export-tasks party-plan.txt 1
   ```
-- Chain `filter-tasks ...` and/or `sort-tasks ...` to export a customised report:
+- **With filter/sort in command**: Exports tasks matching the specified criteria
   ```
   export-tasks high-priority.txt filter-tasks --priority high sort-tasks --deadline ascending
   ```
+- **Without any parameters**: 
+  - If you previously ran `sort-tasks` or `filter-tasks`, exports that cached view
+  - If no cached view exists (or you used `list` command), exports all tasks
+  - To force exporting all tasks, use the `--all` flag
+
+**Clearing the cached view:**
+The cached sorted/filtered view is automatically cleared when you use `list` commands:
+- `list --all` clears the cached view
+- `list <projectIndex>` clears the cached view
+
+**Notes:**
+- Files are written to your current working directory by default. Use absolute or relative paths to choose a location.
+  - If the path contains spaces, wrap it in quotes: `export-tasks "My Reports/tasks.txt"`
+- Existing files with the same name will be overwritten.
+- Inline mode requires the `.txt` extension in the filename. In interactive mode, entering the name without `.txt` will auto-append `.txt`.
+
+**Common mistakes and fixes:**
+- "Invalid filename": Avoid illegal characters and ensure the name ends with `.txt`.
+- "Export failed: Directory does not exist": Create the folder or use an existing path.
+- "Export failed: Permission denied": Export to a writable location (e.g., home directory).
+- "No tasks to export": Broaden scope by removing filters or exporting all tasks.
+
+**Interactive mode options:**
+After entering a filename, choose to export: all tasks, a specific project, filtered tasks, sorted tasks, or filtered+sorted tasks, then confirm.
+
+**Export file format example:**
+When you export tasks, FLowCLI creates a plain text file like this:
+```
+CS2113T Project - high priority
+============================================
+
+[X] [H] Finalize DG (Due: 2025-11-10)
+[ ] [H] Implement UI (Due: 2025-11-20)
+[ ] [M] Write UG (Due: 2025-11-25)
+```
 
 ### Get help and exit: `help` / `bye`
 
 - `help` reprints the command summary inside the app.
 - `bye` exits FlowCLI.
+
+## Common Workflows
+
+Here are some practical examples of how to combine commands for common use cases:
+
+### Daily Task Review
+```bash
+# Check what's urgent
+filter-tasks --priority high
+status --all
+
+# Review and update a task
+list 1
+update-task 1 2 --deadline 2025-11-15
+mark 1 1
+```
+
+### Weekly Planning
+```bash
+# See all upcoming deadlines
+sort-tasks --deadline ascending
+
+# Export high-priority items for the week
+export-tasks weekly-plan.txt filter-tasks --priority high sort-tasks --deadline ascending
+```
+
+### Project Cleanup
+```bash
+# Check project status
+status --all
+
+# Mark completed tasks
+mark 1 1
+mark 1 3
+
+# Remove finished tasks
+delete-task 1 1
+```
+
+### Custom Reports
+```bash
+# Create a report of medium-priority tasks
+export-tasks medium-tasks.txt filter-tasks --priority medium
+
+# Create a deadline-sorted report for a specific project
+export-tasks project1-deadlines.txt 1 sort-tasks --deadline ascending
+```
 
 ## Testing Your Setup
 
@@ -248,16 +370,112 @@ Now explore FlowCLI's full capabilities:
 - **Command errors?** Double-check project/task numbers exist with `list --all`
 - **Interactive mode not working?** Ensure you enter commands without arguments to trigger guided input
 
+## Troubleshooting
+
+### Common Errors and Solutions
+
+**"Project index is out of range"**
+- Check available projects with `list --all`
+- Projects are numbered starting from 1
+- Make sure you're using the correct index from the list output
+
+**"Task index is out of range"**
+- Use `list <projectIndex>` to see all tasks in that project
+- Tasks are numbered starting from 1 within each project
+- Verify the task hasn't been deleted already
+
+**"Export failed: Permission denied"**
+- Ensure you have write permissions in the directory
+- Try exporting to a different location (e.g., your home directory)
+- On Windows, avoid system directories like `C:\Windows`
+
+**"Export failed: Directory does not exist"**
+- Create the parent folders first or export to an existing path
+- Use a valid absolute or relative path (e.g., `~/exports/report.txt`)
+
+**"Export failed due to filesystem error (read-only, disk full, etc.)"**
+- Ensure the target drive/folder is writable and has free space
+- Try exporting to another drive or your home directory
+
+**"File is currently open or locked"**
+- Close the exported file in other programs (Excel, text editors, etc.)
+- Try using a different filename
+- Wait a moment and try again
+
+**Interactive mode not triggering?**
+- Ensure you type ONLY the command name (e.g., `add` not `add-task`)
+- Don't include any arguments or flags to trigger interactive prompts
+- Commands that support interactive mode: `create`, `add`, `list`, `mark`, `unmark`, `delete`, `update`, `sort`, `filter`, `export`
+
+**"Invalid date format"**
+- Dates must be in `YYYY-MM-DD` format (e.g., `2025-11-15`)
+- Use 4-digit year, 2-digit month, 2-digit day
+- Separate with hyphens, not slashes
+
+**"Invalid priority value"**
+- Priority must be one of: `low`, `medium`, or `high`
+- Case-insensitive (LOW, Low, low all work)
+- Cannot use abbreviations like `l`, `m`, `h`
+
+**"Unexpected extra parameters"**
+- Commands like `status` and `list` expect only the documented arguments
+- Examples of errors:
+  - `status 1 2` → Error: "Unexpected extra parameters: 2" → Use `status 1`
+  - `list 1 extra` → Error: "Unexpected extra parameters: extra" → Use `list 1`
+- Check the command format in `help` or the Command Summary table
+
+**"This command does not accept any parameters"**
+- Commands like `help` and `bye` don't take any arguments
+- Examples of errors:
+  - `help extra` → Use `help` (no arguments needed)
+  - `bye extra` → Use `bye` (no arguments needed)
+
+## Tips and Best Practices
+
+### Workflow Optimization
+- **Start each session fresh**: Use `list --all` to check what projects you have
+- **Use descriptive project names**: Makes filtering and organizing easier later
+- **Set realistic deadlines**: Helps with priority management and sorting
+- **Export for reports**: Use export to create human-readable snapshots for meetings, sharing, or backups
+- **Combine filter + sort + export**: Create custom reports for different contexts (meetings, weekly reviews, etc.)
+
+### Command Usage
+- **Use interactive mode to learn**: Great for remembering command syntax when starting out
+- **Use inline mode for speed**: Once you know the commands, inline is much faster
+- **Leverage the help command**: Type `help` anytime to see all available commands and their formats
+- **Double-check indices**: Always verify project/task numbers with `list` before deleting
+
+### Task Management
+- **Mark tasks as done regularly**: Helps track progress with the `status` command
+- **Use priority levels strategically**: 
+  - `high` for urgent/important tasks
+  - `medium` for regular tasks
+  - `low` for nice-to-have items
+- **Set deadlines wisely**: Even if approximate, deadlines help with sorting and planning
+- **Review status frequently**: Use `status --all` to get a quick overview of all your projects
+
+### Export Strategies
+- **Exports for sharing**: Export creates human-readable files perfect for sharing with teammates or stakeholders
+- **Filtered exports**: Create focused task lists for specific needs (e.g., `export-tasks meeting.txt filter-tasks --priority high`)
+- **Deadline-sorted exports**: Great for weekly planning (e.g., `export-tasks week.txt sort-tasks --deadline ascending`)
+- **Per-project exports**: Export individual projects for team sharing or handoffs
+ - **Be explicit about paths**: Use absolute/relative paths to control where files are saved
+ - **Overwrites**: Export will overwrite files with the same name; pick unique names when needed
+
 ## FAQ
 
 **Q**: How do I transfer my tasks to another machine?
-**A**: FlowCLI currently stores tasks in memory only. Run `export-tasks all_tasks.txt` and copy the generated text file to the new machine as a snapshot.
+**A**: FlowCLI stores tasks in `data/flowcli-data.txt`. Copy this file to the same location (relative to where you run the JAR) on the new machine. Alternatively, use `export-tasks all_tasks.txt` for a human-readable snapshot.
 
 **Q**: Why do I get an error about an invalid index?
 **A**: Project and task indices must be valid numbers corresponding to the lists. Use `list --all` to see project indices and `list <projectIndex>` for task indices.
 
 **Q**: What's the difference between inline commands and interactive mode?
-**A**: Inline commands require you to type the full command with all arguments (e.g., `add-task 1 "Buy groceries" --priority high`). Interactive mode lets you type just the command name (e.g., `add`) and then guides you through each required input step-by-step. Both modes do exactly the same thing - choose whichever you prefer!## Command Summary
+**A**: Inline commands require you to type the full command with all arguments (e.g., `add-task 1 "Buy groceries" --priority high`). Interactive mode lets you type just the command name (e.g., `add`) and then guides you through each required input step-by-step. Both modes do exactly the same thing - choose whichever you prefer!
+
+
+
+## Command Summary
 
 | Action            | Format                                                                                                               | Example                                                               |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |

@@ -1,8 +1,8 @@
 package seedu.flowcli.parsers;
 
+import seedu.flowcli.exceptions.IndexOutOfRangeException;
 import seedu.flowcli.exceptions.InvalidArgumentException;
 import seedu.flowcli.exceptions.InvalidIndexFormatException;
-import seedu.flowcli.exceptions.IndexOutOfRangeException;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
@@ -13,6 +13,7 @@ import seedu.flowcli.project.ProjectList;
  * it exists. Any remaining text after the index is preserved for further
  * command-specific parsing.
  */
+//@@author Zhenzha0
 public class ArgumentParser {
 
     public static final String INVALID_PROJECT_INDEX_MESSAGE = "Invalid project index: %s. Use the numeric project "
@@ -41,6 +42,7 @@ public class ArgumentParser {
         return remainingArgument;
     }
 
+    //@@author zeeeing
     public String getParsedProjectName() {
         return parsedProjectToken;
     }
@@ -80,8 +82,7 @@ public class ArgumentParser {
         }
 
         // Non-numeric identifiers are preserved in remainingArgument for
-        // commands
-        // that do their own parsing (e.g. create-project).
+        // commands that do their own parsing (e.g. create-project).
         remainingArgument = trimmed.length() > firstToken.length() ? trimmed.substring(firstToken.length()).trim()
                 : null;
     }
@@ -92,17 +93,20 @@ public class ArgumentParser {
             if (parsed > 0) {
                 return parsed;
             }
+            return parsed;
         } catch (NumberFormatException e) {
             return null;
         }
-        return null;
     }
+    //@@author
 
+    //@@author sean6369
     public void validateProjectIndex() throws InvalidArgumentException,
             InvalidIndexFormatException, MissingArgumentException, IndexOutOfRangeException {
         if (targetProject == null) {
             if (targetProjectIndex != null) {
-                throw new IndexOutOfRangeException(projects.getProjectListSize());
+                int userEnteredIndex = targetProjectIndex + 1;
+                throw new IndexOutOfRangeException(userEnteredIndex, projects.getProjectListSize());
             }
             if (hasNonNumericProjectToken()) {
                 throw new InvalidIndexFormatException(parsedProjectToken, "project");
@@ -110,4 +114,5 @@ public class ArgumentParser {
             throw new MissingArgumentException();
         }
     }
+    //@@author
 }

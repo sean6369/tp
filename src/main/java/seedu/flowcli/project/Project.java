@@ -6,6 +6,7 @@ import seedu.flowcli.exceptions.IndexOutOfRangeException;
 
 import java.time.LocalDate;
 
+//@@author Zhenzha0
 public class Project {
     private String projectName;
     private String projectStatus;
@@ -72,3 +73,4 @@ public class Project {
         return projectTasks.render();
     }
 }
+//@@author

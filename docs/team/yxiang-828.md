@@ -1,5 +1,6 @@
 # Yao Xiang's Project Portfolio Page
-(Yxiang-828)
+
+**GitHub**: [Yxiang-828](https://github.com/Yxiang-828)
 
 ## Project: FlowCLI
 
@@ -24,7 +25,7 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 - **Highlights**: Implemented efficient algorithms with O(n log n) sorting complexity and O(n) filtering complexity. Added comprehensive JUnit test coverage with 13 test cases. Integrated parameter validation and error handling for robust user experience.
 - **Code contributed**: `TaskSorter.java`, `TaskFilter.java`, `CommandHandler.java` (sort/filter command parsing), comprehensive test suite in `TaskSorterTest.java` and `TaskFilterTest.java`.
 
-#### 2. Interactive Mode Implementation
+#### 2. Interactive Mode Implementation (did the entire feature)
 
 - **What it does**: Transforms single-word commands into guided conversational interfaces, providing step-by-step prompts for complex operations without requiring users to remember full command syntax.
 - **Justification**: Reduces learning curve for new users and prevents command errors by guiding users through parameter collection with validation and clear options.
@@ -41,12 +42,12 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 
 - **Architecture Section**: Added detailed layered architecture explanation with interactive mode integration
 - **Implementation Section**: Documented sorting/filtering algorithms with complexity analysis, interactive mode implementation details with 4-layer breakdown
-- **UML Diagrams**: Created and maintained 16+ PlantUML diagrams including sequence diagrams, state diagrams, class diagrams, and activity diagrams
+- **UML Diagrams**: Created and maintained 14+ PlantUML diagrams including sequence diagrams, state diagrams, class diagrams, and activity diagrams
 - **Manual Testing**: Added comprehensive testing instructions with setup steps, sample data, and troubleshooting guide
 
 ### Contributions to team-based tasks
 
-- **Documentation Standards**: Ensured AB3 compliance by standardizing author attributions and UML diagram formatting across DeveloperGuide.md
+- **Documentation Standards**: Ensured AB3 compliance by standardizing author attributions and UML diagram formatting across `DeveloperGuide.md`
 - **Code Quality**: Fixed checkstyle violations and maintained coding standards throughout development
 - **Testing**: Added comprehensive JUnit tests and manual testing procedures
 
@@ -55,11 +56,6 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 - Reviewed and merged team member pull requests for error handling and task management features
 - Provided guidance on interactive mode implementation and UML diagram standards
 - Assisted with merge conflict resolution and branch management
-
-### Contributions beyond the project team
-
-- Participated in class forum discussions on Java development best practices
-- Shared insights on PlantUML diagram creation and AB3 documentation standards
 
 ## Key Commits and Pull Requests
 

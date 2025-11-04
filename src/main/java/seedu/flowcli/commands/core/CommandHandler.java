@@ -7,6 +7,7 @@ import seedu.flowcli.commands.Command;
 import seedu.flowcli.exceptions.FlowCLIException;
 import seedu.flowcli.parsers.CommandParser;
 import seedu.flowcli.project.ProjectList;
+import seedu.flowcli.storage.Storage;
 import seedu.flowcli.ui.ConsoleUi;
 
 public class CommandHandler {
@@ -17,12 +18,13 @@ public class CommandHandler {
     private final CommandContext context;
     private InteractivePromptHandler interactiveHandler;
 
-    public CommandHandler(ProjectList projects, ConsoleUi ui) {
+    //@@author Zhenzha0
+    public CommandHandler(ProjectList projects, ConsoleUi ui, Storage storage) {
         this.ui = ui;
         ExportCommandHandler exportHandler = new ExportCommandHandler(projects, ui);
         this.parser = new CommandParser();
         this.factory = new CommandFactory();
-        this.context = new CommandContext(projects, ui, exportHandler);
+        this.context = new CommandContext(projects, ui, exportHandler, storage);
         this.interactiveHandler = null; // Will be set in handleCommands
     }
 
@@ -40,7 +42,7 @@ public class CommandHandler {
                     ui.printLine();
                     continue;
                 }
-
+                //@@author
                 Command command = resolveCommand(line, scanner);
                 if (command == null) {
                     // Interactive mode was cancelled, continue to next input
@@ -87,6 +89,7 @@ public class CommandHandler {
      * @param parsed The parsed command
      * @return true if interactive mode should be triggered
      */
+    //@@author Yxiang-828 zeeeing
     private boolean shouldUseInteractiveMode(CommandParser.ParsedCommand parsed) {
         // Trigger interactive mode for main commands with minimal/no arguments
         switch (parsed.getType()) {

@@ -1,3 +1,5 @@
+![FlowCLI Cover](images/logos/FlowCLI-Cover-Image.png)
+
 # Developer Guide
 
 ---
@@ -16,22 +18,27 @@ We also acknowledge:
 
 ## Table of Contents
 
-- [Architecture](#architecture-yao-xiang)
+- [Architecture](#architecture-by-yao-xiang)
 - [Implementation &amp; Design](#implementation--design)
   - [Core Functionality](#core-functionality)
-    - [CreateCommand Feature](#createcommand-feature-by-xylon-chanteamxylonchanmd)
-    - [Common Classes](#common-classes)
+    - [Command Processing Infrastructure](#command-processing-infrastructure-by-zhenzhao)
+    - [Validation Framework](#validation-framework-by-sean-lee)
+    - [Task Management Features](#task-management-features-by-zing-jen)
+    - [Project Management Features](#project-management-features-by-xylon-chan)
+    - [Common Classes](#common-classes-by-zhenzhao)
   - [Data Processing](#data-processing)
-    - [Task Sorting Algorithm](#task-sorting-algorithm-yao-xiang)
-    - [Task Filtering Algorithm](#task-filtering-algorithm-yao-xiang)
-  - [Data Persistence](#data-persistence)
-  - [User Interface](#user-interface)
-    - [Interactive Mode](#interactive-mode-yao-xiang)
-    - [Task Status Display System](#task-status-display-system-zhen-zhao)
-    - [Interactive Command Flows](#interactive-command-flows-yao-xiang)
+    - [Task Sorting Algorithm](#task-sorting-algorithm-by-yao-xiang)
+    - [Task Filtering Algorithm](#task-filtering-algorithm-by-yao-xiang)
+- [Data Persistence](#data-persistence-by-sean-lee)
+  - [Export Algorithm](#export-algorithm-by-sean-lee)
+  - [Data Storage](#data-storage-by-zhenzhao)
+- [User Interface](#user-interface)
+    - [Interactive Mode](#interactive-mode-by-yao-xiang)
+    - [Status Display System](#status-display-system-by-zhenzhao)
+    - [Interactive Command Flows](#interactive-command-flows-by-yao-xiang)
 - [Product scope](#product-scope)
 - [User Stories](#user-stories)
-- [Non-Functional Requirements](#non-functional-requirements-zhen-zhao)
+- [Non-Functional Requirements](#non-functional-requirements-by-zhenzhao)
 - [Glossary](#glossary)
 - [Instructions for manual testing](#instructions-for-manual-testing)
 
@@ -42,6 +49,19 @@ We also acknowledge:
 FlowCLI follows a layered architecture with clear separation of concerns:
 
 ![Architecture Diagram](plantUML/architecture/architecture.png)
+
+**Component Relationships:**
+
+The diagram shows the main components and their relationships:
+- **ConsoleUi** handles all user interface interactions
+- **CommandHandler** orchestrates command processing
+- **InteractivePromptHandler** manages interactive mode dialogues
+- **CommandFactory** creates command objects
+- **ProjectList** contains multiple **Project** instances (1-to-many relationship)
+- **Project** contains multiple **Task** instances (1-to-many relationship)
+- **TaskSorter** and **TaskFilter** provide data processing utilities
+
+*Note: The multiplicity notation "1" → "*" indicates a one-to-many relationship in UML. For example, one ProjectList can contain zero or more Projects, and one Project can contain zero or more Tasks.*
 
 **Key Design Principles:**
 
@@ -56,7 +76,170 @@ FlowCLI follows a layered architecture with clear separation of concerns:
 
 ### Core Functionality
 
-#### Task Management features by [Zing Jen](team/zingjen.md)
+#### Command Processing Infrastructure by [Zhenzhao](team/zhenzha0.md)
+
+The command processing infrastructure forms the foundation of FlowCLI, handling all user input parsing, validation, and command execution. It consists of three key components that work together to transform user input into executable commands.
+
+**Key Components:**
+
+- **CommandHandler** - Manages the main command loop, reads user input, coordinates parsing and execution
+- **CommandParser** - Parses command words and extracts arguments, maps input to CommandType enum
+- **ArgumentParser** - Parses project identifiers (index or name), resolves to Project objects, validates existence
+
+![Command Processing Infrastructure Sequence](plantUML/command-processing-infrastructure/Command-processing-infrastructure-sequence-diagram.png)
+
+**Implementation Details:**
+
+1. **FlowCLI** initializes by creating CommandHandler, CommandParser, CommandFactory, and ConsoleUi (these objects exist throughout the application lifecycle).
+2. **CommandHandler** manages the main command loop, reading user input line by line using a Scanner.
+3. For each input line, **CommandParser** splits the command word from arguments and maps it to a CommandType enum.
+4. **CommandFactory** creates a new Command object for each user input based on the type.
+5. During command execution, a new **ArgumentParser** is created to validate and resolve project identifiers (if applicable), converting indices or names into Project objects. This parser is destroyed after parsing completes.
+6. The Command validates arguments, performs business logic, and displays results through ConsoleUi.
+7. After execution, the Command object is destroyed (each command is executed once and discarded).
+8. Exceptions are caught and handled gracefully, displaying user-friendly error messages.
+
+**Note:** The sequence diagram shows constructor calls only for objects created during the command processing flow (Command and ArgumentParser). Pre-existing components (FlowCLI, CommandHandler, CommandParser, CommandFactory, ConsoleUi) are created during application initialization and persist throughout the session.
+
+**Design Rationale:**
+
+- **Separation of Concerns**: CommandParser handles syntax, ArgumentParser handles semantics, CommandHandler orchestrates the flow.
+- **Reusability**: ArgumentParser is used by multiple commands that need project resolution.
+- **Extensibility**: New commands can be added by extending the CommandType enum and Command base class.
+- **Error Handling**: Validation happens early in the pipeline, preventing invalid state changes.
+
+**Example Flow:**
+
+```
+User input: "add-task 1 Fix bug --priority high"
+↓
+CommandParser: type=ADD_TASK, args="1 Fix bug --priority high"
+↓
+ArgumentParser: projectIndex=1 → resolves to Project("CS2113T"), remaining="Fix bug --priority high"
+↓
+AddCommand: validates and adds task to project
+↓
+ConsoleUi: displays confirmation
+```
+
+---
+
+#### Validation Framework by [Sean Lee](team/sean6369.md)
+
+Input validation is centralized to ensure consistent rules, clear error messages, and early failure before any state mutation.
+
+**Key Components:**
+
+- `CommandValidator` - Static utility methods for validating command parameters (priorities, dates, filter/sort options, command syntax)
+- `ValidationConstants` - Canonical constants for valid values (priorities, filter types, sort fields/orders, keywords)
+
+**CommandValidator Methods:**
+
+- `validatePriority(String)` - Validates and normalizes priority (`low`, `medium`, `high`, case-insensitive), throws `InvalidArgumentException` on failure
+- `priorityToInt(String)` - Converts validated priority string to integer (1=low, 2=medium, 3=high); use after `validatePriority()`
+- `validateAndParseDate(String)` - Validates date format (`yyyy-MM-dd`) and returns `LocalDate`, throws `InvalidDateException` on failure
+- `validateFilterType(String)` - Validates filter type (currently only `priority`), throws `InvalidArgumentException` on failure
+- `validateSortField(String)` - Validates sort field (`deadline` or `priority`), throws `InvalidArgumentException` on failure
+- `validateSortOrder(String)` - Validates sort order (`ascending` or `descending`), throws `InvalidArgumentException` on failure
+- `validateFilterCommand(String[], int)` - Validates filter command syntax completeness, throws `InvalidCommandSyntaxException` on failure
+- `validateSortCommand(String[], int)` - Validates sort command syntax completeness, throws `InvalidCommandSyntaxException` on failure
+
+**ValidationConstants Values:**
+
+- Priorities: `PRIORITY_LOW`, `PRIORITY_MEDIUM`, `PRIORITY_HIGH` (string values)
+- Priority integers: `PRIORITY_LOW_VALUE = 1`, `PRIORITY_MEDIUM_VALUE = 2`, `PRIORITY_HIGH_VALUE = 3`
+- Filter types: `FILTER_TYPE_PRIORITY`
+- Sort fields: `SORT_FIELD_DEADLINE`, `SORT_FIELD_PRIORITY`
+- Sort orders: `SORT_ORDER_ASCENDING`, `SORT_ORDER_DESCENDING`
+- Keywords: `KEYWORD_BY`, `KEYWORD_FILTER`, `KEYWORD_SORT`
+
+**Parser Integration:**
+
+- `CommandParser.parseIndexOrNull(String indexText, int maxIndex)`
+
+  - Parses a 1-based user index and converts to 0-based on success
+  - Validates index is within range [1, maxIndex]
+  - Throws: `MissingIndexException` (if indexText is null), `InvalidIndexFormatException` (if not numeric), `IndexOutOfRangeException` (if out of range)
+  - Returns the 0-based index (never returns null; throws exceptions on validation failure)
+- `ArgumentParser.validateProjectIndex()`
+
+  - Verifies that a target project is resolvable from user input
+  - Detects non-numeric tokens and out-of-range indices against the current project list
+  - Must be called after `ArgumentParser` construction to validate parsed project index
+  - Throws: `MissingArgumentException`, `InvalidIndexFormatException`, `IndexOutOfRangeException`, `InvalidArgumentException`
+
+**Usage Example:**
+
+```java
+// Typical validation pattern in commands (e.g., AddCommand, UpdateCommand)
+ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
+parsedArgument.validateProjectIndex();  // Validate project index first
+Project targetProject = parsedArgument.getTargetProject();
+
+String remaining = parsedArgument.getRemainingArgument();
+if (remaining == null || remaining.trim().isEmpty()) {
+    throw new MissingDescriptionException();  // Validate required fields
+}
+
+// Validate and convert priority
+String validatedPriority = CommandValidator.validatePriority(priorityStr);
+int priority = CommandValidator.priorityToInt(validatedPriority);
+
+// Validate and parse date
+LocalDate deadline = CommandValidator.validateAndParseDate(dateStr);
+```
+
+**Extra Parameter Validation:**
+
+Commands that don't accept parameters (e.g., `bye`, `help`, `status`, `list`) check for extra arguments using `ArgumentParser.getRemainingArgument()` and throw `ExtraArgumentException`:
+
+```java
+String remaining = parsedArgument.getRemainingArgument();
+if (remaining != null && !remaining.trim().isEmpty()) {
+    throw new ExtraArgumentException("Unexpected extra parameters: " + remaining);
+}
+```
+
+**Exception Types:**
+
+- `MissingArgumentException` - Required argument is missing
+- `ExtraArgumentException` - Unexpected extra parameters provided
+- `MissingIndexException` - Required index argument is missing
+- `MissingDescriptionException` - Required description/field is missing or empty
+- `InvalidIndexFormatException` - Index cannot be parsed as integer
+- `IndexOutOfRangeException` - Index is out of valid range
+- `InvalidArgumentException` - Argument format/value is invalid (e.g., invalid priority, filter type, sort field)
+- `InvalidDateException` - Date format is invalid (expects `yyyy-MM-dd`)
+- `InvalidFilenameException` - Filename format is invalid
+- `InvalidCommandSyntaxException` - Command syntax is malformed or incomplete
+
+**Validation Flow:**
+
+The following sequence diagram illustrates the validation process, showing both success and exception paths:
+
+![Validation Framework Sequence Diagram](plantUML/validation-framework/validation-framework-sequence-diagram.png)
+
+The validation flow operates in 3 main layers:
+
+1. **Project Index layer**: `ArgumentParser.validateProjectIndex()` validates project index format and range (throws `MissingArgumentException`, `IndexOutOfRangeException`, `InvalidIndexFormatException`) - *always executed first*
+2. **Task Index layer**: `CommandParser.parseIndexOrNull()` validates task index format and range (throws `MissingIndexException`, `InvalidIndexFormatException`, `IndexOutOfRangeException`) - *only for commands that need task indices (Mark, Update, DeleteTask, Unmark)*
+3. **Domain layer**: Commands use `CommandValidator` methods for domain-specific validation (priorities, dates, filters, sort options) which reference `ValidationConstants` for valid values
+
+All exceptions propagate to `CommandHandler`, which catches `FlowCLIException` and displays user-friendly messages via `ConsoleUi`.
+
+**Pre-execution validation**: All validation occurs before model mutation to preserve data integrity.
+
+**Best Practices:**
+
+- Always validate project index first using `ArgumentParser.validateProjectIndex()` before accessing project data
+- Validate optional parameters (priority, deadline) before using them
+- Use `validatePriority()` followed by `priorityToInt()` to normalize and convert priorities
+- Check for extra parameters on commands that don't accept arguments
+- Throw specific exception types rather than generic ones for better error messages
+
+---
+
+#### Task Management features by [Zing Jen](team/zeeeing.md)
 
 The task management system forms the core of FlowCLI, allowing users to create, track, and manage their work within different projects. The implementation follows the command pattern, where each user action is encapsulated in a dedicated command class.
 
@@ -72,12 +255,12 @@ The following sequence diagram illustrates the process of adding a task:
 
 **Implementation Details**:
 
-1.  The `CommandParser` identifies the `add-task` command and creates an `AddCommand` object.
-2.  `AddCommand#execute()` is called.
-3.  The command parses the arguments to extract the project index, task description, deadline, and priority.
-4.  It validates that the project exists and that a task description is provided.
-5.  If validation passes, it retrieves the `Project` object and calls `project.addTask()` to create and add the new task.
-6.  The `ConsoleUi` then displays a confirmation message to the user.
+1. The `CommandParser` identifies the `add-task` command and creates an `AddCommand` object.
+2. `AddCommand#execute()` is called.
+3. The command parses the arguments to extract the project index, task description, deadline, and priority.
+4. It validates that the project exists and that a task description is provided.
+5. If validation passes, it retrieves the `Project` object and calls `project.addTask()` to create and add the new task.
+6. The `ConsoleUi` then displays a confirmation message to the user.
 
 ---
 
@@ -93,11 +276,11 @@ The sequence diagram below shows the workflow:
 
 **Implementation Details**:
 
-1.  The `CommandParser` creates a `DeleteTaskCommand` object.
-2.  `DeleteTaskCommand#execute()` validates the presence of the project index and task index.
-3.  It ensures the specified project exists and the task index is within the valid range.
-4.  If valid, it calls `project.deleteTask()` to remove the task from the project's `TaskList`.
-5.  A success message, including the details of the deleted task, is shown to the user.
+1. The `CommandParser` creates a `DeleteTaskCommand` object.
+2. `DeleteTaskCommand#execute()` validates the presence of the project index and task index.
+3. It ensures the specified project exists and the task index is within the valid range.
+4. If valid, it calls `project.deleteTask()` to remove the task from the project's `TaskList`.
+5. A success message, including the details of the deleted task, is shown to the user.
 
 ---
 
@@ -119,11 +302,11 @@ The process is illustrated in the following diagram:
 
 **Implementation Details**:
 
-1.  `MarkCommand` or `UnmarkCommand` is instantiated by the parser.
-2.  The `execute()` method validates the project and task index.
-3.  It retrieves the `Task` object and calls its `mark()` or `unmark()` method.
-4.  The command includes logic to prevent redundant operations (e.g., marking an already-marked task).
-5.  The UI confirms that the task status has been updated.
+1. `MarkCommand` or `UnmarkCommand` is instantiated by the parser.
+2. The `execute()` method validates the project and task index.
+3. It retrieves the `Task` object and calls its `mark()` or `unmark()` method.
+4. The command includes logic to prevent redundant operations (e.g., marking an already-marked task).
+5. The UI confirms that the task status has been updated.
 
 ---
 
@@ -139,10 +322,10 @@ The update process is shown below:
 
 **Implementation Details**:
 
-1.  The `UpdateCommand` is responsible for parsing the various optional flags that specify which fields to update.
-2.  It validates the project and task index.
-3.  It calls `project.updateTask()`, passing the new values. The `updateTask` method handles the logic of only changing the fields that were provided in the command.
-4.  The UI displays the updated task details.
+1. The `UpdateCommand` is responsible for parsing the various optional flags that specify which fields to update.
+2. It validates the project and task index.
+3. It calls `project.updateTask()`, passing the new values. The `updateTask` method handles the logic of only changing the fields that were provided in the command.
+4. The UI displays the updated task details.
 
 ---
 
@@ -158,11 +341,15 @@ The diagram below illustrates the listing process:
 
 **Implementation Details**:
 
-1.  The `ListCommand` checks if a project index was provided.
-2.  If a project index is given, it finds the project and calls `ConsoleUi` to display only the tasks for that project.
-3.  If no project name is given, it iterates through the entire `ProjectList` and instructs the `ConsoleUi` to display all projects and their associated tasks.
+1. The `ListCommand` checks if a project index or `--all` flag was provided.
+2. **Argument Validation**:
+   - Checks for empty arguments (throws `MissingArgumentException`)
+   - If `--all` flag, validates project list is not empty (throws `EmptyProjectListException`)
+   - If project index provided, validates the index and rejects unexpected extra parameters (e.g., `list 1 extra` throws exception)
+3. If a valid project index is given, it finds the project and calls `ConsoleUi` to display only the tasks for that project.
+4. If `--all` flag is given, it iterates through the entire `ProjectList` and instructs the `ConsoleUi` to display all projects and their associated tasks.
 
-#### Project Management features by [Xylon Chan](team/xylonchan.md)
+#### Project Management features by [Xylon Chan](team/xylonc.md)
 
 ##### CreateCommand
 
@@ -196,11 +383,21 @@ Here is a sequence diagram illustrating the process:
 
 ![CreateCommandSequenceDiagram](plantUML/project-management/CreateCommandDiagram.png)
 
-#### Common Classes
+#### Common Classes by [Zhenzhao](team/zhenzha0.md)
 
-##### Project and ProjectList classes
+The core data model of FlowCLI consists of four fundamental classes that represent the domain entities and their relationships. These classes form the foundation upon which all features are built.
 
-![ProjectRelationshipDiagram](plantUML/project-management/ProjectClassDiagram.png)
+##### Project, ProjectList, Task, and TaskList classes
+
+![ProjectRelationshipDiagram](plantUML/project-management/Project-and-task-class-diagram.png)
+
+**Class Relationships:**
+
+- **ProjectList** contains multiple **Project** instances
+- Each **Project** contains a **TaskList**
+- Each **TaskList** contains multiple **Task** instances
+
+This hierarchical structure allows for organized task management within distinct projects, with clear ownership and encapsulation of responsibilities.
 
 #### Project class
 
@@ -222,21 +419,13 @@ Represents a single project and encapsulates its name and task collection `TaskL
 ##### API
 
 - `Project(String projectName)` — Constructor that constructs an empty project with the given name.
-
 - `String getProjectName()` — returns the name of the project.
-
 - `TaskList getProjectTasks()` — returns the tasks in that project
-
 - `void addTask(String description)` — adds a task.
-
 - `void addTask(String description, LocalDate deadline, int priority)` — add a task with deadline and priority
-
 - `Task deleteTask(int index) — remove and return the task at index.`
-
 - `Task updateTask(int index, String newDescription, boolean updateDescription, LocalDate newDeadline, boolean updateDeadline, Integer newPriority, boolean updatePriority)` — Updates the task description , deadline and priority
-
 - `String showAllTasks()` — render the project’s tasks to a printable string (delegates to `TaskList.render()`).
-
 - `String toString()` — printable representation of the project header + rendered tasks.
 
 #### ProjectList class
@@ -256,19 +445,12 @@ An ArrayList container of Project instances offering indexed access, name-lookup
 ##### API
 
 - `void addProject(String projectName)` — appends a new Project.
-
 - `Project delete(int zeroBasedIndex)` — delete by index, return the removed Project for confirmation.
-
 - `Project deleteProject(Project project)` — remove by identity and returns the removed project
-
 - `Project getProjectByIndex(int zeroBasedIndex)` — indexed accessor.
-
 - `List<Project> getProjectList()` — list the projects by name currently in the list
-
 - `int getProjectListSize()` — returns the number of projects.
-
 - `Project getProject(String projectName)` — returns the project via name-based lookup
-
 - `String render()` — concatenate each project’s toString() into a printable block.
 
 ### Data Processing
@@ -299,40 +481,194 @@ The filtering algorithm supports filtering tasks by priority level and/or projec
 - **Case Insensitive**: Project name and priority filtering ignore case
 - **Multiple Filters**: Can combine priority and project name filters
 
-### Data Persistence by [Sean Lee](team/seanlee.md)
+### Data Persistence by [Sean Lee](team/sean6369.md)
 
-#### Export Algorithm by [Sean Lee](team/seanlee.md)
+#### Export Algorithm by [Sean Lee](team/sean6369.md)
 
 The export algorithm supports saving project and task data to text files with filtering and sorting capabilities:
 
-![Export Command State Diagram](plantUML/export-command/export-command-state-diagram.png)
+##### Architecture Overview
 
-**Key Classes:**
-- `TaskExporter` - Handles file I/O operations and formatting
-- `ExportCommandHandler` - Orchestrates export process and parameter parsing
-- `TaskCollector` - Aggregates tasks from projects with project context
-- `TaskWithProject` - Wrapper class enabling cross-project operations
+![Export Command Class Diagram](plantUML/export-command/export-command-class-diagram.png)
 
-**Export Process:**
-1. Parse and validate export parameters (filename, project selection, filters, sorting)
-2. Collect tasks based on specific project
-3. Apply filtering and sorting if specified
-4. Write tasks to file with proper formatting and error handling
-5. Display success confirmation to user
+**Key Components:**
 
-**File Structure:**
+- **ExportCommandHandler** - Orchestrates export process, parameter parsing, and view state management
+- **TaskCollector** - Utility class for aggregating tasks from projects with project context
+- **TaskExporter** - Utility class for file I/O operations with comprehensive error handling
+- **TaskWithProject** - Wrapper class enabling cross-project operations
+- **TaskFilter** - Filters tasks by priority and/or project name
+- **TaskSorter** - Sorts tasks by deadline or priority
+
+**Design Principles:**
+
+- **Separation of Concerns**: Collection (TaskCollector), I/O (TaskExporter), and orchestration (ExportCommandHandler) are separate
+- **Utility Pattern**: TaskCollector and TaskExporter are final classes with static methods only
+- **Reusability**: TaskWithProject enables cross-project operations across filtering, sorting, and listing
+- **Error Isolation**: All I/O exceptions are translated to FileWriteException with user-friendly messages
+
+##### Export Workflow
+
+The following sequence diagram illustrates the export workflow:
+
+![Export Command Sequence Diagram](plantUML/export-command/export-command-sequence-diagram.png)
+
+##### TaskCollector
+
+Utility class providing static methods to collect tasks from projects while preserving project association:
+
+- **`getAllTasksWithProjects(ProjectList projects)`** - Returns `List<TaskWithProject>` of all tasks from all projects (O(n) time/space)
+- **`getTasksFromProject(Project project)`** - Returns `List<TaskWithProject>` of tasks from a specific project (O(m) time/space)
+
+Each task is wrapped in `TaskWithProject`, which formats as `"ProjectName: [X] Task Description (Due: YYYY-MM-DD) [priority]"`. The class is reusable across filtering, sorting, and listing operations.
+
+##### TaskExporter
+
+Utility class that writes tasks to text files with comprehensive error handling:
+
+**Method:** `exportTasksToFile(List<TaskWithProject> tasks, String filename, String header) throws FileWriteException`
+
+**File Format:**
+
 ```
-Export Header
-=============
+<Header Text>
+================
 
 ProjectName: [X] Task Description (Due: YYYY-MM-DD) [priority]
 ProjectName: [ ] Another Task [priority]
 ```
 
+Uses try-with-resources for automatic cleanup. All I/O exceptions are translated to `FileWriteException` with user-friendly messages covering: permission denied, directory not found, disk space issues, file locking, path length limits, read-only filesystem, and security policy violations. Error messages follow the pattern `"'<filename>': <description>"` with actionable suggestions.
+
+##### Integration with ExportCommandHandler
+
+The export workflow consists of 5 steps:
+
+1. **Parameter Parsing** - Validates filename, project selection, filters, and sorting options
+2. **Task Collection** - Uses `TaskCollector` based on parameters with 4 strategies:
+   ```java
+   if (params.forceAll) {
+       tasks = TaskCollector.getAllTasksWithProjects(projects);
+   } else if (params.projectIndex != null) {
+       tasks = TaskCollector.getTasksFromProject(projects.getProjectByIndex(params.projectIndex));
+   } else if (!params.hasFilterOrSort() && lastViewType != ViewType.NONE && !lastDisplayedTasks.isEmpty()) {
+       tasks = new ArrayList<>(lastDisplayedTasks);  // Export last cached view (from sort/filter)
+   } else {
+       tasks = TaskCollector.getAllTasksWithProjects(projects);  // Default: all tasks
+   }
+   ```
+
+   **Last View Caching:** View state is stored in `ExportCommandHandler` instance fields (`lastDisplayedTasks`, `lastViewType`, `lastViewMetadata`). The `sort-tasks` and `filter-tasks` commands update this state via `updateViewState()`. When exporting without parameters, it automatically exports the cached view if available.
+3. **Filtering/Sorting** - Applies `TaskFilter` and `TaskSorter` if specified in export command
+4. **File Export** - Calls `TaskExporter.exportTasksToFile()` with header
+5. **User Feedback** - Displays success via `ConsoleUi.showExportSuccess()`
+
+**Design Benefits:** Separation of concerns, reusability across operations, error isolation, independent testability, and seamless integration with view commands (sort/filter) through view state tracking.
+
+---
+
+#### Data Storage by [Zhenzhao](team/zhenzha0.md)
+
+The storage system provides persistent data storage for FlowCLI, automatically saving and loading all projects and tasks between sessions. It implements robust error handling, data validation, and atomic write operations to ensure data integrity.
+
+**Key Components:**
+
+- **Storage** - Main storage class handling save/load operations, file I/O, data validation, and corruption handling
+- **DataCorruptedException** - Exception thrown when the data file format is invalid or corrupted
+- **StorageException** - Exception thrown when file I/O operations fail (permissions, disk space, etc.)
+
+**Architecture Overview:**
+
+![Storage Class Diagram](plantUML/data-storage/storage-class-diagram.png)
+
+The Storage class acts as the central persistence manager, coordinating file I/O operations and data validation. It maintains relationships with the domain model (ProjectList, Project, TaskList, Task) for serialization and handles exceptional cases through specialized exception types.
+
+**Storage Location:**
+
+Data is saved to `./data/flowcli-data.txt` (relative to where the JAR is executed).
+
+**Data Format:**
+
+The storage uses a custom delimiter-based format optimized for parsing and validation:
+
+```
+PROJECT|Project Name
+TASK|isDone|description|deadline|priority
+```
+
+Where:
+- `PROJECT|<name>` - Project header line
+- `TASK|<0/1>|<description>|<YYYY-MM-DD or null>|<1-3>` - Task entry (0=not done, 1=done; 1=low, 2=medium, 3=high priority)
+- Special characters (`|`, newlines) are escaped using `<PIPE>` and `<NEWLINE>` markers
+
+**Implementation Details:**
+
+1. **On Startup (FlowCLI constructor):**
+   - Storage object is created
+   - `load()` is called to read data from file
+   - If file doesn't exist: starts with empty ProjectList (first run)
+   - If file is empty: starts with empty ProjectList
+   - If file is corrupted: backs up to `.backup` file, shows warning, starts with empty ProjectList
+   - If I/O error occurs: shows warning, starts with empty ProjectList
+   - Loaded data is used to initialize the application state
+
+2. **On Exit (ByeCommand execution):**
+   - `save()` is called with current ProjectList
+   - Data is written to temporary file first (`flowcli-data.tmp`)
+   - Temporary file is atomically renamed to `flowcli-data.txt` (prevents corruption if interrupted)
+   - If save fails: user is prompted to retry up to 3 times
+   - If all retries fail: warning is shown, application exits without saving
+
+3. **Data Validation During Load:**
+   - Every line is validated against expected format
+   - Project names cannot be empty
+   - Task fields must have exactly 4 pipe-delimited values
+   - `isDone` must be 0 or 1
+   - Dates must be valid ISO format (YYYY-MM-DD) or "null"
+   - Priority must be 1, 2, or 3
+   - Tasks must follow a PROJECT header (cannot appear before any project)
+   - Any validation failure triggers DataCorruptedException and backup
+
+4. **Special Character Handling:**
+   - Pipe characters `|` in user input are escaped to `<PIPE>`
+   - Newlines in user input are escaped to `<NEWLINE>`
+   - The escape sequences themselves are double-escaped (`<PIPE>` becomes `<PIPE><PIPE>`)
+   - Unescaping happens in reverse order during load
+
 **Error Handling:**
-- Permission denied, directory not found, disk space issues
-- File locked/in use, invalid filenames, read-only filesystem
-- User-friendly error messages with actionable suggestions
+
+| Error Type | Handling | User Impact |
+|------------|----------|-------------|
+| File not found (first run) | Silent, start with empty list | None |
+| Empty file | Silent, start with empty list | None |
+| Corrupted data | Backup to `.backup`, show warning, start with empty list | Warning message |
+| I/O error (read) | Show warning, start with empty list | Warning message |
+| I/O error (write) | Prompt for retry (3 attempts), allow exit without saving | Error message + retry prompt |
+| Permission denied | Show specific error, prompt for retry or exit | Error message |
+| Disk full | Show specific error, prompt for retry or exit | Error message |
+
+
+**Example Storage File:**
+
+```
+PROJECT|CS2113T Project
+TASK|1|Complete assignment|2025-12-31|3
+TASK|0|Study for exam|null|2
+PROJECT|Personal Tasks
+TASK|0|Buy groceries|2025-11-10|1
+TASK|1|Call dentist|null|2
+```
+
+**Edge Cases Handled:**
+
+- Empty project list (no projects/tasks)
+- Projects with no tasks
+- Tasks with no deadlines (null)
+- Tasks with empty descriptions
+- Special characters in project/task names
+- Large datasets (100+ projects, 1000+ tasks)
+
+---
 
 ### **User Interface**
 
@@ -348,13 +684,13 @@ The interactive mode transforms single-word commands into guided conversations. 
 
 The overall command processing workflow shows how user input flows through the system components:
 
-![Command Processing Sequence Diagram](plantUML/command-processing-sequence/Command%20Processing%20Sequence%20Diagram.png)
+![Command Processing Sequence Diagram](plantUML/command-processing-sequence/Command Processing Sequence Diagram.png)
 
 **Architecture Flow**: User input → CommandHandler → InteractivePromptHandler (if needed) → CommandFactory → Command execution → Result display.
 
 #### Class Diagram: InteractivePromptHandler Structure by [Yao Xiang](team/yxiang-828.md)
 
-![InteractivePromptHandler Class Diagram](plantUML/interactive-prompt-handler/interactiveprompthandler.png)
+![InteractivePromptHandler Class Diagram](plantUML/interactive-prompt-handler/interactiveprompthandler-class-diagram.png)
 
 #### Interactive Mode Detection by [Yao Xiang](team/yxiang-828.md)
 
@@ -393,33 +729,101 @@ private boolean shouldUseInteractiveMode(CommandParser.ParsedCommand parsed) {
 
 **Decision Rationale**: Interactive mode is triggered for main commands with empty arguments, preserving backward compatibility.
 
-#### Task Status Display System by [Zhen Zhao](team/zhenzhao.md)
+#### Status Display System by [Zhenzhao](team/zhenzha0.md)
 
-Tasks display completion status using visual markers:
+The status display system provides users with visual feedback on project progress through completion tracking, progress bars, and motivational messages. It separates analysis logic from presentation concerns for maintainability.
+
+##### Architecture Overview
+
+![Status Display System Class Diagram](plantUML/status-display-system/status-display-class-diagram.png)
+
+**Key Components:**
+
+- **StatusCommand** - Entry point that parses arguments and coordinates status display
+- **ProjectStatusAnalyzer** - Pure analysis logic that calculates completion statistics
+- **ProjectStatus** - Immutable data transfer object holding project statistics
+- **ConsoleUi** - Renders status information with progress bars and messages
+
+**Design Principles:**
+
+- **Separation of Concerns**: Analysis logic (ProjectStatusAnalyzer) is separate from UI rendering (ConsoleUi)
+- **Data Transfer Objects**: ProjectStatus acts as an immutable container for statistics
+- **Single Responsibility**: Each class has one clear purpose in the status display pipeline
+
+##### Status Command Execution Flow
+
+![Status Command Sequence Diagram](plantUML/status-command-sequence/status-command-sequence-diagram.png)
+
+The above diagram shows the execution flow for displaying a specific project's status (e.g., `status 1`). The diagram focuses on the main success path for clarity.
+
+**Execution Flow:**
+
+1. **Command Parsing**:
+   - User enters command (e.g., "status 1")
+   - CommandHandler delegates to CommandParser
+   - CommandParser splits command word and arguments, returns ParsedCommand
+   - CommandHandler creates StatusCommand with arguments
+
+2. **Argument Processing**:
+   - StatusCommand validates arguments are not empty
+   - Creates ArgumentParser to parse project identifier
+   - ArgumentParser resolves project index/name to Project object
+   - ArgumentParser is destroyed after returning the parsed result
+
+3. **Status Analysis**:
+   - StatusCommand calls ConsoleUi to display project status
+   - ConsoleUi delegates to ProjectStatusAnalyzer for analysis
+   - ProjectStatusAnalyzer:
+     - Retrieves project's TaskList
+     - Counts completed tasks (where `isDone() == true`)
+     - Calculates completion percentage
+     - Returns ProjectStatus data object
+
+4. **UI Rendering**:
+   - ConsoleUi formats the status output:
+     - `formatStatusSummary()`: Creates summary text (e.g., "3/5 tasks completed, 60%")
+     - `generateProgressBar()`: Creates visual progress bar `[=========>      ] 60%`
+     - `getMotivationalMessage()`: Selects message based on completion percentage
+   - Displays formatted output to user
+
+5. **Cleanup**:
+   - StatusCommand returns success flag
+   - StatusCommand is destroyed after execution
+
+**Note**: The command also supports displaying all projects with `status --all`, which follows a similar flow but iterates through all projects in the ProjectList.
+
+**Task Status Markers:**
+
+Individual tasks display completion status using visual markers in list views:
 
 ```java
 public String marker() {
     return isDone ? "[X]" : "[ ]";
-}
-
-public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(marker()).append(" ").append(description);
-    if (deadline != null) {
-        sb.append(" (Due: ").append(deadline).append(")");
-    }
-    sb.append(" [").append(getPriorityString()).append("]");
-    return sb.toString();
 }
 ```
 
 **Display Example**:
 
 ```
-1. [X] Implement login feature (Due: Dec 31, 2024) [high]
-2. [ ] Write unit tests [medium]
-3. [ ] Fix bug in parser [low]
+CS2113T Project - Project Status
+3/5 tasks completed, 60%
+[========================>               ] 60%
+We are on the right track, keep completing your tasks!
 ```
+
+**Motivational Messages:**
+
+The system provides contextual encouragement based on progress:
+
+- ≤25%: "You are kinda cooked, start doing your tasks!"
+- ≤50%: "You gotta lock in and finish all tasks!"
+- ≤75%: "We are on the right track, keep completing your tasks!"
+- \>75%: "We are finishing all tasks!! Upzzz!"
+
+**Status Types:**
+
+1. **Single Project Status** (`status <projectIndex>`): Shows detailed status for one project
+2. **All Projects Status** (`status --all`): Shows summary status for all projects in a compact format
 
 #### Interactive Command Flows by [Yao Xiang](team/yxiang-828.md)
 
@@ -427,7 +831,7 @@ public String toString() {
 
 The add command guides users through project selection, task description, priority, and optional deadline:
 
-![Add Command Sequence Diagram](plantUML/add-command-sequence/Add%20Command%20Sequence%20Diagram.png)
+![Add Command Sequence Diagram](plantUML/add-command-sequence/add-command-sequence-diagram.png)
 
 **Key Features**:
 
@@ -526,7 +930,7 @@ Create command prompts for a new project name with validation:
 
 Mark and unmark commands follow identical selection flow with different validation:
 
-![Mark/Unmark Command Sequence Diagram](plantUML/mark-unmark-sequence/Unmark%20Command%20Sequence%20Diagram.png)
+![Mark/Unmark Command Sequence Diagram](plantUML/mark-unmark-sequence/Unmark-Command-Sequence-Diagram.png)
 
 **Shared Logic**: Both commands use identical project/task selection but different validation rules.
 
@@ -589,44 +993,45 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 
 ---
 
-## Non-Functional Requirements by [Zhen Zhao](team/zhenzhao.md)
+## Non-Functional Requirements by [Zhenzhao](team/zhenzha0.md)
 
 1. **Performance**
+
    - The application should respond to user commands within 500ms under normal operating conditions.
    - Loading and parsing project data should complete within 1 second for up to 100 projects with 1000 tasks total.
    - Sorting and filtering operations should complete within 200ms for typical datasets (up to 500 tasks).
-
 2. **Usability**
+
    - The application should be usable by users with basic command-line knowledge without requiring extensive training.
    - Interactive mode prompts should guide users through command execution with clear, numbered options.
    - Error messages should be descriptive and suggest corrective actions where applicable.
    - All commands should have both short-form (for experienced users) and interactive mode (for new users).
-
 3. **Reliability**
+
    - The application should handle invalid inputs gracefully without crashing.
    - All data validation should occur before any state changes to maintain data integrity.
    - Error handling should prevent data corruption in edge cases (e.g., concurrent file access, invalid date formats).
-
 4. **Portability**
+
    - The application should run on any platform with Java 11 or higher installed (Windows, macOS, Linux).
    - No platform-specific dependencies should be required beyond the Java Runtime Environment.
    - File paths should use platform-independent representations where possible.
-
 5. **Maintainability**
+
    - Code should follow standard Java coding conventions and style guidelines.
    - All public methods and classes should include Javadoc documentation.
    - The codebase should maintain clear separation of concerns between UI, logic, and model layers.
    - Each command should be implemented as a separate, testable class extending the Command base class.
-
 6. **Scalability**
+
    - The application should handle at least 50 projects with 20 tasks each without performance degradation.
    - Memory usage should remain under 100MB for typical usage scenarios.
-
 7. **Security**
+
    - User input should be validated and sanitized to prevent command injection or malicious input.
    - File operations should verify file paths to prevent unauthorized access to system files.
-
 8. **Compatibility**
+
    - The application should be compatible with common terminal emulators (Command Prompt, PowerShell, Terminal, Bash).
    - Text output should be compatible with standard terminal character encoding (UTF-8).
 
@@ -646,21 +1051,23 @@ FlowCLI addresses the challenge of managing complex academic or personal project
 These instructions will guide you through comprehensive manual testing of FlowCLI, including both inline command usage and interactive mode functionality.
 
 ### Prerequisites
+
 - Ensure you have Java 17 or higher installed
 - Ensure you have Gradle installed
 
 ### Setup Steps
 
 1. **Build the application:**
+
    ```
    ./gradlew build
    ```
-
 2. **Locate the JAR file:**
+
    - Navigate to `build\libs\`
    - Copy the full path of `flowcli.jar`
-
 3. **Run the application:**
+
    ```
    java -jar <full-path-to-flowcli.jar>
    ```
@@ -670,6 +1077,7 @@ These instructions will guide you through comprehensive manual testing of FlowCL
 4. **Load sample data:**
    Copy and paste the following commands to populate the application with sample data:
    (no need to copy paste one at a time)
+
    ```
    create-project "CS2113T Project"
    create-project "Internship Hunt"
@@ -711,16 +1119,15 @@ These instructions will guide you through comprehensive manual testing of FlowCL
 ### Testing Commands
 
 5. **View help:**
+
    ```
    help
    ```
-
 6. **Test inline command variations:**
    Follow the help output and test all inline command variations.
-
-
 7. **Test interactive mode:**
    Follow the help output and try all one-word command triggers for interactive mode:
+
    - `add` (triggers interactive task addition)
    - `create` (triggers interactive project creation)
    - `list` (triggers interactive project/task listing)
@@ -731,8 +1138,8 @@ These instructions will guide you through comprehensive manual testing of FlowCL
    - `sort` (triggers interactive sorting)
    - `filter` (triggers interactive filtering)
    - `export` (triggers interactive data export)
-
 8. **Exit the application:**
+
    ```
    bye
    ```

@@ -2,6 +2,7 @@ package seedu.flowcli.commands;
 
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.exceptions.EmptyProjectListException;
+import seedu.flowcli.exceptions.ExtraArgumentException;
 import seedu.flowcli.exceptions.IndexOutOfRangeException;
 import seedu.flowcli.exceptions.InvalidIndexFormatException;
 import seedu.flowcli.exceptions.MissingArgumentException;
@@ -35,6 +36,11 @@ public class StatusCommand extends Command {
 
         // Check if a specific project is targeted
         if (parsedArgument.getTargetProject() != null) {
+            // Validate no extra parameters after project index
+            String remaining = parsedArgument.getRemainingArgument();
+            if (remaining != null && !remaining.trim().isEmpty()) {
+                throw new ExtraArgumentException("Unexpected extra parameters: " + remaining);
+            }
             Project project = parsedArgument.getTargetProject();
             context.getUi().showProjectStatus(project);
             return true;
@@ -55,3 +61,4 @@ public class StatusCommand extends Command {
         return true;
     }
 }
+//@@author

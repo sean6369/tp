@@ -3,9 +3,11 @@ package seedu.flowcli.commands;
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.exceptions.EmptyProjectListException;
 import seedu.flowcli.exceptions.EmptyTaskListException;
+import seedu.flowcli.exceptions.ExtraArgumentException;
 import seedu.flowcli.exceptions.MissingArgumentException;
 import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
+import seedu.flowcli.project.ProjectList;
 
 public class ListCommand extends Command {
 
@@ -14,6 +16,7 @@ public class ListCommand extends Command {
     }
 
     @Override
+    //@@author zeeeing
     public boolean execute(CommandContext context) throws Exception {
         String trimmedArguments = arguments.trim();
 
@@ -21,8 +24,10 @@ public class ListCommand extends Command {
             throw new MissingArgumentException();
         }
 
+        ProjectList projects = context.getProjects();
+
         if ("--all".equalsIgnoreCase(trimmedArguments)) {
-            if (context.getProjects().isEmpty()) {
+            if (projects.isEmpty()) {
                 throw new EmptyProjectListException();
             }
             context.getUi().showProjectList();
@@ -30,9 +35,15 @@ public class ListCommand extends Command {
             return true;
         }
 
-        ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
+        ArgumentParser parsedArgument = new ArgumentParser(arguments, projects);
         parsedArgument.validateProjectIndex();
         Project targetProject = parsedArgument.getTargetProject();
+
+        // Validate no extra parameters after project index
+        String remaining = parsedArgument.getRemainingArgument();
+        if (remaining != null && !remaining.trim().isEmpty()) {
+            throw new ExtraArgumentException("Unexpected extra parameters: " + remaining);
+        }
 
         if (targetProject.isEmpty()) {
             throw new EmptyTaskListException();

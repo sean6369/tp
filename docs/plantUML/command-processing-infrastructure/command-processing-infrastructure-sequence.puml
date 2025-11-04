@@ -1,0 +1,118 @@
+@startuml CommandProcessingInfrastructureSequence
+title Command Processing Infrastructure Sequence Diagram
+
+actor User
+participant ":FlowCLI" as FlowCLI
+participant ":CommandHandler" as Handler
+participant ":CommandParser" as Parser
+participant ":CommandFactory" as Factory
+participant ":ConsoleUi" as UI
+
+User -> FlowCLI: run()
+activate FlowCLI
+
+FlowCLI -> UI: printWelcomeMessage()
+activate UI
+deactivate UI
+
+FlowCLI -> Handler: handleCommands()
+activate Handler
+
+loop while shouldContinue && scanner.hasNextLine()
+    Handler -> Handler: scanner.nextLine()
+    activate Handler
+    Handler --> Handler
+    deactivate Handler
+    
+    Handler -> Handler: resolveCommand(line, scanner)
+    activate Handler
+    
+    Handler -> Parser: parse(input)
+    activate Parser
+    
+    Parser -> Parser: split command word and arguments
+    activate Parser
+    Parser --> Parser
+    deactivate Parser
+    
+    Parser --> Handler: ParsedCommand(type, args)
+    deactivate Parser
+    
+    Handler -> Factory: create(type, args)
+    activate Factory
+    
+    create ":Command" as Cmd
+    Factory -> Cmd: new Command(args)
+    activate Cmd
+    
+    Factory --> Handler: command
+    deactivate Factory
+    
+    Handler --> Handler
+    deactivate Handler
+    
+    Handler -> Cmd: execute(context)
+    
+    create ":ArgumentParser" as ArgParser
+    Cmd -> ArgParser: new ArgumentParser(args, projects)
+    activate ArgParser
+    
+    ArgParser -> ArgParser: parseArgument()
+    activate ArgParser
+    ArgParser --> ArgParser
+    deactivate ArgParser
+    
+    ArgParser --> Cmd: 
+    deactivate ArgParser
+    destroy ArgParser
+    
+    Cmd -> Cmd: validate arguments
+    activate Cmd
+    Cmd --> Cmd
+    deactivate Cmd
+    
+    Cmd -> Cmd: perform business logic
+    activate Cmd
+    Cmd --> Cmd
+    deactivate Cmd
+    
+    Cmd -> UI: showResult(message)
+    activate UI
+    UI --> User: display output
+    deactivate UI
+    
+    Cmd --> Handler: return boolean
+    deactivate Cmd
+    destroy Cmd
+end
+
+Handler --> FlowCLI: 
+deactivate Handler
+
+deactivate FlowCLI
+
+note over Parser
+  CommandParser responsibilities:
+  - Parse command word
+  - Extract arguments string
+  - Map to CommandType enum
+end note
+
+note over ArgParser
+  ArgumentParser responsibilities:
+  - Parse project identifier
+  - Resolve to Project object
+  - Extract remaining arguments
+  - Validate project exists
+end note
+
+note over Handler
+  CommandHandler responsibilities:
+  - Main command loop
+  - Coordinate parsing and execution
+  - Handle exceptions
+  - Manage scanner lifecycle
+end note
+
+@enduml
+

@@ -3,11 +3,11 @@ package seedu.flowcli.commands;
 import seedu.flowcli.commands.core.CommandContext;
 import seedu.flowcli.exceptions.InvalidCommandSyntaxException;
 import seedu.flowcli.exceptions.MissingArgumentException;
-import seedu.flowcli.exceptions.MissingIndexException;
-import seedu.flowcli.parsers.CommandParser;
+import seedu.flowcli.parsers.ArgumentParser;
 import seedu.flowcli.project.Project;
 import seedu.flowcli.project.ProjectList;
 
+//@@author zeeeing
 public class DeleteProjectCommand extends Command {
 
     public DeleteProjectCommand(String arguments) {
@@ -22,30 +22,22 @@ public class DeleteProjectCommand extends Command {
         }
 
         ProjectList projects = context.getProjects();
-        String[] parts = trimmedArgs.split("\\s+");
-        String indexToken = parts[0];
+        ArgumentParser parsedArgument = new ArgumentParser(arguments, projects);
+        parsedArgument.validateProjectIndex();
 
-        int zeroBasedIndex;
-        try {
-            zeroBasedIndex = CommandParser.parseIndexOrNull(indexToken, projects.getProjectListSize());
-        } catch (MissingIndexException e) {
-            throw new MissingArgumentException();
-        }
-
-        boolean confirmed = false;
-        for (int i = 1; i < parts.length; i++) {
-            if ("--confirm".equalsIgnoreCase(parts[i])) {
-                confirmed = true;
-                break;
-            }
-        }
+        // Check for --confirm flag in remaining arguments
+        String remaining = parsedArgument.getRemainingArgument();
+        boolean confirmed = remaining != null && remaining.toLowerCase().contains("--confirm");
 
         if (!confirmed) {
             throw new InvalidCommandSyntaxException("Confirm project deletion with --confirm.");
         }
 
+        // Get the zero-based index from ArgumentParser
+        int zeroBasedIndex = parsedArgument.getTargetProjectIndex();
         Project deletedProject = projects.delete(zeroBasedIndex);
         context.getUi().showDeletedProject(deletedProject);
         return true;
     }
 }
+

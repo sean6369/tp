@@ -34,7 +34,7 @@ public class InteractivePromptHandler {
         this.projects = projects;
         this.scanner = scanner;
 
-        logger.info("InteractivePromptHandler initialized");
+        logger.fine("InteractivePromptHandler initialized");
     }
 
     /**
@@ -44,7 +44,7 @@ public class InteractivePromptHandler {
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleAddCommand() {
-        logger.info("Starting interactive add command flow");
+        logger.fine("Starting interactive add command flow");
 
         // Step 1: Project selection
         Integer projectSelection = promptForProjectIndex();
@@ -85,7 +85,7 @@ public class InteractivePromptHandler {
         }
 
         String result = args.toString();
-        logger.info("Add command arguments constructed: " + result);
+        logger.fine("Add command arguments constructed: " + result);
         return result;
     }
 
@@ -96,7 +96,7 @@ public class InteractivePromptHandler {
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleCreateCommand() {
-        logger.info("Starting interactive create command flow");
+        logger.fine("Starting interactive create command flow");
 
         String projectName = promptForNewProjectName();
         if (projectName == null) {
@@ -104,7 +104,7 @@ public class InteractivePromptHandler {
         }
 
         String result = projectName;
-        logger.info("Create command arguments constructed: " + result);
+        logger.fine("Create command arguments constructed: " + result);
         return result;
     }
 
@@ -115,7 +115,7 @@ public class InteractivePromptHandler {
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleListCommand() {
-        logger.info("Starting interactive list command flow");
+        logger.fine("Starting interactive list command flow");
 
         if (projects.getProjectListSize() == 0) {
             System.out.println("No projects available. Create one with 'create-project <projectName>' first.");
@@ -134,7 +134,7 @@ public class InteractivePromptHandler {
 
             if (input.isEmpty()) {
                 String result = "--all";
-                logger.info("List command arguments constructed: " + result);
+                logger.fine("List command arguments constructed: " + result);
                 return result;
             }
 
@@ -142,7 +142,7 @@ public class InteractivePromptHandler {
                 int choice = Integer.parseInt(input);
                 if (choice >= 1 && choice <= projects.getProjectListSize()) {
                     String result = String.valueOf(choice);
-                    logger.info("List command arguments constructed: " + result);
+                    logger.fine("List command arguments constructed: " + result);
                     return result;
                 } else {
                     System.out.print("\nLook at the list properly,");
@@ -161,7 +161,7 @@ public class InteractivePromptHandler {
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleMarkCommand() {
-        logger.info("Starting interactive mark command flow");
+        logger.fine("Starting interactive mark command flow");
 
         Integer projectSelection = promptForProjectIndex();
         if (projectSelection == null) {
@@ -212,7 +212,7 @@ public class InteractivePromptHandler {
         }
 
         String result = args.toString();
-        logger.info("Mark command arguments constructed: " + result);
+        logger.fine("Mark command arguments constructed: " + result);
         return result;
     }
 
@@ -223,7 +223,7 @@ public class InteractivePromptHandler {
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleUnmarkCommand() {
-        logger.info("Starting interactive unmark command flow");
+        logger.fine("Starting interactive unmark command flow");
 
         Integer projectSelection = promptForProjectIndex();
         if (projectSelection == null) {
@@ -289,7 +289,7 @@ public class InteractivePromptHandler {
         }
 
         String result = args.toString();
-        logger.info("Unmark command arguments constructed: " + result);
+        logger.fine("Unmark command arguments constructed: " + result);
         return result;
     }
 
@@ -300,7 +300,7 @@ public class InteractivePromptHandler {
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleDeleteCommand() {
-        logger.info("Starting interactive delete command flow");
+        logger.fine("Starting interactive delete command flow");
 
         System.out.println("What do you want to delete, forgetful one?");
         System.out.println("1. A project");
@@ -429,7 +429,7 @@ public class InteractivePromptHandler {
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleUpdateCommand() {
-        logger.info("Starting interactive update command flow");
+        logger.fine("Starting interactive update command flow");
 
         System.out.println("Hmph you want to update? Which project contains the task?");
         System.out.println("Don't keep me waiting!");
@@ -570,7 +570,7 @@ public class InteractivePromptHandler {
         }
 
         String result = args.toString();
-        logger.info("Update command arguments constructed: " + result);
+        logger.fine("Update command arguments constructed: " + result);
         return result;
     }
 
@@ -646,7 +646,7 @@ public class InteractivePromptHandler {
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleSortCommand() {
-        logger.info("Starting interactive sort command flow");
+        logger.fine("Starting interactive sort command flow");
 
         System.out.println("Hmph, sort tasks by what? Don't make me guess!");
         System.out.println("1. Deadline");
@@ -696,7 +696,7 @@ public class InteractivePromptHandler {
                 }
 
                 String result = "--" + field + " " + order;
-                logger.info("Sort command arguments constructed: " + result);
+                logger.fine("Sort command arguments constructed: " + result);
                 return result;
             }
         }
@@ -708,7 +708,7 @@ public class InteractivePromptHandler {
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleFilterCommand() {
-        logger.info("Starting interactive filter command flow");
+        logger.fine("Starting interactive filter command flow");
         // Only allow filtering by priority in interactive mode
         return handleFilterByPriority();
     }
@@ -746,7 +746,7 @@ public class InteractivePromptHandler {
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleExportCommand() {
-        logger.info("Starting interactive export command flow");
+        logger.fine("Starting interactive export command flow");
 
         // Step 1: Filename
         System.out.println("Hmph, enter filename (without .txt extension):");
@@ -821,7 +821,7 @@ public class InteractivePromptHandler {
             String confirm = scanner.nextLine().trim().toLowerCase();
             if (confirm.equals("y") || confirm.equals("yes")) {
                 String result = args.toString();
-                logger.info("Export command arguments constructed: " + result);
+                logger.fine("Export command arguments constructed: " + result);
                 return result;
             } else {
                 System.out.println("Export cancelled.");
@@ -836,7 +836,7 @@ public class InteractivePromptHandler {
      * @return The constructed command arguments string, or null if cancelled
      */
     public String handleStatusCommand() {
-        logger.info("Starting interactive status command flow");
+        logger.fine("Starting interactive status command flow");
 
         System.out.println("Hmph, you want to check progress? At least you're keeping track!");
         System.out.println("What would you like to see?");
@@ -860,10 +860,10 @@ public class InteractivePromptHandler {
                     return null;
                 }
                 String result = String.valueOf(projectSelection);
-                logger.info("Status command arguments constructed: " + result);
+                logger.fine("Status command arguments constructed: " + result);
                 return result;
             case "2":
-                logger.info("Status command arguments constructed: --all");
+                logger.fine("Status command arguments constructed: --all");
                 return "--all";
             default:
                 System.out.println("Hmph, individual project or all, pick one!");

@@ -20,10 +20,10 @@ public class CreateCommand extends Command {
         assert arguments != null : "CreateCommand arguments must not be null";
         logger.fine(() -> "CreateCommand.execute() called with args=\"" + arguments + "\"");
 
-        String name = arguments.trim();
+        String name = stripQuotesIfWrapped(arguments.trim()).trim();
         if (name.isEmpty()) {
             logger.warning(() -> "Missing project name in arguments: \"" + arguments + "\"");
-            throw new MissingArgumentException();
+            throw new MissingArgumentException("Project name cannot be empty.");
         }
 
         try {
@@ -34,11 +34,31 @@ public class CreateCommand extends Command {
             // Project doesn't exist, which is what we want - continue with creation
         }
 
-        logger.info(() -> "Creating project: \"" + name + "\"");
+        logger.fine(() -> "Creating project: \"" + name + "\"");
         context.getProjects().addProject(name);
         context.getUi().showAddedProject();
         logger.fine(() -> "Project created and UI notified for: \"" + name + "\"");
 
         return true;
     }
+
+    //@@author sean6369
+    private String stripQuotesIfWrapped(String name) {
+        if (name == null || name.length() < 2) {
+            return name;
+        }
+
+        // Check for double quotes
+        if (name.startsWith("\"") && name.endsWith("\"")) {
+            return name.substring(1, name.length() - 1);
+        }
+
+        // Check for single quotes
+        if (name.startsWith("'") && name.endsWith("'")) {
+            return name.substring(1, name.length() - 1);
+        }
+
+        return name;
+    }
+    //@@author
 }

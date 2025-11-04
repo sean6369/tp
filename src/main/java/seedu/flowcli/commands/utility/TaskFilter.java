@@ -33,7 +33,7 @@ public class TaskFilter {
         this.priorityFilter = priority;
         this.projectNameFilter = projectName;
 
-        logger.info(String.format("Creating TaskFilter with priority='%s', project='%s'", priorityFilter,
+        logger.fine(String.format("Creating TaskFilter with priority='%s', project='%s'", priorityFilter,
                 projectNameFilter));
 
         filter();
@@ -50,7 +50,7 @@ public class TaskFilter {
         this.priorityFilter = priority;
         this.projectNameFilter = projectName;
 
-        logger.info(String.format("Creating TaskFilter with priority='%s', project='%s' on %d tasks", priorityFilter,
+        logger.fine(String.format("Creating TaskFilter with priority='%s', project='%s' on %d tasks", priorityFilter,
                 projectNameFilter, tasks.size()));
 
         filter();
@@ -111,7 +111,7 @@ public class TaskFilter {
             }
         }
 
-        logger.info(String.format("Task filtering completed. Processed %d tasks, found %d matches", totalTasksProcessed,
+        logger.fine(String.format("Task filtering completed. Processed %d tasks, found %d matches", totalTasksProcessed,
                 filteredTasks.size()));
     }
 }

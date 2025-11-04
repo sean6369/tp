@@ -17,6 +17,7 @@ import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.task.Task;
 import seedu.flowcli.ui.ConsoleUi;
 
+//@@author zeeeing
 class TaskCommandsTest {
 
     private ProjectList projects;
@@ -30,7 +31,7 @@ class TaskCommandsTest {
         projects.addProject("Alpha");
         project = projects.getProject("Alpha");
         ui = new StubConsoleUi(projects);
-        context = new CommandContext(projects, ui, null);
+        context = new CommandContext(projects, ui, null, null);
     }
 
     @Test

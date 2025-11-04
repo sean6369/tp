@@ -6,6 +6,7 @@ import seedu.flowcli.project.Project;
  * Utility class for analyzing project completion status.
  * Provides data about task completion without handling presentation.
  */
+//@@author Zhenzha0
 public class ProjectStatusAnalyzer {
 
     /**
@@ -64,3 +65,4 @@ public class ProjectStatusAnalyzer {
         return new ProjectStatus(project.getProjectName(), totalTasks, completedTasks);
     }
 }
+//@@author

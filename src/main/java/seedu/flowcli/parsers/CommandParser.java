@@ -4,6 +4,7 @@ import seedu.flowcli.exceptions.IndexOutOfRangeException;
 import seedu.flowcli.exceptions.InvalidIndexFormatException;
 import seedu.flowcli.exceptions.MissingIndexException;
 
+//@@author Zhenzha0 zeeeing
 public class CommandParser {
 
     public static final String INVALID_TASK_INDEX_MESSAGE = "Invalid task index: %s. Use the numeric task "
@@ -83,7 +84,9 @@ public class CommandParser {
             return new ParsedCommand(CommandType.UNKNOWN, arguments);
         }
     }
+    //@@author
 
+    //@@author sean6369
     public static Integer parseIndexOrNull(String indexText, int maxIndex)
             throws IndexOutOfRangeException, MissingIndexException, InvalidIndexFormatException {
         if (indexText == null) {
@@ -96,10 +99,11 @@ public class CommandParser {
         } catch (NumberFormatException e) {
             throw new InvalidIndexFormatException(indexText, "task");
         }
-        
+
         if (inputIndex < 1 || inputIndex > maxIndex) {
-            throw new IndexOutOfRangeException(maxIndex);
+            throw new IndexOutOfRangeException(inputIndex, maxIndex, true);
         }
         return inputIndex - 1;
     }
+    //@@author
 }

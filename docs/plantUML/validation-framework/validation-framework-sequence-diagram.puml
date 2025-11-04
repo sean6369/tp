@@ -1,0 +1,99 @@
+@startuml validation-framework-sequence-diagram
+title Validation Framework - Sequence Diagram
+
+participant ":Command" as Command
+participant ":ArgumentParser" as ArgParser
+participant ":CommandParser" as CmdParser
+participant ":CommandValidator" as Validator
+participant ":ValidationConstants" as Constants
+
+== Layer 1: Project Index Validation ==
+
+Command -> ArgParser: new ArgumentParser(args, projects)
+activate ArgParser
+ArgParser -> ArgParser: parseArgument()
+note right: Extracts project index\nand remaining arguments
+ArgParser --> Command
+deactivate ArgParser
+
+Command -> ArgParser: validateProjectIndex()
+activate ArgParser
+ArgParser -> ArgParser: check targetProject != null
+alt Invalid: Missing index
+    ArgParser --> Command: MissingArgumentException
+else Invalid: Out of range
+    ArgParser --> Command: IndexOutOfRangeException
+else Invalid: Non-numeric
+    ArgParser --> Command: InvalidIndexFormatException
+else Valid
+    ArgParser --> Command: ✓ Valid
+end
+deactivate ArgParser
+
+Command -> ArgParser: getTargetProject()
+ArgParser --> Command: Project
+
+Command -> ArgParser: getRemainingArgument()
+ArgParser --> Command: "remaining args"
+
+== Layer 2: Task Index Validation (Optional) ==
+
+note over Command
+  For commands that need task indices
+  (Mark, Update, DeleteTask, Unmark)
+end note
+
+Command -> CmdParser: parseIndexOrNull(indexText, maxIndex)
+activate CmdParser
+CmdParser -> CmdParser: parse and validate task index
+alt Invalid: Missing index
+    CmdParser --> Command: MissingIndexException
+else Invalid: Non-numeric
+    CmdParser --> Command: InvalidIndexFormatException
+else Invalid: Out of range
+    CmdParser --> Command: IndexOutOfRangeException
+else Valid
+    CmdParser --> Command: 0-based index
+end
+deactivate CmdParser
+
+== Layer 3: Domain Validation ==
+
+Command -> Validator: validatePriority("high")
+activate Validator
+Validator -> Constants: VALID_PRIORITIES
+Constants --> Validator: ["low", "medium", "high"]
+Validator -> Validator: normalize and validate
+alt Invalid priority
+    Validator --> Command: InvalidArgumentException
+else Valid
+    Validator --> Command: "high" (normalized)
+end
+deactivate Validator
+
+Command -> Validator: priorityToInt("high")
+activate Validator
+Validator -> Constants: PRIORITY_HIGH_VALUE
+Constants --> Validator: 3
+Validator --> Command: 3
+deactivate Validator
+
+Command -> Validator: validateAndParseDate("2024-11-05")
+activate Validator
+Validator -> Validator: parse and validate date format
+alt Invalid date format
+    Validator --> Command: InvalidDateException
+else Valid
+    Validator --> Command: LocalDate(2024-11-05)
+end
+deactivate Validator
+
+note over Command,Constants
+  **Validation Layers:**
+  1. Project Index: ArgumentParser validates project index (always first)
+  2. Task Index: CommandParser validates task index (for some commands)
+  3. Domain: CommandValidator validates parameters (priorities, dates, etc.)
+  4. All exceptions propagate to CommandHandler
+end note
+
+@enduml

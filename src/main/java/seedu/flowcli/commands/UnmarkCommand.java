@@ -16,7 +16,7 @@ public class UnmarkCommand extends Command {
 
     @Override
     public boolean execute(CommandContext context) throws Exception {
-        logger.info("Executing UnmarkCommand with arguments: " + arguments);
+        logger.fine("Executing UnmarkCommand with arguments: " + arguments);
 
         ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
         parsedArgument.validateProjectIndex();
@@ -28,7 +28,7 @@ public class UnmarkCommand extends Command {
 
         targetProject.getProjectTasks().unmark(idx);
 
-        logger.info("Task unmarked successfully at index " + (idx + 1));
+        logger.fine("Task unmarked successfully at index " + (idx + 1));
         context.getUi().showMarked(targetProject.getProjectName(), targetProject.getProjectTasks().get(idx), false);
         return true;
     }

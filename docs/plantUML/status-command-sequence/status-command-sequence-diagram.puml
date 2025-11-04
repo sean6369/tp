@@ -1,0 +1,135 @@
+@startuml StatusCommandSequenceDiagram
+title Status Command Execution Flow
+
+actor User
+participant ":CommandHandler" as Handler
+participant ":CommandParser" as Parser
+participant ":StatusCommand" as StatusCmd
+participant ":ArgumentParser" as ArgParser
+participant ":ProjectList" as Projects
+participant ":Project" as Proj
+participant ":ProjectStatusAnalyzer" as Analyzer
+participant ":ConsoleUi" as UI
+
+User -> Handler: enters "status 1"
+activate Handler
+
+Handler -> Parser: parse(input)
+activate Parser
+
+Parser -> Parser: split command and arguments
+activate Parser
+Parser --> Parser
+deactivate Parser
+
+Parser --> Handler: ParsedCommand(STATUS, "1")
+deactivate Parser
+
+create StatusCmd
+Handler -> StatusCmd: new StatusCommand("1")
+activate StatusCmd
+StatusCmd --> Handler
+deactivate StatusCmd
+
+Handler -> StatusCmd: execute(context)
+activate StatusCmd
+
+StatusCmd -> StatusCmd: validate arguments not empty
+activate StatusCmd
+StatusCmd --> StatusCmd
+deactivate StatusCmd
+
+create ArgParser
+StatusCmd -> ArgParser: new ArgumentParser("1", projects)
+activate ArgParser
+
+ArgParser -> ArgParser: parseArgument()
+activate ArgParser
+ArgParser --> ArgParser
+deactivate ArgParser
+
+ArgParser -> Projects: getProjectByIndex(0)
+activate Projects
+Projects --> ArgParser: project
+deactivate Projects
+
+ArgParser --> StatusCmd: parsedArgument
+deactivate ArgParser
+
+StatusCmd -> ArgParser: getTargetProject()
+activate ArgParser
+ArgParser --> StatusCmd: project
+deactivate ArgParser
+
+destroy ArgParser
+
+StatusCmd -> UI: showProjectStatus(project)
+activate UI
+
+UI -> Analyzer: analyzeProject(project)
+activate Analyzer
+
+Analyzer -> Proj: size(), getProjectTasks()
+activate Proj
+Proj --> Analyzer: data
+deactivate Proj
+
+Analyzer -> Analyzer: count completed tasks
+activate Analyzer
+Analyzer --> Analyzer
+deactivate Analyzer
+
+Analyzer --> UI: ProjectStatus
+deactivate Analyzer
+
+UI -> UI: formatStatusSummary(status)
+activate UI
+UI --> UI
+deactivate UI
+
+UI -> UI: generateProgressBar(percentage)
+activate UI
+UI --> UI
+deactivate UI
+
+UI -> UI: getMotivationalMessage(percentage)
+activate UI
+UI --> UI
+deactivate UI
+
+UI --> User: display status
+deactivate UI
+
+StatusCmd --> Handler: true
+deactivate StatusCmd
+destroy StatusCmd
+
+Handler --> User
+deactivate Handler
+
+note over StatusCmd
+  Validates arguments and coordinates
+  between ArgumentParser and UI
+end note
+
+note over ArgParser
+  Parses project identifier
+  Resolves to Project object
+  Temporary object - destroyed after use
+end note
+
+note over Analyzer
+  Static utility for calculating
+  project completion statistics
+  Returns ProjectStatus data object
+end note
+
+note over UI
+  Handles all display formatting:
+  - Status summary
+  - Progress bar visualization
+  - Motivational messages
+end note
+
+@enduml
+
