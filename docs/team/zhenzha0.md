@@ -98,7 +98,7 @@ While specific PR reviews were conducted throughout the project, my primary ment
 
 ### Contributions Beyond the Project Team
 
-- **Bug Reports**: Identified and reported bugs in other teams' products during Practical Exam Dry Run (PE-D)
+- **Bug Reports**: Identified and reported bugs in other teams' products during PE-D (mock practical exam)
   - [View all bug reports](https://github.com/nus-cs2113-AY2526S1/ped-Zhenzha0/issues)
 
 ---
