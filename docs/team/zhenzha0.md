@@ -98,8 +98,8 @@ While specific PR reviews were conducted throughout the project, my primary ment
 
 ### Contributions Beyond the Project Team
 
-- **Documentation Best Practices**: Created comprehensive documentation structure that other CS2113 teams could reference
-- **Architecture Patterns**: The command processing infrastructure design could serve as a reference for other CLI projects
+- **Bug Reports**: Identified and reported bugs in other teams' products during PE-D (mock practical exam)
+  - [View all bug reports](https://github.com/nus-cs2113-AY2526S1/ped-Zhenzha0/issues)
 
 ---
 
@@ -192,6 +192,36 @@ public static ProjectStatus analyzeProject(Project project) {
    - ≤50%: "You gotta lock in and finish all tasks!"
    - ≤75%: "We are on the right track, keep completing your tasks!"
    - >75%: "We are finishing all tasks!! Upzzz!"
+
+---
+
+### Data Storage
+
+The storage system provides persistent data storage for FlowCLI, automatically saving and loading all projects and tasks between sessions.
+
+**Architecture Overview:**
+
+![Storage Class Diagram](../plantUML/data-storage/storage-class-diagram.png)
+
+**Key Components:**
+- **Storage**: Main class handling file I/O, validation, and atomic write operations
+- **DataCorruptedException**: Thrown when data file format is invalid
+- **StorageException**: Thrown on I/O failures (permissions, disk space, etc.)
+
+**Storage Location:** `./data/flowcli-data.txt`
+
+**Data Format:**
+```
+PROJECT|Project Name
+TASK|isDone|description|deadline|priority
+```
+
+**Implementation Highlights:**
+
+1. **Atomic Writes**: Data is written to a temp file first, then renamed atomically to prevent corruption
+2. **Data Validation**: All loaded data is validated; corrupted files are backed up and user warned
+3. **Error Handling**: Retry logic for save failures; graceful degradation on load errors
+4. **Edge Cases Handled**: First-time runs, empty data, corrupted files, filesystem errors
 
 ---
 
@@ -288,76 +318,5 @@ delete-task 1 1
 - **Exports for sharing**: Export creates human-readable files perfect for sharing with team members
 - **Filtered exports**: Create focused task lists for specific needs (e.g., high-priority items)
 - **Data transfer**: Copy `data/flowcli-data.txt` to move all data to another machine
-
----
-
-## Contributions to the Developer Guide (Extracts)
-
-### Data Storage
-
-The storage system provides persistent data storage for FlowCLI, automatically saving and loading all projects and tasks between sessions.
-
-**Architecture Overview:**
-
-![Storage Class Diagram](../plantUML/data-storage/storage-class-diagram.png)
-
-**Key Components:**
-- **Storage**: Main class handling file I/O, validation, and atomic write operations
-- **DataCorruptedException**: Thrown when data file format is invalid
-- **StorageException**: Thrown on I/O failures (permissions, disk space, etc.)
-
-**Storage Location:** `./data/flowcli-data.txt`
-
-**Data Format:**
-```
-PROJECT|Project Name
-TASK|isDone|description|deadline|priority
-```
-
-**Implementation Highlights:**
-
-1. **Atomic Writes**: Data is written to a temp file first, then renamed atomically to prevent corruption
-2. **Data Validation**: All loaded data is validated; corrupted files are backed up and user warned
-3. **Error Handling**: Retry logic for save failures; graceful degradation on load errors
-4. **Edge Cases Handled**: First-time runs, empty data, corrupted files, filesystem errors
-
----
-
-### Command Processing Infrastructure
-
-The command processing infrastructure forms the backbone of FlowCLI's architecture, enabling efficient parsing and execution of user commands.
-
-**Architecture Overview:**
-
-1. **CommandHandler**: Coordinates the command execution loop
-2. **CommandParser**: Creates appropriate Command objects from input strings  
-3. **ArgumentParser**: Extracts flags and arguments from command strings
-
-**Design Rationale:**
-
-The infrastructure follows the Command pattern, enabling easy addition of new commands without modifying existing code (Open-Closed Principle). This design separates command parsing from execution and supports both inline and interactive modes.
-
-**Sequence Diagram:**
-
-![Command Processing Sequence](../plantUML/command-processing-infrastructure/Command-processing-infrastructure-sequence-diagram.png)
-
----
-
-### Status Display System
-
-The status display system provides comprehensive project progress tracking with completion percentages, visual progress bars, and motivational messages.
-
-**Class Diagram:**
-
-![Status Display Class Diagram](../plantUML/status-display-system/status-display-class-diagram.png)
-
-**Display Features:**
-
-1. **Progress Bar**: Visual representation using ASCII characters (`[=====>     ] 50%` format)
-2. **Motivational Messages**: Context-aware messages based on completion level:
-   - ≤25%: "You are kinda cooked, start doing your tasks!"
-   - ≤50%: "You gotta lock in and finish all tasks!"
-   - ≤75%: "We are on the right track, keep completing your tasks!"
-   - >75%: "We are finishing all tasks!! Upzzz!"
 
 ---
