@@ -214,10 +214,19 @@ if (remaining != null && !remaining.trim().isEmpty()) {
 
 **Validation Flow:**
 
-1. **Parser layer**: `CommandParser` and `ArgumentParser` extract and validate basic structure (indices, project references, command syntax)
-2. **Command layer**: Commands use `CommandValidator` methods for domain-specific validation (priorities, dates, filters, sort options)
-3. **Pre-execution**: All validation occurs before model mutation to preserve data integrity
-4. **Error handling**: Commands propagate exceptions (do not catch); `CommandHandler` catches `FlowCLIException` and displays user-friendly messages via `ConsoleUi`
+The following sequence diagram illustrates the validation process, showing both success and exception paths:
+
+![Validation Framework Sequence Diagram](plantUML/validation-framework/validation-framework-sequence-diagram.png)
+
+The validation flow operates in 3 main layers:
+
+1. **Project Index layer**: `ArgumentParser.validateProjectIndex()` validates project index format and range (throws `MissingArgumentException`, `IndexOutOfRangeException`, `InvalidIndexFormatException`) - *always executed first*
+2. **Task Index layer**: `CommandParser.parseIndexOrNull()` validates task index format and range (throws `MissingIndexException`, `InvalidIndexFormatException`, `IndexOutOfRangeException`) - *only for commands that need task indices (Mark, Update, DeleteTask, Unmark)*
+3. **Domain layer**: Commands use `CommandValidator` methods for domain-specific validation (priorities, dates, filters, sort options) which reference `ValidationConstants` for valid values
+
+All exceptions propagate to `CommandHandler`, which catches `FlowCLIException` and displays user-friendly messages via `ConsoleUi`.
+
+**Pre-execution validation**: All validation occurs before model mutation to preserve data integrity.
 
 **Best Practices:**
 
@@ -477,14 +486,31 @@ The filtering algorithm supports filtering tasks by priority level and/or projec
 
 The export algorithm supports saving project and task data to text files with filtering and sorting capabilities:
 
-![Export Command State Diagram](plantUML/export-command/export-command-state-diagram.png)
+##### Architecture Overview
 
-**Key Classes:**
+![Export Command Class Diagram](plantUML/export-command/export-command-class-diagram.png)
 
-- `TaskCollector` - Aggregates tasks from projects with project context
-- `TaskExporter` - Handles file I/O operations and formatting with error handling
-- `ExportCommandHandler` - Orchestrates export process and parameter parsing
-- `TaskWithProject` - Wrapper class enabling cross-project operations
+**Key Components:**
+
+- **ExportCommandHandler** - Orchestrates export process, parameter parsing, and view state management
+- **TaskCollector** - Utility class for aggregating tasks from projects with project context
+- **TaskExporter** - Utility class for file I/O operations with comprehensive error handling
+- **TaskWithProject** - Wrapper class enabling cross-project operations
+- **TaskFilter** - Filters tasks by priority and/or project name
+- **TaskSorter** - Sorts tasks by deadline or priority
+
+**Design Principles:**
+
+- **Separation of Concerns**: Collection (TaskCollector), I/O (TaskExporter), and orchestration (ExportCommandHandler) are separate
+- **Utility Pattern**: TaskCollector and TaskExporter are final classes with static methods only
+- **Reusability**: TaskWithProject enables cross-project operations across filtering, sorting, and listing
+- **Error Isolation**: All I/O exceptions are translated to FileWriteException with user-friendly messages
+
+##### Export Workflow
+
+The following sequence diagram illustrates the export workflow:
+
+![Export Command Sequence Diagram](plantUML/export-command/export-command-sequence-diagram.png)
 
 ##### TaskCollector
 
@@ -493,7 +519,7 @@ Utility class providing static methods to collect tasks from projects while pres
 - **`getAllTasksWithProjects(ProjectList projects)`** - Returns `List<TaskWithProject>` of all tasks from all projects (O(n) time/space)
 - **`getTasksFromProject(Project project)`** - Returns `List<TaskWithProject>` of tasks from a specific project (O(m) time/space)
 
-Each task is wrapped in `TaskWithProject`, which formats as `"ProjectName: [X] Task Description (Due: YYYY-MM-DD) [priority]"`. The class follows the utility pattern (final class with private constructor, static methods) and is reusable across filtering, sorting, and listing operations.
+Each task is wrapped in `TaskWithProject`, which formats as `"ProjectName: [X] Task Description (Due: YYYY-MM-DD) [priority]"`. The class is reusable across filtering, sorting, and listing operations.
 
 ##### TaskExporter
 
@@ -515,7 +541,7 @@ Uses try-with-resources for automatic cleanup. All I/O exceptions are translated
 
 ##### Integration with ExportCommandHandler
 
-The export workflow:
+The export workflow consists of 5 steps:
 
 1. **Parameter Parsing** - Validates filename, project selection, filters, and sorting options
 2. **Task Collection** - Uses `TaskCollector` based on parameters with 4 strategies:
@@ -658,22 +684,6 @@ The above diagram shows the execution flow for displaying a specific project's s
    - StatusCommand returns success flag
    - StatusCommand is destroyed after execution
 
-1. **StatusCommand** receives arguments (project index or `--all` flag)
-2. **Argument Validation**:
-   - Checks for empty arguments (throws `MissingArgumentException`)
-   - Validates project list is not empty (throws `EmptyProjectListException`)
-   - Rejects unexpected extra parameters after project index (e.g., `status 1 2` throws exception)
-3. **ArgumentParser** validates and resolves project identifiers (if specific project)
-4. **ProjectStatusAnalyzer** analyzes each project:
-   - Iterates through tasks in the project's TaskList
-   - Counts completed tasks (where `isDone() == true`)
-   - Calculates completion percentage
-   - Returns a ProjectStatus data object
-5. **ConsoleUi** renders the status information:
-   - Formats status summary (e.g., "3/5 tasks completed, 60%")
-   - Generates visual progress bar: `[=========>      ] 60%`
-   - Selects motivational message based on completion percentage
-   - Displays formatted output to user
 **Note**: The command also supports displaying all projects with `status --all`, which follows a similar flow but iterates through all projects in the ProjectList.
 
 **Task Status Markers:**
@@ -702,8 +712,7 @@ The system provides contextual encouragement based on progress:
 - ≤25%: "You are kinda cooked, start doing your tasks!"
 - ≤50%: "You gotta lock in and finish all tasks!"
 - ≤75%: "We are on the right track, keep completing your tasks!"
-- > 75%: "We are finishing all tasks!! Upzzz!"
-  >
+- \>75%: "We are finishing all tasks!! Upzzz!"
 
 **Status Types:**
 
