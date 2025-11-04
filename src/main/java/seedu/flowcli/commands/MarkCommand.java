@@ -18,7 +18,7 @@ public class MarkCommand extends Command {
     @Override
     public boolean execute(CommandContext context) throws Exception {
         assert context != null : "CommandContext cannot be null";
-        logger.info("Executing MarkCommand with arguments: " + arguments);
+        logger.fine("Executing MarkCommand with arguments: " + arguments);
 
         ArgumentParser parsedArgument = new ArgumentParser(arguments, context.getProjects());
         parsedArgument.validateProjectIndex();
@@ -38,7 +38,7 @@ public class MarkCommand extends Command {
         targetProject.getProjectTasks().mark(idx);
 
         assert targetProject.getProjectTasks().get(idx).isDone() : "Task should be marked as done";
-        logger.info("Task marked successfully at index " + (idx + 1));
+        logger.fine("Task marked successfully at index " + (idx + 1));
 
         context.getUi().showMarked(targetProject.getProjectName(), targetProject.getProjectTasks().get(idx), true);
         return true;

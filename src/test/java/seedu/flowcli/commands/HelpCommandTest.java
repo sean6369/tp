@@ -1,11 +1,11 @@
 package seedu.flowcli.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import seedu.flowcli.commands.core.CommandContext;
@@ -13,7 +13,7 @@ import seedu.flowcli.exceptions.ExtraArgumentException;
 import seedu.flowcli.project.ProjectList;
 import seedu.flowcli.ui.ConsoleUi;
 
-@DisplayName("HelpCommand Unit Tests")
+//@@author zeeeing
 class HelpCommandTest {
 
     static class SpyUi extends ConsoleUi {
@@ -37,11 +37,10 @@ class HelpCommandTest {
     void setUp() {
         projects = new ProjectList();
         ui = new SpyUi(projects);
-        ctx = new CommandContext(projects, ui, null);
+        ctx = new CommandContext(projects, ui, null, null);
     }
 
     @Test
-    @DisplayName("execute_showsHelp")
     void executeShowsHelp() throws Exception {
         HelpCommand cmd = new HelpCommand("");
 
@@ -52,16 +51,17 @@ class HelpCommandTest {
     }
 
     @Test
-    @DisplayName("execute_withArguments_throwsException")
     void executeWithArgumentsThrowsException() {
         HelpCommand cmd = new HelpCommand("some random arguments");
 
-        assertThrows(ExtraArgumentException.class, () -> cmd.execute(ctx),
+        ExtraArgumentException ex = assertThrows(ExtraArgumentException.class, () -> cmd.execute(ctx),
                 "Should throw exception when arguments are provided");
+        assertEquals("The 'help' command does not accept any parameters.", ex.getMessage(),
+                "Exception message should explain that no parameters are accepted");
+        assertFalse(ui.helpShown, "Help should not be displayed when extra arguments are provided");
     }
 
     @Test
-    @DisplayName("execute_withValidArguments_returnsTrue")
     void executeWithValidArgumentsReturnsTrue() throws Exception {
         HelpCommand cmd1 = new HelpCommand("");
         HelpCommand cmd2 = new HelpCommand(null);
@@ -75,10 +75,9 @@ class HelpCommandTest {
     }
 
     @Test
-    @DisplayName("execute_withEmptyProjectList_stillShowsHelp")
     void executeWithEmptyProjectList() throws Exception {
         assertEquals(0, projects.getProjectListSize(), "Project list should be empty");
-        
+
         HelpCommand cmd = new HelpCommand("");
         boolean result = cmd.execute(ctx);
 
@@ -86,4 +85,3 @@ class HelpCommandTest {
         assertTrue(ui.helpShown, "UI should show help message");
     }
 }
-

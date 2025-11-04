@@ -155,7 +155,7 @@ public class UpdateCommand extends Command {
                 || !Objects.equals(originalDeadline, updatedTask.getDeadline()) : "Deadline unchanged after update";
         assert !updatePriority || originalPriority != updatedTask.getPriority() : "Priority unchanged after update";
 
-        logger.info(() -> String.format("Task %d in project \"%s\" updated successfully", updatedTaskNumber,
+        logger.fine(() -> String.format("Task %d in project \"%s\" updated successfully", updatedTaskNumber,
                 updatedProjectName));
         context.getUi().showUpdatedTask(targetProject, updatedTask);
         return true;

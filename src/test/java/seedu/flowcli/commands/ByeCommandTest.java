@@ -50,7 +50,7 @@ class ByeCommandTest {
 
     /** Build a minimal CommandContext; ByeCommand only uses getUi(). */
     private CommandContext makeContext(ProjectList projects, ConsoleUi ui) {
-        return new CommandContext(projects, ui, null);
+        return new CommandContext(projects, ui, null, null);
     }
 
     @Test
