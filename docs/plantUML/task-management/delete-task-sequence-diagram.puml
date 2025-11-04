@@ -1,6 +1,5 @@
 @startuml DeleteTaskSequenceDiagram
 title FlowCLI: delete-task Sequence
-autonumber
 
 actor User
 participant "FlowCLI Main" as CLI
@@ -10,60 +9,37 @@ participant "CommandContext" as Ctx
 participant "Projects Model" as Projects
 participant "Target Project" as Project
 participant "UI" as UI
-participant "Logger" as Log
 
-User -> CLI: Enter "delete-task 1 /p MyProject"
-CLI -> Parser: parse("delete-task 1 /p MyProject")
-Parser --> CLI: new DeleteTaskCommand(rawArgs)
+User -> CLI: delete-task 1 3
+CLI -> Parser: parse(...)
+Parser --> CLI: DeleteTaskCommand
 
 CLI -> DeleteCmd: execute(Ctx)
-
-group Argument parsing
-  DeleteCmd -> DeleteCmd: extract arguments (project, task index)
-  alt project name is blank
-    DeleteCmd -> Log: warn("Missing project name")
-    DeleteCmd --> CLI: throw MissingArgumentException
-    CLI -> UI: showError("Missing project name")
-    return
-  end
-  alt task index is blank
-    DeleteCmd -> Log: warn("Missing task index")
-    DeleteCmd --> CLI: throw MissingIndexException
-    CLI -> UI: showError("Missing task index")
-    return
-  end
-end
 
 DeleteCmd -> Ctx: getProjects(), getUi()
 Ctx --> DeleteCmd: Projects, UI
 
-group Validation
-  DeleteCmd -> Projects: getProject(projectName)
-  Projects --> DeleteCmd: project|null
-  alt project not found
-    DeleteCmd -> Log: warning("Project not found: {name}")
-    DeleteCmd --> CLI: throw ProjectNotFoundException
-    CLI -> UI: showError("Project not found: {name}")
-    return
-  end
-  DeleteCmd -> Project: getProjectTasks()
-  alt index out of bounds
-    DeleteCmd -> Log: warning("Index out of range")
-    DeleteCmd --> CLI: throw IndexOutOfRangeException
-    CLI -> UI: showError("Index out of range")
-    return
-  end
-end
+DeleteCmd -> Projects: getProjectByIndex(projectIndex)
 
-group Deletion
-  DeleteCmd -> Project: deleteTask(index)
-  Project --> DeleteCmd: deletedTask
-  DeleteCmd -> UI: showDeletedTask(deletedTask)
-  DeleteCmd -> Log: info("Deleted task '{desc}' from project {name}")
-  DeleteCmd --> CLI: return true
-end
+alt invalid project index
+    Projects --> DeleteCmd: IndexOutOfRangeException
+    DeleteCmd --> CLI: IndexOutOfRangeException
+    CLI -> UI: showError("Invalid project index")
+else valid project
+    Projects --> DeleteCmd: Project
+    DeleteCmd -> Project: getTask(taskIndex)
 
-== Logging ==
-CLI -> Log: fine("delete-task completed")
+    alt task index out of range
+        Project --> DeleteCmd: IndexOutOfRangeException
+        DeleteCmd --> CLI: IndexOutOfRangeException
+        CLI -> UI: showError("Invalid task index")
+    else task found
+        Project --> DeleteCmd: Task
+        DeleteCmd -> Project: deleteTask(taskIndex)
+        Project --> DeleteCmd: deletedTask
+        DeleteCmd -> UI: showDeletedTask(Project, deletedTask)
+        DeleteCmd --> CLI: success
+    end
+end
 
 @enduml

@@ -1,6 +1,5 @@
 @startuml ListTasksSequenceDiagram
 title FlowCLI: list-tasks Sequence
-autonumber
 
 actor User
 participant "FlowCLI Main" as CLI
@@ -8,42 +7,50 @@ participant "CommandParser" as Parser
 participant "ListCommand" as ListCmd
 participant "CommandContext" as Ctx
 participant "Projects Model" as Projects
+participant "Target Project" as Project
 participant "UI" as UI
-participant "Logger" as Log
 
-User -> CLI: Enter "list /p MyProject"
-CLI -> Parser: parse("list /p MyProject")
-Parser --> CLI: new ListCommand(rawArgs)
+User -> CLI: list 1
+CLI -> Parser: parse(...)
+Parser --> CLI: ListCommand
 
 CLI -> ListCmd: execute(Ctx)
-
-group Argument parsing
-  ListCmd -> ListCmd: extract arguments (project name)
-end
 
 ListCmd -> Ctx: getProjects(), getUi()
 Ctx --> ListCmd: Projects, UI
 
-alt project name provided
-  group Show specific project
-    ListCmd -> Projects: getProject(projectName)
-    Projects --> ListCmd: project|null
-    alt project not found
-      ListCmd -> Log: warning("Project not found: {name}")
-      ListCmd --> CLI: throw ProjectNotFoundException
-      CLI -> UI: showError("Project not found: {name}")
-      return
+alt arguments == "--all"
+    ListCmd -> Projects: isEmpty()
+    alt projects empty
+        Projects --> ListCmd: true
+        ListCmd --> CLI: EmptyProjectListException
+        CLI -> UI: showError("No projects found.")
+    else projects exist
+        Projects --> ListCmd: false
+        ListCmd -> UI: showProjectList()
+        ListCmd --> CLI: success
     end
-    ListCmd -> UI: showTasks(project)
-  end
-else no project name
-  group Show all projects
-    ListCmd -> UI: showAllProjects(Projects)
-  end
-end
+else project index provided
+    ListCmd -> Projects: getProjectByIndex(projectIndex)
 
-ListCmd --> CLI: return true
-== Logging ==
-CLI -> Log: fine("list-tasks completed")
+    alt invalid project index
+        Projects --> ListCmd: IndexOutOfRangeException
+        ListCmd --> CLI: IndexOutOfRangeException
+        CLI -> UI: showError("Invalid project index")
+    else valid project
+        Projects --> ListCmd: Project
+        ListCmd -> Project: isEmpty()
+
+        alt no tasks
+            Project --> ListCmd: true
+            ListCmd --> CLI: EmptyTaskListException
+            CLI -> UI: showError("No tasks found in project.")
+        else tasks available
+            Project --> ListCmd: false
+            ListCmd -> UI: showTaskList(Project)
+            ListCmd --> CLI: success
+        end
+    end
+end
 
 @enduml

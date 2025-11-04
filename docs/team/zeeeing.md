@@ -20,7 +20,7 @@ FlowCLI is a Command Line Interface (CLI) app for managing tasks and projects, o
 
 - **Major Refactoring of Core Application & Inline Commands**: Led a massive refactoring effort across the entire project, including overhauling all inline commands and restructuring the application's core logic to adhere to OOP principles.
 
-  - **What it does:** This foundational work created a stable, scalable, and maintainable codebase. It allows for new features to be added easily and ensures the application runs efficiently. The refactoring of all inline commands unified their structure and behavior, providing a consistent user experience.
+  - **What it does:** This foundational work created a stable, scalable, and maintainable codebase. Initially, code was heavily coupled and divided due to the different coding habits by each developer. Standardising and integrating across core components like `Parser`, `Commands` and `Handlers` allows for new features to be added easily and ensures the application runs efficiently. The refactoring of all inline commands unified their structure and behavior, providing a consistent user experience.
   - **Justification:** The original codebase was highly coupled and difficult to extend. My contributions introduced a clear separation of concerns, implemented design patterns, and drastically improved code quality. This was crucial for the project's success, as it unblocked further development and reduced the likelihood of bugs.
   - **Highlights:** A key achievement was the complete refactoring of all inline commands, which involved creating a more abstract and flexible command processing system. I also led the major refactoring of going from using `projectName` to `projectIndex` for all commands, which significantly improved performance and usability. My focus was always on writing clean, well-documented, and thoroughly tested code.
 
@@ -33,7 +33,7 @@ FlowCLI is a Command Line Interface (CLI) app for managing tasks and projects, o
 #### Contributions to the User Guide (UG)
 
 - Structured and wrote the entire User Guide, ensuring all features were clearly documented with examples.
-- Continuously updated the User Guide to reflect the latest changes and features, culminating in the v2.0 release.
+- Continuously updated the User Guide to reflect the latest changes and features, culminating in across all releases.
 
 #### Contributions to the Developer Guide (DG)
 
