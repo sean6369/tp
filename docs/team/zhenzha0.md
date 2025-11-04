@@ -194,6 +194,10 @@ TASK|isDone|description|deadline|priority
 
 The common classes form FlowCLI's core data model, providing robust project and task management capabilities.
 
+**Class Diagram:**
+
+![Project and Task Class Diagram](../plantUML/project-management/Project-and-task-class-diagram.png)
+
 **Class Overview:**
 
 - **Project**: Represents a project containing multiple tasks, with methods for task CRUD operations
@@ -201,26 +205,17 @@ The common classes form FlowCLI's core data model, providing robust project and 
 - **Task**: Represents an individual task with description, priority, deadline, and completion status
 - **TaskList**: Manages collections of tasks with validation and index-based access
 
+**Class Relationships:**
+- ProjectList contains multiple Project instances
+- Each Project contains a TaskList
+- Each TaskList contains multiple Task instances
+
 **Design Principles:**
 
 These classes follow object-oriented design principles:
 - **Encapsulation**: Internal state is private with controlled access through methods
 - **Validation**: All operations include input validation with meaningful exceptions
 - **Immutability where appropriate**: Certain fields are final to prevent unintended modifications
-
-**Example Usage:**
-
-```java
-// Creating a project with tasks
-Project project = new Project("CS2113T Project");
-Task task = new Task("Implement feature", Priority.HIGH, "2025-11-15");
-project.addTask(task);
-
-// Managing projects
-ProjectList projects = new ProjectList();
-projects.add(project);
-Project retrieved = projects.getProjectByIndex(0);
-```
 
 ---
 
