@@ -40,29 +40,40 @@ As the technical lead for the foundational architecture, I was responsible for d
   - `ProjectStatusAnalyzer` utility class [\[Functional code\]](../../src/main/java/seedu/flowcli/commands/utility/ProjectStatusAnalyzer.java)
   - Status-related UI methods in `ConsoleUi` [\[Functional code\]](../../src/main/java/seedu/flowcli/ui/ConsoleUi.java)
 
-#### 4. Exception Handling Framework
+#### 4. Data Persistence System
+- **What it does**: Implements automatic data storage and loading for all projects and tasks, ensuring data persists between application sessions.
+- **Justification**: Critical for production usability - users need their work saved automatically without manual export. Prevents data loss and improves user experience significantly.
+- **Highlights**: Implements robust error handling with atomic write operations (temp file + rename), comprehensive data validation, special character escaping, corruption detection with automatic backup, and retry logic for save failures. Handles all edge cases including first-time runs, empty data, corrupted files, and filesystem errors.
+- **Code contributed**:
+  - `Storage` class with save/load operations [\[Functional code\]](../../src/main/java/seedu/flowcli/storage/Storage.java)
+  - `StorageException` and `DataCorruptedException` custom exceptions [\[Functional code\]](../../src/main/java/seedu/flowcli/exceptions/)
+  - Integration into `FlowCLI` main class (startup loading) [\[Functional code\]](../../src/main/java/seedu/flowcli/FlowCLI.java)
+  - Integration into `ByeCommand` (exit saving with retry) [\[Functional code\]](../../src/main/java/seedu/flowcli/commands/ByeCommand.java)
+  - Comprehensive test suite with 24 test cases [\[Test code\]](../../src/test/java/seedu/flowcli/storage/StorageTest.java)
+
+#### 5. Exception Handling Framework
 - **What it does**: Implements custom exception classes that provide meaningful error messages to users when validation fails or invalid operations are attempted.
 - **Justification**: Proper exception handling is crucial for user experience, helping users understand what went wrong and how to fix it.
 - **Code contributed**:
   - `IndexOutOfRangeException`, `ProjectNotFoundException`, `MissingIndexException`, `MissingDescriptionException`, `MissingArgumentException`, `EmptyProjectListException`, `UnknownInputException` [\[Functional code\]](../../src/main/java/seedu/flowcli/exceptions/)
 
-#### 5. User Interface Components
+#### 6. User Interface Components
 - **What it does**: Implements core UI methods for displaying messages, task lists, and interactive feedback to users.
 - **Justification**: Provides consistent, user-friendly console output across all commands.
 - **Code contributed**:
   - Basic UI methods in `ConsoleUi` class (welcome messages, task lists, confirmations) [\[Functional code\]](../../src/main/java/seedu/flowcli/ui/ConsoleUi.java)
 
-#### 6. Main Application Class
-- **What it does**: Orchestrates the entire application lifecycle from initialization to shutdown.
+#### 7. Main Application Class
+- **What it does**: Orchestrates the entire application lifecycle from initialization to shutdown, including storage integration for automatic data loading.
 - **Justification**: Serves as the entry point and coordinates all major components.
 - **Code contributed**:
-  - `FlowCLI` main class [\[Functional code\]](../../src/main/java/seedu/flowcli/FlowCLI.java)
+  - `FlowCLI` main class with storage initialization [\[Functional code\]](../../src/main/java/seedu/flowcli/FlowCLI.java)
 
 ### Contributions to the User Guide
 
-- Added Important Notes section with data persistence warnings
+- Added Data Persistence section explaining automatic save/load functionality
 - Created Common Workflows section with practical command combination examples
-- Expanded Troubleshooting section with solutions for common error scenarios
+- Expanded Troubleshooting section with solutions for parameter validation errors
 - Authored Tips and Best Practices section for workflow optimization
 - Added export file format example
 
@@ -71,6 +82,7 @@ As the technical lead for the foundational architecture, I was responsible for d
 - Documented Command Processing Infrastructure section with architecture design and sequence diagram
 - Documented Status Display System section with class diagram and execution flow
 - Documented Common Classes section covering core data models
+- Documented Data Storage section with implementation details, class diagram, and data format specification
 
 ### Contributions to Team-Based Tasks
 
@@ -115,7 +127,7 @@ The infrastructure follows the Command pattern, where each command encapsulates 
 
 The following sequence diagram illustrates how a user command flows through the system:
 
-![Command Processing Sequence](../plantUML/command-processing-sequence/Command%20Processing%20Sequence%20Diagram.png)
+![Command Processing Sequence](../plantUML/command-processing-infrastructure/Command-processing-infrastructure-sequence-diagram.png)
 
 **Implementation Details:**
 
@@ -143,13 +155,13 @@ The system separates concerns through two main components:
 
 **Class Diagram:**
 
-![Status Display Class Diagram](../plantUML/status-display-system/Status%20Display%20Class%20Diagram.png)
+![Status Display Class Diagram](../plantUML/status-display-system/status-display-class-diagram.png)
 
 **Execution Flow:**
 
 When a user executes `status <projectIndex>` or `status --all`, the following sequence occurs:
 
-![Status Command Sequence](../plantUML/status-command-sequence/Status%20Command%20Sequence%20Diagram.png)
+![Status Command Sequence](../plantUML/status-command-sequence/Status-command-sequence-diagram.png)
 
 **Implementation Details:**
 
@@ -265,19 +277,87 @@ delete-task 1 1
 - **Start each session fresh**: Use `list --all` to check what projects you have
 - **Use descriptive project names**: Makes filtering and organizing easier later
 - **Set realistic deadlines**: Helps with priority management and sorting
-- **Export regularly**: Since data doesn't persist, save important snapshots throughout your work session
+- **Data automatically persists**: Your work is saved automatically when you exit with `bye`
 
 #### Task Management
 - **Mark tasks as done regularly**: Helps track progress with the `status` command
-- **Use priority levels strategically**: 
-  - `high` for urgent/important tasks
-  - `medium` for regular tasks
-  - `low` for nice-to-have items
+- **Use priority levels strategically**: High for urgent tasks, medium for regular tasks, low for nice-to-have items
 - **Set deadlines wisely**: Even if approximate, deadlines help with sorting and planning
 
 #### Export Strategies
-- **End-of-session export**: Always export before typing `bye` to preserve your work
-- **Filtered exports**: Create focused task lists for specific needs
-- **Deadline-sorted exports**: Great for weekly planning
+- **Exports for sharing**: Export creates human-readable files perfect for sharing with team members
+- **Filtered exports**: Create focused task lists for specific needs (e.g., high-priority items)
+- **Data transfer**: Copy `data/flowcli-data.txt` to move all data to another machine
+
+---
+
+## Contributions to the Developer Guide (Extracts)
+
+### Data Storage
+
+The storage system provides persistent data storage for FlowCLI, automatically saving and loading all projects and tasks between sessions.
+
+**Architecture Overview:**
+
+![Storage Class Diagram](../plantUML/data-storage/storage-class-diagram.png)
+
+**Key Components:**
+- **Storage**: Main class handling file I/O, validation, and atomic write operations
+- **DataCorruptedException**: Thrown when data file format is invalid
+- **StorageException**: Thrown on I/O failures (permissions, disk space, etc.)
+
+**Storage Location:** `./data/flowcli-data.txt`
+
+**Data Format:**
+```
+PROJECT|Project Name
+TASK|isDone|description|deadline|priority
+```
+
+**Implementation Highlights:**
+
+1. **Atomic Writes**: Data is written to a temp file first, then renamed atomically to prevent corruption
+2. **Data Validation**: All loaded data is validated; corrupted files are backed up and user warned
+3. **Error Handling**: Retry logic for save failures; graceful degradation on load errors
+4. **Edge Cases Handled**: First-time runs, empty data, corrupted files, filesystem errors
+
+---
+
+### Command Processing Infrastructure
+
+The command processing infrastructure forms the backbone of FlowCLI's architecture, enabling efficient parsing and execution of user commands.
+
+**Architecture Overview:**
+
+1. **CommandHandler**: Coordinates the command execution loop
+2. **CommandParser**: Creates appropriate Command objects from input strings  
+3. **ArgumentParser**: Extracts flags and arguments from command strings
+
+**Design Rationale:**
+
+The infrastructure follows the Command pattern, enabling easy addition of new commands without modifying existing code (Open-Closed Principle). This design separates command parsing from execution and supports both inline and interactive modes.
+
+**Sequence Diagram:**
+
+![Command Processing Sequence](../plantUML/command-processing-infrastructure/Command-processing-infrastructure-sequence-diagram.png)
+
+---
+
+### Status Display System
+
+The status display system provides comprehensive project progress tracking with completion percentages, visual progress bars, and motivational messages.
+
+**Class Diagram:**
+
+![Status Display Class Diagram](../plantUML/status-display-system/status-display-class-diagram.png)
+
+**Display Features:**
+
+1. **Progress Bar**: Visual representation using ASCII characters (`[=====>     ] 50%` format)
+2. **Motivational Messages**: Context-aware messages based on completion level:
+   - ≤25%: "You are kinda cooked, start doing your tasks!"
+   - ≤50%: "You gotta lock in and finish all tasks!"
+   - ≤75%: "We are on the right track, keep completing your tasks!"
+   - >75%: "We are finishing all tasks!! Upzzz!"
 
 ---
