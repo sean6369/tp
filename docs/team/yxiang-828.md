@@ -1,7 +1,5 @@
 # Yao Xiang's Project Portfolio Page
 
-<img src="../images/yxiang-828.png" width="200"/>
-
 **GitHub**: [Yxiang-828](https://github.com/Yxiang-828)
 
 ## Project: FlowCLI
