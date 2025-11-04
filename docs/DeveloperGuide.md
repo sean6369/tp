@@ -712,7 +712,7 @@ The system provides contextual encouragement based on progress:
 - ≤25%: "You are kinda cooked, start doing your tasks!"
 - ≤50%: "You gotta lock in and finish all tasks!"
 - ≤75%: "We are on the right track, keep completing your tasks!"
-- > 75%: "We are finishing all tasks!! Upzzz!"
+- \>75%: "We are finishing all tasks!! Upzzz!"
 
 **Status Types:**
 
