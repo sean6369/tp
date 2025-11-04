@@ -1,17 +1,20 @@
 @startuml Command Processing Sequence Diagram
 
 actor User
-participant ConsoleUi
-participant CommandHandler
-participant InteractivePromptHandler
-participant CommandFactory
-participant Command
+participant ":ConsoleUi" as ConsoleUi
+participant ":CommandHandler" as CommandHandler
+participant ":InteractivePromptHandler" as InteractivePromptHandler
+participant ":CommandFactory" as CommandFactory
+participant ":Command" as Command
 
 User -> ConsoleUi: enters command (e.g., "add")
 activate ConsoleUi
 ConsoleUi -> CommandHandler: resolveCommand(input)
 activate CommandHandler
 CommandHandler -> CommandHandler: parse command type
+activate CommandHandler
+CommandHandler --> CommandHandler
+deactivate CommandHandler
 
 alt Interactive Mode Required
     CommandHandler -> InteractivePromptHandler: handleInteractiveCommand()
@@ -28,10 +31,14 @@ alt Interactive Mode Required
     deactivate InteractivePromptHandler
 else Normal Mode
     CommandHandler -> CommandHandler: parse arguments normally
+    activate CommandHandler
+    CommandHandler --> CommandHandler
+    deactivate CommandHandler
 end
 
 CommandHandler -> CommandFactory: createCommand(type, args)
 activate CommandFactory
+create Command
 CommandFactory -> Command: new Command(args)
 activate Command
 CommandFactory --> CommandHandler: return Command
@@ -39,6 +46,8 @@ deactivate CommandFactory
 CommandHandler -> Command: execute()
 Command -> ConsoleUi: return result
 deactivate Command
+destroy Command
+deactivate CommandHandler
 ConsoleUi --> User: display result
 deactivate ConsoleUi
 
