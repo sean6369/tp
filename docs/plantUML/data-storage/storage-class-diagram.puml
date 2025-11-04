@@ -1,0 +1,116 @@
+@startuml Storage Class Diagram
+title Data Storage — Class Diagram
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam monochrome true
+hide circle
+
+class Storage {
+  - String dataFilePath
+  - String tempFilePath
+  - String backupFilePath
+  - String dataDirectory
+  --
+  + Storage()
+  + Storage(String customFilePath)
+  + ProjectList load()
+  + void save(ProjectList projects)
+  + String getDataFilePath()
+  - void ensureDataDirectoryExists()
+  - ProjectList loadFromFile(File file)
+  - void writeToFile(ProjectList projects, File file)
+  - Project parseProjectLine(String line, int lineNumber)
+  - void parseAndAddTask(String line, Project project, int lineNumber)
+  - void backupCorruptedFile()
+  - String escape(String input)
+  - String unescape(String input)
+}
+
+class ProjectList {
+  - List<Project> projects
+  --
+  + void addProject(String projectName)
+  + Project getProjectByIndex(int index)
+  + int getProjectListSize()
+  + List<Project> getProjectList()
+}
+
+class Project {
+  - String projectName
+  - TaskList projectTasks
+  --
+  + Project(String projectName)
+  + String getProjectName()
+  + TaskList getProjectTasks()
+  + void addTask(String description)
+  + void addTask(String description, LocalDate deadline, int priority)
+}
+
+class TaskList {
+  - List<Task> tasks
+  --
+  + void addTask(String description)
+  + void addTask(String description, LocalDate deadline, int priority)
+  + Task get(int index)
+  + void mark(int index)
+  + int size()
+  + List<Task> getTasks()
+}
+
+class Task {
+  - String description
+  - boolean isDone
+  - LocalDate deadline
+  - int priority
+  --
+  + Task(String description)
+  + Task(String description, LocalDate deadline, int priority)
+  + String getDescription()
+  + boolean isDone()
+  + LocalDate getDeadline()
+  + int getPriority()
+  + void mark()
+  + void setDescription(String description)
+  + void setDeadline(LocalDate deadline)
+  + void setPriority(int priority)
+}
+
+class DataCorruptedException {
+  --
+  + DataCorruptedException(String message)
+  + DataCorruptedException(String message, Throwable cause)
+}
+
+class StorageException {
+  --
+  + StorageException(String message)
+  + StorageException(String message, Throwable cause)
+}
+
+' Relationships
+Storage ..> ProjectList : loads/saves
+Storage ..> DataCorruptedException : throws
+Storage ..> StorageException : throws
+ProjectList *-- Project : contains >
+Project *-- TaskList : owns >
+TaskList *-- Task : contains >
+
+note top of Storage
+  Central persistence manager
+  Implements atomic write operations
+  Validates all loaded data
+end note
+
+note right of DataCorruptedException
+  Thrown when data file
+  format is invalid
+end note
+
+note right of StorageException
+  Thrown on I/O failures
+  (permissions, disk space, etc.)
+end note
+
+@enduml
+

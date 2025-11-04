@@ -50,7 +50,7 @@ class StatusCommandTest {
     }
 
     private CommandContext makeContext(ProjectList projects, ConsoleUi ui) {
-        return new CommandContext(projects, ui, null);
+        return new CommandContext(projects, ui, null, null);
     }
 
     @BeforeEach

@@ -7,6 +7,7 @@ import seedu.flowcli.commands.Command;
 import seedu.flowcli.exceptions.FlowCLIException;
 import seedu.flowcli.parsers.CommandParser;
 import seedu.flowcli.project.ProjectList;
+import seedu.flowcli.storage.Storage;
 import seedu.flowcli.ui.ConsoleUi;
 
 public class CommandHandler {
@@ -18,12 +19,12 @@ public class CommandHandler {
     private InteractivePromptHandler interactiveHandler;
 
     //@@author Zhenzha0
-    public CommandHandler(ProjectList projects, ConsoleUi ui) {
+    public CommandHandler(ProjectList projects, ConsoleUi ui, Storage storage) {
         this.ui = ui;
         ExportCommandHandler exportHandler = new ExportCommandHandler(projects, ui);
         this.parser = new CommandParser();
         this.factory = new CommandFactory();
-        this.context = new CommandContext(projects, ui, exportHandler);
+        this.context = new CommandContext(projects, ui, exportHandler, storage);
         this.interactiveHandler = null; // Will be set in handleCommands
     }
 

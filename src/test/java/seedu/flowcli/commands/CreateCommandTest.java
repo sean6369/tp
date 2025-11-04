@@ -54,7 +54,7 @@ class CreateCommandTest {
     private CommandContext makeContext(ProjectList projects, ConsoleUi ui) {
         // Your constructor is CommandContext(ProjectList, ConsoleUi, ExportCommandHandler)
         // CreateCommand doesn't use the export handler, so pass null.
-        return new CommandContext(projects, ui, null);
+        return new CommandContext(projects, ui, null, null);
     }
 
     @Test
