@@ -1,10 +1,10 @@
 @startuml Mark/Unmark Command Sequence Diagram
 
-actor User
-participant InteractivePromptHandler
-participant ProjectList
-participant Project
-participant Task
+actor "user:User" as User
+participant "handler:InteractivePromptHandler" as InteractivePromptHandler
+participant "projectList:ProjectList" as ProjectList
+participant "project:Project" as Project
+participant "task:Task" as Task
 
 User -> InteractivePromptHandler: types "mark" or "unmark" command
 activate InteractivePromptHandler
@@ -30,6 +30,9 @@ InteractivePromptHandler -> User: "Enter task numbers to mark/unmark:"
 User -> InteractivePromptHandler: enters task indices
 
 InteractivePromptHandler -> InteractivePromptHandler: validate indices
+activate InteractivePromptHandler
+InteractivePromptHandler --> InteractivePromptHandler: validation result
+deactivate InteractivePromptHandler
 alt Invalid indices
     InteractivePromptHandler -> User: "Invalid task numbers. Try again."
 else Valid indices
